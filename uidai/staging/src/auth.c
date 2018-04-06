@@ -1181,7 +1181,7 @@ int32_t auth_process_ekyc_req(int32_t conn_fd,
                               uint8_t *req_ptr,
                               uint8_t *req_xml,
                               uint32_t req_xml_size,
-                              uint8_t *req_xml_len) {
+                              uint32_t *req_xml_len) {
 
   /*/request?type=auth&subtype=ekyc&subsubtype=pi&
      uid=999999990019&ext_conn_id=14&rc=y&ver=2.0&
@@ -1194,7 +1194,9 @@ int32_t auth_process_ekyc_req(int32_t conn_fd,
   uint32_t auth_xml_size = 6000;
   uint8_t pid_pi_xml[512];
   uint8_t *b64_auth_xml = NULL;
-  uint32_t b64_len = 0;
+  uint16_t b64_len = 0;
+  uint8_t http_header[512];
+
   auth_ctx_t *pAuthCtx = &auth_ctx_g;
  
   subsubtype = uidai_get_param(req_ptr, "subsubtype");
@@ -1225,6 +1227,12 @@ int32_t auth_process_ekyc_req(int32_t conn_fd,
     auth_auth_pi_xml(pid_pi_xml,
                      sizeof(pid_pi_xml),
                      req_ptr);
+
+  } else if(!strncmp(subsubtype, "otp", 3)) {
+    /*Prepare otp Pid*/
+ 
+  } else if(!strncmp(subsubtype, "bio", 3)) {
+    /*Prepare bio PID*/
   }
 
   free(subsubtype);
@@ -1248,14 +1256,47 @@ int32_t auth_process_ekyc_req(int32_t conn_fd,
   memset((void *)b64_auth_xml, 0, b64_len);
 
   util_base64(auth_xml, 
-              strlen(auth_xml), 
+              (int32_t)strlen(auth_xml), 
               b64_auth_xml, 
               &b64_len);
+
+  memset((void *)http_header, 0, sizeof(http_header));
+  snprintf(http_header,
+           sizeof(http_header),
+           "%s%s%s%s%s"
+           "%s%s%d%s%d"
+           "%s%s%s%s%s"
+           "%s%s%s%s%d"
+           "%s%s",
+           "POST http://",
+           pAuthCtx->uidai_host_name,
+           "/kyc/",
+           pAuthCtx->version,
+           "/",
+           pAuthCtx->ac,
+           "/",
+           uid[0],
+           "/",
+           uid[1],
+           "/",
+           pAuthCtx->lk,
+           " HTTP/1.1\r\n",
+           "Host: ",
+           pAuthCtx->uidai_host_name,
+           "\r\n",
+           "Content-Type: text/xml\r\n",
+           "Connection: Keep-alive\r\n",
+           "Content-Length: ",
+           (int32_t)b64_len,
+           "\r\n",
+           /*Payload delimeter*/
+           "\r\n");
    
   *req_xml_len = sprintf(req_xml,
                          "%s%s%s%s%s"
                          "%s%s%s%s%s"
-                         "%s%s",
+                         "%s%s%s",
+                         http_header,
                          "<Kyc ver=\"",
                          pAuthCtx->version,
                          "\" ts=\"" ,
@@ -1266,7 +1307,7 @@ int32_t auth_process_ekyc_req(int32_t conn_fd,
                          ">\n",
                          "  <Rad>",
                          b64_auth_xml,
-                         "  </Rad>\n"
+                         "  </Rad>\n",
                          "</Kyc>");
   free(auth_xml);
   free(b64_auth_xml);
@@ -1437,10 +1478,10 @@ int32_t auth_process_req(int32_t conn_fd,
     
   } else if(!strncmp(req_sub_type, "kyc", 3)) {
     auth_process_ekyc_req(conn_fd, 
-                             req_ptr,
-                             req_xml,
-                             req_xml_size,
-                             req_xml_len);
+                          req_ptr,
+                          req_xml,
+                          req_xml_size,
+                          req_xml_len);
     
   }
 
