@@ -241,7 +241,6 @@ proc submit_contents {type version} {
   if {"staging" == $type} {
 
     if {"1.6" == $version} {
-      puts "Staging Version $version"
       staging_retrieve_value_v16    
     } elseif {"2.0" == $version} { 
       

@@ -734,5 +734,5 @@ proc staging_retrieve_value_v16 {} {
     }
   }
 
-  puts "Final REQ $REQ\n"
+  puts $REQ
 };#/*staging_retrieve_value_v16*/

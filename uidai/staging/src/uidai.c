@@ -909,13 +909,8 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
  */
 int32_t uidai_process_gui_req(int32_t rd_fd[2], int32_t wr_fd[2], uint8_t *gui_name) {
 
-  fd_set fds_rd;
-  fd_set fds_wr;
-  int32_t max_fd;
   int32_t ret = -1;
-  uint8_t len_buff[10];
-  uint8_t tmp_buff[20];
-  uint32_t len = sizeof(len_buff);
+  uint32_t len = (sizeof(uint8_t) * 1024);
   uint8_t *req_ptr = NULL;
 
   close(rd_fd[1]);
@@ -928,41 +923,16 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2], int32_t wr_fd[2], uint8_t *gui_n
     exit(0);
   }
 
-  max_fd = rd_fd[0] > wr_fd[1] ? rd_fd[0]: wr_fd[1];
+  req_ptr = (uint8_t *)malloc(len);
+  assert(req_ptr != NULL);
+  
   for(;;) {
-    FD_ZERO(&fds_rd);
-    FD_ZERO(&fds_wr);
-    FD_SET(rd_fd[0], &fds_rd);
-    FD_SET(wr_fd[1], &fds_wr);
-    ret = select(max_fd, &fds_rd, &fds_wr, NULL, NULL);
+    /*Request has been received from gui, Process it*/
+    memset((void *)req_ptr, 0, len);
 
-    if(ret > 0) {
-      if(FD_ISSET(rd_fd[0], &fds_rd)) { 
-        /*Request has been received from gui, Process it*/
-        uidai_recv(rd_fd[0], len_buff, &len, MSG_PEEK);
-        ret = write(2, req_ptr, len);  
-        if(len) {
-          memset((void *)tmp_buff, 0, sizeof(tmp_buff));
-          sscanf(len_buff, "%[^&]", tmp_buff);
-          len = atoi(tmp_buff);
-        }
+    ret = read(rd_fd[0], req_ptr, len);
 
-        if(len) {
-          req_ptr = (uint8_t *)malloc(len + 50);
-          assert(req_ptr != NULL);
-          memset((void *)req_ptr, 0, (len + 50));
-          uidai_recv(rd_fd[0], req_ptr, &len, 0);
-
-          if(len) {
-            ret = write(2, req_ptr, len);  
-          }
-        }
-      }
-    
-      if(FD_ISSET(wr_fd[1], &fds_wr)) {
-        /*Send Response to GUI*/
-      }
-    }  
+    ret = write(2, req_ptr, ret);
   }
 
   close(rd_fd[0]);
