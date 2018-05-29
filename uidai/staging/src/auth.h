@@ -113,7 +113,8 @@ int32_t auth_c14n_auth_xml(uint8_t *c14n_auth_xml,
 
 int32_t auth_auth_otp_xml(uint8_t *auth_otp_xml, 
                           uint32_t auth_otp_xml_size, 
-                          uint8_t *pid_xml);
+                          uint8_t *pid_xml,
+                          uint32_t otp_value);
 
 int32_t auth_req_auth(uint8_t *req_xml, 
                       uint32_t req_xml_size, 
@@ -161,4 +162,9 @@ int32_t auth_process_req(int32_t conn_fd,
                          uint32_t req_xml_size,
                          uint32_t *req_xml_len);
 
+int32_t auth_process_ekyc_req(int32_t conn_fd, 
+                              uint8_t *req_ptr,
+                              uint8_t *req_xml,
+                              uint32_t req_xml_size,
+                              uint32_t *req_xml_len);
 #endif /* __AUTH_H__ */

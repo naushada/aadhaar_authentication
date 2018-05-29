@@ -1120,7 +1120,43 @@ int32_t auth_req_auth(uint8_t *req_xml,
   return(0);           
 }/*auth_req_auth*/
 
-int32_t auth_auth_pi_xml(uint8_t *auth_xml, uint32_t auth_xml_size, uint8_t *param) {
+int32_t auth_auth_otp_xml(uint8_t *auth_xml, 
+                          uint32_t auth_xml_size, 
+                          uint8_t *param,
+                          uint32_t otp_value) {
+  
+  auth_ctx_t *pAuthCtx = &auth_ctx_g;
+  /*the ts - timestamp format is YYYY-MM-DDThh:mm:ss */
+  uint8_t ts[32];
+
+  memset((void *)auth_xml, 0, auth_xml_size);
+  memset((void *)ts, 0, sizeof(ts));
+  auth_compute_ts(ts, sizeof(ts));
+
+  snprintf(auth_xml,
+           auth_xml_size,
+           "%s%s%s%s%s"
+           "%s%s%s%d%s"
+           "%s",
+           "<Pid xmlns=\"http://www.uidai.gov.in/authentication/uid-auth-request-data/",
+           pAuthCtx->version,
+           "\" ts=\"",
+           ts,
+           "\" ver=\"",
+           pAuthCtx->version,
+           "\" wadh=\"\">\n",
+           "  <Pv otp=\"",
+           otp_value,
+           "/>\n",
+           "</Pid>");
+
+  return(0);
+}/*auth_auth_otp_xml*/
+
+
+int32_t auth_auth_pi_xml(uint8_t *auth_xml, 
+                         uint32_t auth_xml_size, 
+                         uint8_t *param) {
   
   auth_ctx_t *pAuthCtx = &auth_ctx_g;
   /*the ts - timestamp format is YYYY-MM-DDThh:mm:ss */
@@ -1230,6 +1266,12 @@ int32_t auth_process_ekyc_req(int32_t conn_fd,
 
   } else if(!strncmp(subsubtype, "otp", 3)) {
     /*Prepare otp Pid*/
+    uint8_t *otp_ptr = uidai_get_param(req_ptr, "otp");
+    auth_auth_otp_xml(pid_pi_xml,
+                     sizeof(pid_pi_xml),
+                     req_ptr,
+                     atoi(otp_ptr));
+    free(otp_ptr);
  
   } else if(!strncmp(subsubtype, "bio", 3)) {
     /*Prepare bio PID*/

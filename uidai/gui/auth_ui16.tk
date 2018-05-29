@@ -1,0 +1,738 @@
+package require BWidget
+
+#/* 
+# @name ui16.tk
+# @brief This file is to build the user form entry
+#        through which respective values can be supplied by end user
+#        This user form complies with specification version 1.6
+#
+# @author Mohad Naushad Ahmed
+# @email  NAUSHAD.DLN@GMAIL.COM
+# @dated  15-May-2018
+#*/
+
+set staging_wi_pname_v16 {
+  {auth.uide auth.tide auth.txne auth.ace auth.sae auth.vere auth.lke}
+  {uses.pic uses.pac uses.pfac uses.bioc uses.pvc uses.democ}
+  {tkn.typee tkn.valuee}
+  {meta.udce meta.fdce meta.idce meta.pipe meta.lote meta.love}
+  {pi.mse pi.mve pi.namee pi.lnamee pi.lmve pi.gendere pi.dobe pi.dobte pi.agee pi.phonee pi.emaile}
+  {pa.mse pa.coe pa.housee pa.streete pa.lme pa.loce pa.vtce pa.subdiste pa.diste pa.statee pa.pce pa.poe}
+  {pfa.mse pfa.mve pfa.ave pfa.lave pfa.lmve}
+  {bio.typee bio.poshe}
+  {pv.pine pv.otpe}
+  {demo.lange}
+}
+
+
+proc staging_auth_attr_v16 {} {
+
+  frame .auth
+  label .auth.uid  -text "uid............"
+  label .auth.tid  -text "tid............"
+  label .auth.txn  -text "txn............"
+  label .auth.ac   -text "ac............."
+  label .auth.sa   -text "sa............."
+  label .auth.ver  -text "ver............"
+  label .auth.lk   -text "lk............."
+ 
+  entry .auth.uide  -width 30 -textvariable staging_auth_v16_uide
+  entry .auth.tide  -width 30 -textvariable staging_auth_v16_tide
+  entry .auth.txne  -width 30 -textvariable staging_auth_v16_txne
+  entry .auth.ace   -width 30 -textvariable staging_auth_v16_ace
+  entry .auth.sae   -width 30 -textvariable staging_auth_v16_sae
+  entry .auth.vere  -width 30 -textvariable staging_auth_v16_vere
+  entry .auth.lke   -width 30 -textvariable staging_auth_v16_lke
+ 
+  grid .auth.uid  .auth.uide  -pady 2 -padx 4 -sticky news
+  grid .auth.tid  .auth.tide  -pady 2 -padx 4 -sticky news
+  grid .auth.txn  .auth.txne  -pady 2 -padx 4 -sticky news
+  grid .auth.ac   .auth.ace   -pady 2 -padx 4 -sticky news
+  grid .auth.sa   .auth.sae   -pady 2 -padx 4 -sticky news
+  grid .auth.ver  .auth.vere  -pady 2 -padx 4 -sticky news
+  grid .auth.lk   .auth.lke   -pady 2 -padx 4 -sticky news
+ 
+  grid .auth -in .staging_auth
+};#/*staging_auth_attr_v16*/
+
+proc staging_uses_attr_v16 {} {
+
+  frame .uses
+  label .uses.pi   -text "Pi............."
+  label .uses.pa   -text "Pa............."
+  label .uses.pfa  -text "Pfa............"
+  label .uses.bio  -text "Bio............"
+  label .uses.pv   -text "Pv............."
+  label .uses.demo -text "Demo..........."
+ 
+  checkbutton .uses.pic   -variable staging_uses_pic   -command {staging_uses_opt pic   $staging_uses_pic} 
+  checkbutton .uses.pac   -variable staging_uses_pac   -command {staging_uses_opt pac   $staging_uses_pac}
+  checkbutton .uses.pfac  -variable staging_uses_pfac  -command {staging_uses_opt pfac  $staging_uses_pfac}
+  checkbutton .uses.bioc  -variable staging_uses_bioc  -command {staging_uses_opt bioc  $staging_uses_bioc}
+  checkbutton .uses.pvc   -variable staging_uses_pvc   -command {staging_uses_opt pvc   $staging_uses_pvc}
+  checkbutton .uses.democ -variable staging_uses_democ -command {staging_uses_opt democ $staging_uses_democ}
+ 
+  grid .uses.pi    .uses.pic   -pady 2 -padx 4 -sticky news 
+  grid .uses.pa    .uses.pac   -pady 2 -padx 4 -sticky news
+  grid .uses.pfa   .uses.pfac  -pady 2 -padx 4 -sticky news
+  grid .uses.bio   .uses.bioc  -pady 2 -padx 4 -sticky news
+  grid .uses.pv    .uses.pvc   -pady 2 -padx 4 -sticky news
+  grid .uses.demo  .uses.democ -pady 2 -padx 4 -sticky news
+
+  grid .uses -in .staging_uses
+};#/*staging_uses_attr_v16*/
+
+proc staging_tkn_attr_v16 {} {
+
+  frame .tkn
+  label .tkn.type  -text "Type*.........."
+  label .tkn.value -text "Value*........."
+ 
+  #entry .tkn.typee -width 30
+  ComboBox .tkn.typee -width 30 -values {"Mobile Number" "NA"} -text "NA"
+  entry .tkn.valuee -width 30
+ 
+  grid .tkn.type  .tkn.typee  -pady 2 -padx 4 -sticky news
+  grid .tkn.value .tkn.valuee -pady 2 -padx 4 -sticky news
+
+  grid .tkn -in .staging_tkn
+};#/*staging_tkn_attr_v16*/
+
+proc staging_meta_attr_v16 {} {
+
+  frame .meta
+  label .meta.udc  -text "Udc*..........."
+  label .meta.fdc  -text "Fdc*..........."
+  label .meta.idc  -text "Idc*..........."
+  label .meta.pip  -text "Pip*..........."
+  label .meta.lot  -text "Lot*..........."
+  label .meta.lov  -text "Lov*..........."
+ 
+  entry .meta.udce -width 30 -textvariable staging_meta_v16_udce
+  ComboBox .meta.fdce -width 30 -values {NC NA} -text "NA"
+  entry .meta.idce -width 30 -textvariable staging_meta_v16_idce
+  entry .meta.pipe -width 30 -textvariable staging_meta_v16_pipe
+  ComboBox .meta.lote -width 30 -values {G P} -text "P"
+  entry .meta.love -width 30 -textvariable staging_meta_v16_love
+ 
+  grid .meta.udc  .meta.udce  -pady 2 -padx 4 -sticky news
+  grid .meta.fdc  .meta.fdce  -pady 2 -padx 4 -sticky news
+  grid .meta.idc  .meta.idce  -pady 2 -padx 4 -sticky news
+  grid .meta.pip  .meta.pipe  -pady 2 -padx 4 -sticky news
+  grid .meta.lot  .meta.lote  -pady 2 -padx 4 -sticky news
+  grid .meta.lov  .meta.love  -pady 2 -padx 4 -sticky news
+
+  grid .meta -in .staging_meta
+};#/*staging_meta_attr_v16*/
+
+proc staging_pi_attr_v16 {} {
+  global staging_pi_mve_v16
+
+  set staging_pi_mve_v16 "100"
+  frame .pi
+  label .pi.ms     -text "Ms............."
+  label .pi.mv     -text "Mv............."
+  label .pi.name   -text "Name..........."
+  label .pi.lname  -text "Lname.........."
+  label .pi.lmv    -text "Lmv............"
+  label .pi.gender -text "Gender........."
+  label .pi.dob    -text "Dob............"
+  label .pi.dobt   -text "Dobt..........."
+  label .pi.age    -text "Age............"
+  label .pi.phone  -text "Phone.........."
+  label .pi.email  -text "E-mail........."
+ 
+  ComboBox .pi.mse  -width 30 -values {P E} -text "E"
+  entry .pi.mve     -width 30 -textvariable  staging_pi_mve_v16
+  entry .pi.namee   -width 30
+  entry .pi.lnamee  -width 30
+  entry .pi.lmve    -width 30
+  ComboBox .pi.gendere -width 30 -values {M F T} -text "M"
+  entry .pi.dobe    -width 30
+  ComboBox .pi.dobte -width 30 -values {D V A} -text "V"
+  entry .pi.agee    -width 30
+  entry .pi.phonee  -width 30
+  entry .pi.emaile  -width 30
+ 
+  grid .pi.ms     .pi.mse     -pady 2 -padx 4 -sticky news
+  grid .pi.mv     .pi.mve     -pady 2 -padx 4 -sticky news
+  grid .pi.name   .pi.namee   -pady 2 -padx 4 -sticky news
+  grid .pi.lname  .pi.lnamee  -pady 2 -padx 4 -sticky news
+  grid .pi.lmv    .pi.lmve    -pady 2 -padx 4 -sticky news
+  grid .pi.gender .pi.gendere -pady 2 -padx 4 -sticky news
+  grid .pi.dob    .pi.dobe    -pady 2 -padx 4 -sticky news
+  grid .pi.dobt   .pi.dobte   -pady 2 -padx 4 -sticky news
+  grid .pi.age    .pi.agee    -pady 2 -padx 4 -sticky news
+  grid .pi.phone  .pi.phonee  -pady 2 -padx 4 -sticky news
+  grid .pi.email  .pi.emaile  -pady 2 -padx 4 -sticky news
+
+  grid .pi -in .staging_pi
+  #;/*Disable the entry for Pi Dempgraphic data*/
+  staging_uses_opt pic  0
+};#/*staging_pi_attr_v16*/
+
+proc staging_pa_attr_v16 {} {
+  frame .pa
+  label .pa.ms        -text "Ms............."
+  label .pa.co        -text "Co............."
+  label .pa.house     -text "House.........."
+  label .pa.street    -text "Street........."
+  label .pa.lm        -text "Lm............."
+  label .pa.loc       -text "Loc............"
+  label .pa.vtc       -text "Vtc............"
+  label .pa.subdist   -text "Subdist........"
+  label .pa.dist      -text "Dist..........."
+  label .pa.state     -text "State.........."
+  label .pa.pc        -text "Pc............."
+  label .pa.po        -text "Po............."
+ 
+  entry .pa.mse      -width 30
+  entry .pa.coe      -width 30 
+  entry .pa.housee   -width 30
+  entry .pa.streete  -width 30
+  entry .pa.lme      -width 30
+  entry .pa.loce     -width 30
+  entry .pa.vtce     -width 30
+  entry .pa.subdiste -width 30
+  entry .pa.diste    -width 30
+  entry .pa.statee   -width 30
+  entry .pa.pce      -width 30
+  entry .pa.poe      -width 30
+ 
+  grid .pa.ms       .pa.mse       -pady 2 -padx 4 -sticky news
+  grid .pa.co       .pa.coe       -pady 2 -padx 4 -sticky news
+  grid .pa.house    .pa.housee    -pady 2 -padx 4 -sticky news
+  grid .pa.street   .pa.streete   -pady 2 -padx 4 -sticky news
+  grid .pa.lm       .pa.lme       -pady 2 -padx 4 -sticky news
+  grid .pa.loc      .pa.loce      -pady 2 -padx 4 -sticky news
+  grid .pa.vtc      .pa.vtce      -pady 2 -padx 4 -sticky news
+  grid .pa.subdist  .pa.subdiste  -pady 2 -padx 4 -sticky news
+  grid .pa.dist     .pa.diste     -pady 2 -padx 4 -sticky news
+  grid .pa.state    .pa.statee    -pady 2 -padx 4 -sticky news
+  grid .pa.pc       .pa.pce       -pady 2 -padx 4 -sticky news
+  grid .pa.po       .pa.poe       -pady 2 -padx 4 -sticky news
+
+  grid .pa -in .staging_pa
+
+  #;/*Disable the entry for Pa Dempgraphic data*/
+  staging_uses_opt pac  0
+};#/*staging_pa_attr_v16*/
+
+proc staging_pfa_attr_v16 {} {
+  frame .pfa
+  label .pfa.ms        -text "Ms............."
+  label .pfa.mv        -text "Mv............."
+  label .pfa.av        -text "Av............."
+  label .pfa.lav       -text "Lav............"
+  label .pfa.lmv       -text "Lmv............"
+ 
+  ComboBox .pfa.mse   -width 30 -values {E P} -text "E"
+  entry .pfa.mve   -width 30 
+  entry .pfa.ave   -width 30
+  entry .pfa.lave  -width 30
+  entry .pfa.lmve  -width 30
+ 
+  grid .pfa.ms    .pfa.mse    -pady 2 -padx 4 -sticky news
+  grid .pfa.mv    .pfa.mve    -pady 2 -padx 4 -sticky news
+  grid .pfa.av    .pfa.ave    -pady 2 -padx 4 -sticky news
+  grid .pfa.lav   .pfa.lave   -pady 2 -padx 4 -sticky news
+  grid .pfa.lmv   .pfa.lmve   -pady 2 -padx 4 -sticky news
+
+  grid .pfa -in .staging_pfa
+  #;/*Disable the entry for Pfa Dempgraphic data*/
+  staging_uses_opt pfac  0
+};#/*staging_pfa_attr_v16*/
+
+proc staging_bio_attr_v16 {} {
+
+  frame .bio
+  label .bio.type  -text "Type..........."
+  label .bio.posh  -text "Posh..........."
+ 
+  ComboBox .bio.typee -width 30 -values {FMR FIR IIR}
+  #entry .bio.poshe -width 30 
+  ComboBox .bio.poshe -width 30 -values {LEFT_IRIS \
+                                         RIGHT_IRIS LEFT_INDEX LEFT_LITTLE LEFT_MIDDLE LEFT_RING \
+                                         LEFT_THUMB RIGHT_INDEX RIGHT_LITTLE RIGHT_MIDDLE \
+                                         RIGHT_RING RIGHT_THUMB UNKNOWN} -text "UNKNOWN"
+ 
+  grid .bio.type  .bio.typee -pady 2 -padx 4 -sticky news
+  grid .bio.posh  .bio.poshe -pady 2 -padx 4 -sticky news
+  grid .bio -in .staging_bio
+ 
+  #;/*Disable the entry for bio Dempgraphic data*/
+  staging_uses_opt bioc  0
+};#/*staging_bio_attr_v16*/
+
+proc staging_pv_attr_v16 {} {
+  frame .pv
+  label .pv.pin  -text "Pin............"
+  label .pv.otp  -text "Otp............"
+ 
+  entry .pv.pine -width 30
+  entry .pv.otpe -width 30 
+ 
+  grid .pv.pin  .pv.pine    -pady 2 -padx 4 -sticky news
+  grid .pv.otp  .pv.otpe    -pady 2 -padx 4 -sticky news
+  grid .pv -in .staging_pv
+
+  #;/*Disable the entry for Pv Dempgraphic data*/
+  staging_uses_opt pvc  0
+};#/*staging_pv_attr_v16*/
+
+proc staging_demo_attr_v16 {} {
+
+  set lang_opt {Assamese
+                Bengali
+                Gujarati
+                Hindi
+                Kannada
+                Malayalam
+                Manipuri
+                Marathi
+                Oriya
+                Punjabi
+                Tamil
+                Telugu
+                Urdu }
+
+  frame .demo
+  label .demo.lang  -text "Language......."
+ 
+  ComboBox .demo.lange -values $lang_opt -modifycmd {staging_demo_lang_get .demo.lange} -width 30 
+ 
+  grid .demo.lang  .demo.lange    -pady 2 -padx 4 -sticky news
+  grid .demo -in .staging_demo
+
+  #;/*Disable the entry for Democ Dempgraphic data*/
+  staging_uses_opt democ  0
+};#/*staging_demo_attr_v16*/
+
+proc staging_uidai_server {} {
+
+  global uidai_host_name
+  set uri_val {/uidauth/1.6 /auth /auth2.5}
+  set uidai_host_name "developer.uidai.gov.in"
+  frame .uidai
+  label .uidai.uri   -text "Uri............"
+  label .uidai.host  -text "Host............"
+ 
+  ComboBox .uidai.urie -values $uri_val -width 30 -text [lindex $uri_val 0] 
+  entry .uidai.hoste -width 30 -textvariable uidai_host_name
+  
+ 
+  grid .uidai.uri  .uidai.urie    -pady 2 -padx 4 -sticky news
+  grid .uidai.host .uidai.hoste  -pady 2 -padx 4 -sticky news
+  grid .uidai -in .staging_uidai
+
+};#/*staging_uidai_server*/
+
+proc staging_demo_lang_get {p_name} {
+
+  set lang_opt { {Assamese   01}
+                 {Bengali    02}
+                 {Gujarati   05}
+                 {Hindi      06}
+                 {Kannada    07}
+                 {Malayalam  11}
+                 {Manipuri   12}
+                 {Marathi    13}
+                 {Oriya      15}
+                 {Punjabi    16}
+                 {Tamil      20}
+                 {Telugu     21}
+                 {Urdu       22}
+               }
+
+  set val [$p_name get] 
+  puts "Value is $val"
+};#/*staging_demo_lang_get*/
+
+proc staging_uses_opt_disable {uses_opt} {
+  global staging_wi_pname_v16
+
+  if {$uses_opt == "pic"} {
+    set demo_list [lindex $staging_wi_pname_v16 4]
+  } elseif {$uses_opt == "pac"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 5]
+  } elseif {$uses_opt == "pfac"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 6]
+  } elseif {$uses_opt == "bioc"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 7]
+  } elseif {$uses_opt == "pvc"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 8]
+  } elseif {$uses_opt == "democ"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 9]
+  } else {
+    #;/*Invalid Option*/
+  }
+
+  foreach pi $demo_list {
+    .$pi configure -state disabled
+  }
+};#/*staging_uses_opt_disable*/
+
+proc staging_uses_opt_enable {uses_opt} {
+  global staging_wi_pname_v16
+
+  if {$uses_opt == "pic"} {
+    set demo_list [lindex $staging_wi_pname_v16 4]
+  } elseif {$uses_opt == "pac"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 5]
+  } elseif {$uses_opt == "pfac"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 6]
+  } elseif {$uses_opt == "bioc"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 7]
+  } elseif {$uses_opt == "pvc"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 8]
+  } elseif {$uses_opt == "democ"} {
+
+    set demo_list [lindex $staging_wi_pname_v16 9]
+  } else {
+    #;/*Invalid Option*/
+  }
+
+  foreach pi $demo_list {
+    .$pi configure -state normal
+  }
+
+};#/*staging_uses_opt_enable*/
+
+proc staging_uses_opt {chk_btn chk_selected} {
+
+  if {$chk_selected == 1} {
+    #/*Enable the Pi entry*/
+    staging_uses_opt_enable $chk_btn 
+
+  } else {
+    #/*Disable the Pi Entry*/
+    staging_uses_opt_disable $chk_btn
+  }
+
+};#i/8staging_uses_opt*/
+
+proc staging_set_default_auth_v16 {} {
+  global staging_auth_v16_sae
+  global staging_auth_v16_ace
+  global staging_auth_v16_tide
+  global staging_auth_v16_vere
+  global staging_auth_v16_txne
+  
+  set staging_auth_v16_sae "public"
+  set staging_auth_v16_ace "public"
+  set staging_auth_v16_tide "public"
+  set staging_auth_v16_vere "1.6"
+  set staging_auth_v16_txne "TXN:DemoStaging"
+  
+};#/*staging_set_default_auth_v16*/
+
+proc staging_set_default_uses_v16 {} {
+  .uses.pic select
+
+};#/*staging_set_default_uses_v16*/
+
+proc staging_set_default_meta_v16 {} {
+  global staging_meta_v16_udce
+  global staging_meta_v16_fdce
+  global staging_meta_v16_idce
+  global staging_meta_v16_pipe
+  global staging_meta_v16_love
+
+  set staging_meta_v16_udce "Balaagh"
+  set staging_meta_v16_fdce "NA"
+  set staging_meta_v16_idce "NA"
+  set staging_meta_v16_pipe "NA"
+  set staging_meta_v16_love "500052"
+};#/*staging_set_default_meta_v16*/
+
+proc staging_clear_auth_v16 {} {
+  global staging_auth_v16_sae
+  global staging_auth_v16_ace
+  global staging_auth_v16_tide
+  global staging_auth_v16_vere
+  global staging_auth_v16_txne
+  
+  set staging_auth_v16_sae ""
+  set staging_auth_v16_ace ""
+  set staging_auth_v16_tide ""
+  set staging_auth_v16_vere ""
+  set staging_auth_v16_txne ""
+  
+};#/*staging_clear_auth_v16*/
+
+proc staging_clear_uses_v16 {} {
+  global staging_wi_pname_v16 
+  set pname [lindex $staging_wi_pname_v16 1]
+
+  foreach val $pname {
+    .$val deselect
+  } 
+
+};#/*staging_clear_uses_v16*/
+
+proc staging_clear_meta_v16 {} {
+  global staging_meta_v16_udce
+  global staging_meta_v16_fdce
+  global staging_meta_v16_idce
+  global staging_meta_v16_pipe
+  global staging_meta_v16_love
+
+  set staging_meta_v16_udce ""
+  set staging_meta_v16_fdce ""
+  set staging_meta_v16_idce ""
+  set staging_meta_v16_pipe ""
+  set staging_meta_v16_love ""
+};#/*staging_clear_meta_v16*/
+
+proc staging_get_tkn_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {type value}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "tkn={$str}"
+  return $str
+
+};#/*staging_get_tkn_attr_value*/
+
+proc staging_get_meta_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {udc fdc idc pip lot lov}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "meta={$str}"
+  return $str
+
+};#/*staging_get_meta_attr_value*/
+
+
+proc staging_get_auth_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set auth_arg {uid tid txn ac sa ver lk}
+  set idx 0
+  set auth_str ""
+  set auth_attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $auth_attr {
+   set auth_str [concat $auth_str [lindex $auth_arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set auth_str [regsub -all {\s+} $auth_str ,]
+  set auth_str "auth={$auth_str}"
+  return $auth_str
+
+};#/*staging_get_auth_attr_value*/
+
+proc staging_get_uses_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  global staging_uses_selected
+
+  set arg {pi pa pfa bio pv demo}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set var [.$val cget -variable]
+   global $var
+   set str [concat $str [lindex $arg $idx]=[subst $$var]]
+   incr idx
+  }
+  
+  set staging_uses_selected $str
+  set str [regsub -all {\s+} $str ,]
+
+  set staging_uses_selected [regsub -all {=} $staging_uses_selected " == "]
+  set str "uses={$str}"
+  return $str
+
+};#/*staging_get_uses_attr_value*/
+
+proc staging_get_pi_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {ms mv name lname lmv gender dob dobt age phone email}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "pi={$str}"
+  return $str
+
+};#/*staging_get_pi_attr_value*/
+
+proc staging_get_pa_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {ms co house street lm loc vtc subdist dist state pc po}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "pa={$str}"
+  return $str
+};#/*staging_get_pa_attr_value*/
+
+proc staging_get_pfa_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {ms mv av lav lmv}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "pfa={$str}"
+  return $str
+};#/*staging_get_pfa_attr_value*/
+
+proc staging_get_bio_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {type posh}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "bio={$str}"
+  return $str
+
+};#/*staging_get_bio_attr_value*/
+
+proc staging_get_pv_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {pin otp}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "pv={$str}"
+  return $str
+
+};#/*staging_get_pv_attr_value*/
+
+proc staging_get_demo_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {lang}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "demo={$str}"
+  return $str
+
+};#/*staging_get_demo_attr_value*/
+
+proc staging_retrieve_value_v16 {} {
+
+  global staging_uses_selected
+
+  set auth [staging_get_auth_attr_value 0]
+  set uses [staging_get_uses_attr_value 1]
+  set tkn [staging_get_tkn_attr_value 2]
+  set meta [staging_get_meta_attr_value 3]
+
+  #/*Prepare the request*/
+  set REQ "stage=staging&request=auth&$auth&$uses&$tkn&$meta"
+
+  foreach {var op val} $staging_uses_selected {
+    if {$var == "pi" && $val == 1} {
+      #/*Pi is selected*/
+      set pi [staging_get_pi_attr_value 4] 
+      set REQ "$REQ&$pi"
+
+    } elseif {$var == "pa" && $val == 1} {
+      #/*Pa is selected*/
+      set pa [staging_get_pa_attr_value 5] 
+      set REQ "$REQ&$pa"
+    
+    } elseif {$var == "pfa" && $val == 1} {
+      #/*pfa is selected*/
+      set pfa [staging_get_pfa_attr_value 6] 
+      set REQ "$REQ&$pfa"
+
+    } elseif {$var == "bio" && $val == 1} {
+      #/*bio is selected*/
+      set bio [staging_get_bio_attr_value 7] 
+      set REQ "$REQ&$bio"
+
+    } elseif {$var == "pv" && $val == 1} {
+      #/*Pv is selected*/
+      set pv [staging_get_pv_attr_value 8] 
+      set REQ "$REQ&$pv"
+
+    } elseif {$var == "demo" && $val == 1} {
+      #/*demo is selected*/
+      set demo [staging_get_demo_attr_value 9] 
+      set REQ "$REQ&$demo"
+    }
+  }
+
+  puts "Final REQ $REQ\n"
+};#/*staging_retrieve_value_v16*/

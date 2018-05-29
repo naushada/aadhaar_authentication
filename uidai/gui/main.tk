@@ -1,0 +1,440 @@
+#!/usr/bin/wish8.6 -f
+
+source [lindex $argv 0]/auth_ui16.tk
+source [lindex $argv 0]/auth_ui20.tk
+source [lindex $argv 0]/auth_ui25.tk
+
+
+#/* 
+# @Name: main.tk
+# @Description: This file is to build the menu bar with anylevel of
+#              submenu. The convention for menu creation is as follows
+# 1) "." - represents the top level of menu 
+# 2) "+" - represents that this is a parent for submenu
+# 3) neither "." nor "+" represents the command for menu item
+# 4) command arguments for menu item
+#
+# @Author: Mohad Naushad Ahmed
+# @Email:  NAUSHAD.DLN@GMAIL.COM
+# @Dated:  15-May-2018
+#*/
+
+set menu_b {
+  #/*Root     Menu Name      Parent/Leaf(proc) Argument for Leafnode*/
+  #/*----------------------------------------------------------------*/
+  {"."          "File"                  "+"   {}}
+  {"File"       "Exit"                  "exit" {}}
+  {"."          "Uidai"                 "+"            {}}
+  {"Uidai"      "Staging"               "+"            {}}
+  {"Staging"    "Authentication"        "+"            {}}
+  {"Authentication"    "Version1.6"    "{staging_auth 1.6}" {}}
+  {"Authentication"    "Version2.0"    "{staging_auth 2.0}" {}}
+  {"Authentication"    "Version2.5"    "{staging_auth 2.5}" {}}
+  {"Staging"           "Otp"            "+"            {}}
+  {"Otp"               "Version1.6"    "proc_otp16"   {}}
+  {"Otp"               "Version2.5"    "proc_otp25"   {}}
+  {"Staging"           "eKyc"           "+"            {}}
+  {"eKyc"              "Version1.6"     "proc_ekyc16"  {}}
+  {"eKyc"              "Version2.5"     "proc_ekyc25"  {}}
+  {"Uidai"             "Pre-Production" "+"            {}}
+  {"Pre-Production"    "Authentication" "+"            {}}
+  {"Authentication"    "Version1.6"    "dot6"        {}}
+  {"Authentication"    "Version2.0"    "dot0"        {}}
+  {"Pre-Production"    "Otp"            "+"            {}}
+  {"Otp"               "Version1.6"    "proc_otp16"   {}}
+  {"Otp"               "Version2.5"    "proc_otp25"   {}}
+  {"Pre-Production"    "eKyc"           "+"            {}}
+  {"eKyc"              "Version1.6"    "proc_ekyc16"  {}}
+  {"eKyc"              "Version2.5"    "proc_ekyc25"  {}}
+  {"Uidai"             "Production" "+"            {}}
+  {"Production"    "Authentication" "+"            {}}
+  {"Authentication"    "Version1.6"    "dot6"        {}}
+  {"Authentication"    "Version2.0"    "dot0"        {}}
+  {"Production"    "Otp"            "+"            {}}
+  {"Otp"               "Version1.6"    "proc_otp16"   {}}
+  {"Otp"               "Version2.5"    "proc_otp25"   {}}
+  {"Production"    "eKyc"           "+"            {}}
+  {"eKyc"              "Version1.6"    "proc_ekyc16"  {}}
+  {"eKyc"              "Version2.5"    "proc_ekyc25"  {}}
+
+};#/*Menu bar*/
+
+proc Exit {arg} {
+  exit
+};#/**/
+ 
+proc staging_auth {version} {
+
+  init_frame container 
+  staging_auth_form container $version 
+  staging_uses_form container $version
+  staging_tkn_form  container $version
+  staging_meta_form container $version
+  staging_pi_form   container $version
+  staging_pa_form   container $version
+  staging_pfa_form  container $version
+  staging_bio_form  container $version
+  staging_pv_form   container $version
+  staging_demo_form container $version
+  staging_uidai_form container $version
+  btn_widget container staging $version
+
+};#/*staging_auth*/
+
+proc staging_pi_form {f_name version} {
+
+  labelframe .staging_pi -text "Pi (Attributes)"
+  grid .staging_pi -sticky news -pady 2 -padx 1 -row 1 -column 1 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_pi_attr_v16
+  }
+};#/*staging_pi_form*/
+
+proc staging_pa_form {f_name version} {
+
+  labelframe .staging_pa -text "Pa (Attributes)"
+  grid .staging_pa -sticky news -pady 2 -padx 1 -row 1 -column 2 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_pa_attr_v16
+  }
+};#/*staging_pa_form*/
+
+proc staging_pfa_form {f_name version} {
+
+  labelframe .staging_pfa -text "Pfa (Attributes)"
+  grid .staging_pfa -sticky news -pady 2 -padx 1 -row 2 -column 0 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_pfa_attr_v16
+  }
+};#/*staging_pfa_form*/
+
+proc staging_bio_form {f_name version} {
+
+  labelframe .staging_bio -text "Bio (Attributes)"
+  grid .staging_bio -sticky news -pady 2 -padx 1 -row 2 -column 1 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_bio_attr_v16
+  }
+};#/*staging_bio_form*/
+
+proc staging_pv_form {f_name version} {
+
+  labelframe .staging_pv -text "Pv (Attributes)"
+  grid .staging_pv -sticky news -pady 2 -padx 1 -row 2 -column 2 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_pv_attr_v16
+  }
+};#/*staging_pv_form*/
+
+proc staging_demo_form {f_name version} {
+
+  labelframe .staging_demo -text "Demo (Attributes)"
+  grid .staging_demo -sticky news -pady 2 -padx 1 -row 3 -column 0 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_demo_attr_v16
+  }
+};#/*staging_demo_form*/
+
+proc staging_uidai_form {f_name version} {
+
+  labelframe .staging_uidai -text "Uidai Host (Attributes)"
+  grid .staging_uidai -sticky news -pady 2 -padx 1 -row 3 -column 1 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_uidai_server
+  }
+};#/*staging_uidai_form*/
+
+
+proc staging_auth_form {f_name version} {
+  labelframe .staging_auth -text "Auth* (Attributes)"
+  grid .staging_auth -sticky news -row 0 -column 0 -pady 2 -padx 1 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_auth_attr_v16
+
+  } elseif {$version == "2.0"} {
+    staging_auth_attr_v20
+
+  } elseif {$version == "2.5"} {
+    staging_auth_attr_v25
+
+  }
+ 
+};#/*staging_auth_form*/
+
+proc staging_uses_form {f_name version} {
+  labelframe .staging_uses -text "Uses* (Attributes)"
+  grid .staging_uses -sticky news -row 0 -column 1 -row 0 -pady 2 -padx 1 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_uses_attr_v16
+  }
+
+};#/*staging_uses_form*/
+
+proc staging_tkn_form {f_name version} {
+  labelframe .staging_tkn -text "Tkn (Attributes)"
+  grid .staging_tkn -sticky news -row 0 -column 2 -row 0 -pady 2 -padx 1 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_tkn_attr_v16
+  }
+
+};#/*staging_tkn_form*/
+
+proc staging_meta_form {f_name version} {
+  labelframe .staging_meta -text "Meta* (Attributes)"
+  grid .staging_meta -sticky news -column 0 -row 1 -pady 2 -padx 1 -in .$f_name
+
+  if {$version == "1.6"} {
+    staging_meta_attr_v16
+  }
+
+};#/*staging_meta_form*/
+
+proc default_contents {type version} {
+
+  if {"staging" == $type} {
+
+    if {"1.6" == $version} {
+     staging_set_default_auth_v16
+     staging_set_default_uses_v16
+     staging_uses_opt_enable "pic"
+     staging_set_default_meta_v16 
+
+    } elseif {"2.0" == $version} { 
+      
+    }
+  }
+};#/*default_contents*/
+
+proc clear_contents {type version} {
+
+  if {"staging" == $type} {
+
+    if {"1.6" == $version} {
+      staging_clear_auth_v16
+      staging_clear_uses_v16
+      staging_uses_opt_disable "pic"
+      staging_uses_opt_disable "pac"
+      staging_uses_opt_disable "pfac"
+      staging_uses_opt_disable "bioc"
+      staging_uses_opt_disable "pvc"
+      staging_uses_opt_disable "democ"
+      staging_clear_meta_v16 
+
+    } elseif {"2.0" == $version} { 
+      
+    }
+  }
+};#/*clear_contents*/
+
+proc submit_contents {type version} {
+
+  if {"staging" == $type} {
+
+    if {"1.6" == $version} {
+      puts "Staging Version $version"
+      staging_retrieve_value_v16    
+    } elseif {"2.0" == $version} { 
+      
+    }
+  }
+};#submit_contents
+
+proc btn_widget {f_name type version} {
+
+  frame .btn_frame
+  labelframe .lbl_frame -text "Command"
+
+  button .clear -text "Clear" -command "clear_contents $type $version"
+  button .default -text "Set Default Value" -command "default_contents $type $version"
+  button .submit -text "Submit" -command "submit_contents $type $version"
+  grid .clear .default .submit -row 4 -pady 5 -padx 5 -in .lbl_frame
+  grid .lbl_frame -in .btn_frame
+  grid .btn_frame -sticky w -pady 8 -padx 9 -in .$f_name 
+    
+};#/*btn_widget*/
+
+# /**
+# @brief This function creates the canvas with vertical and horizontal 
+# scrollbars and attached themselves to frame.
+#
+# @pram f_name
+# @return none
+# @author NAUSHAD.DLN@GMAIL.COM
+# */
+proc init_frame {f_name} {
+  frame .$f_name
+  canvas .canvas -xscrollcommand ".xscroll set" -yscrollcommand ".yscroll set" -width 1140 -height 750  
+  scrollbar .xscroll -orient horizontal -command ".canvas xview"
+  scrollbar .yscroll -orient vertical -command ".canvas yview"
+
+  .canvas create window 0 0 -anchor nw -window .$f_name
+
+  grid .canvas - .yscroll -sticky news -pady 4 -padx 2
+  grid .xscroll - x -sticky news
+  grid rowconfigure . 0 -weight 1
+  grid columnconfigure . 0 -weight 1
+
+  bind .$f_name <Configure> {
+    .canvas configure -scrollregion [.canvas bbox all]
+  }
+
+};#/*init_frame*/
+
+# /**
+# @brief
+# @pram
+# @return
+# @author
+# */
+proc get_parent_path path {
+
+  set len [llength $path]
+  set tmp_path {}
+
+  for {set idx 1} {$idx < $len} {incr idx} {
+    set tmp_var [string tolower [lindex $path [expr {$len - $idx}]]]
+    set tmp_path [concat $tmp_path.$tmp_var]
+  }
+
+  return $tmp_path
+};#/*get_parent_path*/
+
+#  @brief:
+#  @pram:
+#  @return:
+#  
+proc build_widget_path path {
+
+  set len [llength $path]
+  set tmp_path {}
+
+  for {set idx 0} {$idx < $len} {incr idx} {
+    set tmp_var [string tolower [lindex $path [expr {$len - $idx - 1}]]]
+    set tmp_path [concat $tmp_path.$tmp_var]
+  }
+
+  return $tmp_path
+};#/*build_widget_path*/
+
+#  @brief:
+#  @pram:
+#  @return:
+#  
+proc get_offset {root parent} {
+
+ set idx 0
+  foreach  p_elem $parent {
+    if {$root != [lindex $parent $idx]} {
+      set idx [expr $idx + 1]
+    } else {
+      break
+    }
+  }
+
+  return $idx
+};#/*get_offset*/
+
+#  @brief:
+#  @pram:
+#  @return:
+#  
+proc del_elem {offset parent} {
+
+  for {set idx 0} {$idx < $offset} {incr idx} {
+    set parent [lreplace $parent 0 0]
+  }
+
+  return $parent
+};#/*del_elem*/
+
+#  @brief:
+#  @pram:
+#  @return:
+#  
+proc build_menu {menu_b menu_bar} {
+
+  set parent [list] 
+
+  foreach elem $menu_b {
+    set root [lindex $elem 0]
+    set lbl [lindex $elem 1]
+    set cmd [lindex $elem 2]
+    set arg [lindex $elem 3]
+
+    if {$cmd == "+"} {
+      #submenu 
+      if {"." == $root} {
+        #Delete the parent list
+        set parent [list]
+        set sep 1
+      } else {
+        set sep 0
+      }
+      #/*pop up the parent*/ 
+      if {$root != [lindex $parent 0]} {
+        set offset [get_offset $root $parent]
+        set parent [del_elem $offset $parent]
+      }
+      #/*push into parent*/
+      set parent [linsert $parent 0 $lbl]
+      set path [build_widget_path $parent]
+
+      if {[llength $parent] > 1} {
+        set parent_path [get_parent_path $parent]
+        eval $menu_bar$parent_path add cascade -menu [menu $menu_bar$path -tearoff $sep] -label $lbl
+        eval $menu_bar$parent_path add separator
+      } else {
+        eval $menu_bar add cascade -menu [menu $menu_bar$path -tearoff $sep] -label $lbl
+        eval $menu_bar add separator
+      }
+    } elseif {$root == "."} {
+      #root element of menubar
+      eval $menu_bar add command -command $cmd -label $lbl
+
+    } elseif {[lindex $parent 0] == $root} {
+      #sub-menu
+      set path [build_widget_path $parent]
+      eval $menu_bar$path add command -command $cmd -label $lbl
+
+    } elseif {[llength $parent] > 0} {
+      #/*pop up the parent*/ 
+      set offset [get_offset $root $parent] 
+      set parent [del_elem $offset $parent]
+      set path [build_widget_path $parent]
+      eval $menu_bar$path add command -command $cmd -label $lbl
+    }
+  }
+};#/*build_menu_*/
+
+wm title . "Balaagh"
+menu .m
+. configure -menu .m -height 500 -width 1200
+build_menu $menu_b .m
+
+
+#bind . <1> {
+#  set iX0 [expr %X-[winfo rootx .]]
+#  set iY0 [expr %Y-[winfo rooty .]]
+#  set bMoved 0
+#}
+
+#bind . <B1-Motion> {
+#  wm geometry . +[expr %X-$iX0]+[expr %Y-$iY0]
+#  set bMoved 1
+#}
+
+#bind . <ButtonRelease-1> {
+#  if { $bMoved } break
+#}
+
+

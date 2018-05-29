@@ -478,6 +478,7 @@ int32_t uidai_process_req(int32_t conn_fd,
   uint8_t *subtype_ptr;
   uint8_t *rsp_ptr = NULL;
   uint32_t rsp_len = 0;
+
   uidai_ctx_t *pUidaiCtx = &uidai_ctx_g;
   uidai_session_t *session = NULL;
 
@@ -854,10 +855,155 @@ void *uidai_main(void *tid) {
   return(0);
 }/*uidai_main*/
 
+/**
+ * @brief This function spawns the gui whose stdin and stdout is mapped
+ * respectively. rd_fd[0] shall be used for receiving request
+ * and wr_fd[1] shall be used to send response to gui/user
+ *
+ * @param rd_fd is the file descriptor on which request is received from gui.
+ * @param wr_fd is the file descriptor on which response is sent to gui
+ *
+ * @return it returns 0 if entire response is received else returns 1
+ */
+int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
+
+  uint8_t *cmd = "wish";
+  close(rd_fd[1]);
+  close(wr_fd[0]);
+
+  /*mapp stdin to rd_fd[0]*/
+  if(dup2(rd_fd[0], 0) < 0) {
+    perror("dup:rd_fd[0]:");
+    return(0);
+  }
+
+  close(rd_fd[0]);
+  /*mapp stdout to wr_fd[1]*/
+  if(dup2(wr_fd[1], 1) < 0) {
+    perror("dup:wr_fd[1]");
+    return(0);
+  }
+
+  close(wr_fd[1]);
+  if(execlp(cmd, cmd, NULL) < 0) {
+    /*launching/instantiating of wish failed*/
+    perror("execlp:");
+    exit(0);
+  }
+
+  close(rd_fd[0]);
+  close(wr_fd[1]);
+
+  return(0);
+}/*uidai_spawn_gui*/
+
+/**
+ * @brief This function processes the received request fro gui
+ * and send to uidai server, rd_fd[0] shall be used for receiving request
+ * and wr_fd[1] shall be used to send response to gui/user
+ *
+ * @param rd_fd is the file descriptor on which request is received from gui.
+ * @param wr_fd is the file descriptor on which response is sent to gui
+ *
+ * @return it returns 0 if entire response is received else returns 1
+ */
+int32_t uidai_process_gui_req(int32_t rd_fd[2], int32_t wr_fd[2], uint8_t *gui_name) {
+
+  fd_set fds_rd;
+  fd_set fds_wr;
+  int32_t max_fd;
+  int32_t ret = -1;
+  uint8_t len_buff[10];
+  uint8_t tmp_buff[20];
+  uint32_t len = sizeof(len_buff);
+  uint8_t *req_ptr = NULL;
+
+  close(rd_fd[1]);
+  close(wr_fd[0]);
+  ret = write(wr_fd[1], gui_name, strlen(gui_name));
+
+  if(ret < 0) {
+    fprintf(stderr, "sending of gui name failed\n");
+    perror("gui_name:");
+    exit(0);
+  }
+
+  max_fd = rd_fd[0] > wr_fd[1] ? rd_fd[0]: wr_fd[1];
+  for(;;) {
+    FD_ZERO(&fds_rd);
+    FD_ZERO(&fds_wr);
+    FD_SET(rd_fd[0], &fds_rd);
+    FD_SET(wr_fd[1], &fds_wr);
+    ret = select(max_fd, &fds_rd, &fds_wr, NULL, NULL);
+
+    if(ret > 0) {
+      if(FD_ISSET(rd_fd[0], &fds_rd)) { 
+        /*Request has been received from gui, Process it*/
+        uidai_recv(rd_fd[0], len_buff, &len, MSG_PEEK);
+        ret = write(2, req_ptr, len);  
+        if(len) {
+          memset((void *)tmp_buff, 0, sizeof(tmp_buff));
+          sscanf(len_buff, "%[^&]", tmp_buff);
+          len = atoi(tmp_buff);
+        }
+
+        if(len) {
+          req_ptr = (uint8_t *)malloc(len + 50);
+          assert(req_ptr != NULL);
+          memset((void *)req_ptr, 0, (len + 50));
+          uidai_recv(rd_fd[0], req_ptr, &len, 0);
+
+          if(len) {
+            ret = write(2, req_ptr, len);  
+          }
+        }
+      }
+    
+      if(FD_ISSET(wr_fd[1], &fds_wr)) {
+        /*Send Response to GUI*/
+      }
+    }  
+  }
+
+  close(rd_fd[0]);
+  close(wr_fd[1]);
+}/*uidai_process_gui_req*/
 
 int32_t main(int32_t argc, char *argv[]) {
 
+  uint8_t *gui_path = "set argv {../../gui}; source ../../gui/main.tk\n";
+  int32_t rd_fd[2];
+  int32_t wr_fd[2];
+  pid_t gui_process;
 
+  if(pipe(rd_fd) < 0) {
+    perror("pipe rd_fd");
+    return(0);
+  }
+
+  if(pipe(wr_fd) < 0) {
+    close(rd_fd[0]);
+    close(rd_fd[1]);
+    perror("pipe wr_fd");
+    return(0);
+  }
+
+  gui_process = fork();
+  if(gui_process < 0) {
+    perror("fork failed");
+    close(rd_fd[0]);
+    close(rd_fd[1]);
+    close(wr_fd[0]);
+    close(wr_fd[1]);
+    return(0);
+ 
+  } else if(gui_process) {
+    /*Parent Process*/
+    uidai_spawn_gui(rd_fd, wr_fd);
+  } else {
+    /*child process*/
+    uidai_process_gui_req(wr_fd, rd_fd, gui_path);
+  }
 }/*main*/
 
 #endif /* __UIDAI_C__ */
