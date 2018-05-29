@@ -856,6 +856,109 @@ void *uidai_main(void *tid) {
 }/*uidai_main*/
 
 /**
+ * @brief This function parses the attribute for a given argument 
+ *
+ * @param in_ptr is the pointer to the received request from gui
+ * @param in_len is the length of the received request
+ * @param rsp_fd is the file descriptor on which response is sent to gui
+ *
+ * @return it returns 0 if entire response is received else returns 1
+ */
+uint8_t *uidai_get_attr(uint8_t *req_ptr, 
+                        const uint8_t *p_name) {
+
+  uint8_t *tmp_req_ptr = NULL;
+  uint8_t *line_ptr = NULL;
+  uint8_t param_name[32];
+  uint8_t *param_value = NULL;
+  uint8_t flag = 0;
+  char *save_ptr;
+  uint32_t req_len = strlen(req_ptr);
+
+  tmp_req_ptr = (uint8_t *) malloc(sizeof(uint8_t) * req_len);
+  assert(tmp_req_ptr != NULL);
+  memset((void *)tmp_req_ptr, 0, (sizeof(uint8_t) * req_len));
+
+  memset((void *)param_name, 0, sizeof(param_name));
+  param_value = (uint8_t *)malloc(sizeof(uint8_t) * 1024);
+  assert(param_value != NULL);
+  memset((void *)param_value, 0, (sizeof(uint8_t) * 1024));
+  sscanf(req_ptr, "{%s}", tmp_req_ptr);
+  line_ptr = strtok_r(tmp_req_ptr, ",", &save_ptr);
+
+  while(line_ptr) {
+    sscanf(line_ptr, "%[^=]=%s", param_name, param_value);
+    fprintf(stderr, "param_name %s param_value %s\n", param_name, param_value);
+    if(!strncmp(param_name, p_name, sizeof(param_name))) {
+      flag = 1;
+      break;      
+    }
+    line_ptr = strtok_r(NULL, ",", &save_ptr);
+  }
+
+  free(tmp_req_ptr);
+  if(flag) {
+    return(param_value);
+  }
+
+  return(NULL);
+}/*uidai_get_attr*/
+
+/**
+ * @brief This function parses the request received from gui 
+ *
+ * @param in_ptr is the pointer to the received request from gui
+ * @param in_len is the length of the received request
+ * @param rsp_fd is the file descriptor on which response is sent to gui
+ *
+ * @return it returns 0 if entire response is received else returns 1
+ */
+int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
+  uint8_t *arg_ptr[256];
+  uint8_t *auth_attr[32];
+  uint8_t *uses_attr[32];
+  uint8_t *tkn_attr[8];
+  uint8_t *meta_attr[32];
+  uint32_t idx = 0;
+  uint32_t offset = 0;
+
+  arg_ptr[0]  = uidai_get_param(in_ptr, "stage");
+  arg_ptr[1]  = uidai_get_param(in_ptr, "request");
+  arg_ptr[2]  = uidai_get_param(in_ptr, "auth");
+  arg_ptr[3]  = uidai_get_param(in_ptr, "uses");
+  arg_ptr[4]  = uidai_get_param(in_ptr, "tkn");
+  arg_ptr[5]  = uidai_get_param(in_ptr, "meta");
+  offset = 6;
+
+  /*Process auth attribute*/
+  auth_attr[0] = uidai_get_attr(arg_ptr[2], "ver");
+  if(strncmp(auth_attr[0], "1.6", 2)) {
+    /*version 1.6*/
+  } else if(strncmp(auth_attr[0], "2.0", 2)) {
+    /*version 2.0*/
+  } else if(strncmp(auth_attr[0], "2.5", 2)) {
+    /*version 2.5*/
+  }
+
+  fprintf(stderr, "Version is %s\n", auth_attr[0]);
+  #if 0
+  arg_ptr[6]  = uidai_get_param(in_ptr, "stage");
+  arg_ptr[7]  = uidai_get_param(in_ptr, "stage");
+  arg_ptr[8]  = uidai_get_param(in_ptr, "stage");
+  arg_ptr[9]  = uidai_get_param(in_ptr, "stage");
+  arg_ptr[10] = uidai_get_param(in_ptr, "stage");
+  arg_ptr[11] = uidai_get_param(in_ptr, "stage");
+  arg_ptr[12] = uidai_get_param(in_ptr, "stage");
+  #endif
+
+  for(idx = 0; idx < offset; idx++) {
+    fprintf(stderr, "%s\n", arg_ptr[idx]);
+    free(arg_ptr[idx]);
+  }
+
+}/*uidai_parse_req*/
+
+/**
  * @brief This function spawns the gui whose stdin and stdout is mapped
  * respectively. rd_fd[0] shall be used for receiving request
  * and wr_fd[1] shall be used to send response to gui/user
@@ -904,6 +1007,7 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
  *
  * @param rd_fd is the file descriptor on which request is received from gui.
  * @param wr_fd is the file descriptor on which response is sent to gui
+ * @param gui_name is the TK script name to be executed
  *
  * @return it returns 0 if entire response is received else returns 1
  */
@@ -931,12 +1035,14 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2], int32_t wr_fd[2], uint8_t *gui_n
     memset((void *)req_ptr, 0, len);
 
     ret = read(rd_fd[0], req_ptr, len);
-
+    uidai_parse_req(req_ptr, (uint32_t)ret, wr_fd[1]);
     ret = write(2, req_ptr, ret);
   }
 
   close(rd_fd[0]);
   close(wr_fd[1]);
+
+  return(0);
 }/*uidai_process_gui_req*/
 
 int32_t main(int32_t argc, char *argv[]) {
