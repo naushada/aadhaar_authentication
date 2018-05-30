@@ -186,7 +186,12 @@ int32_t auth_init(const uint8_t *ac,
                   const uint8_t *lk,
                   const uint8_t *private_key,
                   const uint8_t *public_key,
-                  const uint8_t *host_name) {
+                  const uint8_t *host_name,
+                  const uint8_t *uri,
+                  const uint8_t *ver,
+                  const uint8_t *tid,
+                  const uint8_t *txn,
+                  const uint8_t *password) {
 
   auth_ctx_t *pAuthCtx = &auth_ctx_g;
 
@@ -195,12 +200,14 @@ int32_t auth_init(const uint8_t *ac,
   strncpy(pAuthCtx->lk, lk, strlen(lk)); 
   strncpy(pAuthCtx->private_key, private_key, strlen(private_key)); 
   strncpy(pAuthCtx->public_key, public_key, strlen(public_key));
-  strncpy(pAuthCtx->version, "2.0", 3);
+  strncpy(pAuthCtx->version, ver, sizeof(pAuthCtx->version));
   strncpy(pAuthCtx->rc, "Y", 1);
-  strncpy(pAuthCtx->uidai_host_name, host_name, strlen(host_name));
-  //strncpy(pAuthCtx->tid, "public", 6);
+  strncpy(pAuthCtx->uidai_host_name, host_name, sizeof(pAuthCtx->uidai_host_name));
   memset(pAuthCtx->tid, 0, sizeof(pAuthCtx->tid));
-  strncpy(pAuthCtx->txn, "DemoClient", 10);
+  strncpy(pAuthCtx->tid, tid, sizeof(pAuthCtx->tid));
+  strncpy(pAuthCtx->txn, txn, sizeof(pAuthCtx->txn));
+  strncpy(pAuthCtx->uri, uri, sizeof(pAuthCtx->uri));
+  strncpy(pAuthCtx->txn, password, sizeof(pAuthCtx->password));
   memset((void *)pAuthCtx->iv, 0, sizeof(pAuthCtx->iv));
   memset((void *)pAuthCtx->aad, 0, sizeof(pAuthCtx->aad));
    

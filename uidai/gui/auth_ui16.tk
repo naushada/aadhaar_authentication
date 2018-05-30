@@ -22,6 +22,8 @@ set staging_wi_pname_v16 {
   {bio.typee bio.poshe}
   {pv.pine pv.otpe}
   {demo.lange}
+  {uidai.urie uidai.hoste}
+  {public private password}
 }
 
 
@@ -689,6 +691,44 @@ proc staging_get_demo_attr_value {offset} {
 
 };#/*staging_get_demo_attr_value*/
 
+proc staging_get_uidai_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {uri host}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "uidai={$str}"
+  return $str
+
+};#/*staging_get_uidai_attr_value*/
+
+proc staging_get_crypto_attr_value {offset} {
+
+  global staging_wi_pname_v16 
+  set arg {public private password}
+  set idx 0
+  set str ""
+  set attr [lindex $staging_wi_pname_v16 $offset]
+
+  foreach val $attr {
+   set str [concat $str [lindex $arg $idx]=[.$val get]]
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "crypto={$str}"
+  return $str
+
+};#/*staging_get_crypto_attr_value*/
+
 proc staging_retrieve_value_v16 {} {
 
   global staging_uses_selected
@@ -734,5 +774,11 @@ proc staging_retrieve_value_v16 {} {
     }
   }
 
-  puts $REQ
+  set uidai [staging_get_uidai_attr_value 10] 
+  set REQ "$REQ&$uidai"
+  #/*Extracting the crypto contents*/
+  set crypto [staging_get_crypto_attr_value 11] 
+  set REQ "$REQ&$crypto"
+
+  puts "/request?$REQ"
 };#/*staging_retrieve_value_v16*/

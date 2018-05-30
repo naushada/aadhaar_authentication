@@ -34,6 +34,8 @@ typedef struct {
   uint8_t private_key[128];
   /*Public key file name*/
   uint8_t public_key[128];
+  /*passowrd of private key*/
+  uint8_t password[24];
   /*256-bit session key*/
   uint8_t session_key[34];
   /*iv - last 12 bytes of ts*/
@@ -42,7 +44,10 @@ typedef struct {
   uint8_t aad[20];
   /*ts - time stamp when PID is formed*/
   uint8_t ts[32];
+  /*reuqest host name*/
   uint8_t uidai_host_name[128];
+  /*request uri*/
+  uint8_t uri[32];
   /*To be removed*/
   uint8_t b64_skey[2048];
   uint32_t skey_len;
@@ -54,7 +59,12 @@ int32_t auth_init(const uint8_t *ac,
                   const uint8_t *lk,
                   const uint8_t *private_key,
                   const uint8_t *public_key,
-                  const uint8_t *host_name);
+                  const uint8_t *host_name,
+                  const uint8_t *uri,
+                  const uint8_t *ver,
+                  const uint8_t *tid,
+                  const uint8_t *txn,
+                  const uint8_t *password);
 
 
 int32_t auth_meta(uint8_t *meta, 

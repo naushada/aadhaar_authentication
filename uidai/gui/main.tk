@@ -77,6 +77,7 @@ proc staging_auth {version} {
   staging_pv_form   container $version
   staging_demo_form container $version
   staging_uidai_form container $version
+  crypto_widget container $version
   btn_widget container staging $version
 
 };#/*staging_auth*/
@@ -262,6 +263,45 @@ proc btn_widget {f_name type version} {
     
 };#/*btn_widget*/
 
+proc crypto_widget {f_name version} {
+
+  frame .crypto_frame
+  labelframe .crypto_lbl_frame -text "Public/Privte Keys File"
+  entry .public -width 30 -textvariable crypto_public_key_file
+  entry .private -width 30 -textvariable crypto_private_key_file
+  entry .password -width 30 -textvariable crypto_password
+  label .lbl_password -text "Password"
+  button .btn_public -text "Select Public File" -command "browse_file public"
+  button .btn_private -text "Set Private Key File" -command "browse_file private"
+  grid .public .btn_public -pady 2 -padx 4 -sticky news -in .crypto_lbl_frame
+  grid .private .btn_private -pady 2 -padx 4 -sticky news -in .crypto_lbl_frame
+  grid .password .lbl_password -pady 2 -padx 4 -sticky ew -in .crypto_lbl_frame
+  grid .crypto_lbl_frame -in .crypto_frame
+  grid .crypto_frame -sticky news -pady 2 -padx 1 -row 3 -column 2 -in .$f_name
+    
+};#/*crypto_widget*/
+
+proc browse_file {type} {
+  global crypto_public_key_file
+  global crypto_private_key_file
+  set types {
+        {{Text Files}       {.txt}        }
+        {{TCL Scripts}      {.tcl}        }
+        {{C Source Files}   {.c}      TEXT}
+        {{GIF Files}        {.gif}        }
+        {{Text Files}       {}        TEXT}
+        {{All Files}        *             }
+      }
+
+  set filename_list [tk_getOpenFile -filetypes $types]
+
+  if {"public" == $type} {
+    set crypto_public_key_file $filename_list
+  } else {
+    set crypto_private_key_file $filename_list
+  }
+
+};#/*browser_file*/
 # /**
 # @brief This function creates the canvas with vertical and horizontal 
 # scrollbars and attached themselves to frame.

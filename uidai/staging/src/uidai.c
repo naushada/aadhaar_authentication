@@ -737,7 +737,12 @@ int32_t uidai_init(uint32_t ip_addr,
             lk, 
             pUidaiCtx->private_fname, 
             pUidaiCtx->public_fname, 
-            "developer.uidai.gov.in");
+            "developer.uidai.gov.in",
+            "/uidauth1.6",
+            "1.6",
+            "public",
+            "DemoAuth",
+            "public");
 
   return(0);
 }/*uidai_init*/
@@ -921,6 +926,7 @@ int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   uint8_t *meta_attr[32];
   uint32_t idx = 0;
   uint32_t offset = 0;
+  uint16_t version = 0;
 
   arg_ptr[0]  = uidai_get_param(in_ptr, "stage");
   arg_ptr[1]  = uidai_get_param(in_ptr, "request");
@@ -932,12 +938,25 @@ int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
 
   /*Process auth attribute*/
   auth_attr[0] = uidai_get_attr(arg_ptr[2], "ver");
+  auth_attr[1] = uidai_get_attr(arg_ptr[2], "request");
+
   if(strncmp(auth_attr[0], "1.6", 2)) {
     /*version 1.6*/
+    version = 16;
   } else if(strncmp(auth_attr[0], "2.0", 2)) {
     /*version 2.0*/
+    version = 20;
   } else if(strncmp(auth_attr[0], "2.5", 2)) {
     /*version 2.5*/
+    version = 25;
+  }
+
+  if(strncmp(auth_attr[2], "auth", 4)) {
+    /*auth_request*/
+  } else if(strncmp(auth_attr[1], "otp", 3)) {
+    /*otp request*/
+  } else if(strncmp(auth_attr[1], "ekyc", 4)) {
+    /*ekyc request*/
   }
 
   fprintf(stderr, "Version is %s\n", auth_attr[0]);
