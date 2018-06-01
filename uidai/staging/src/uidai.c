@@ -893,15 +893,18 @@ uint8_t *uidai_get_attr(uint8_t *req_ptr,
 
   while(line_ptr) {
     sscanf(line_ptr, "%[^=]=%s", param_name, param_value);
-    fprintf(stderr, "param_name %s param_value %s\n", param_name, param_value);
+
     if(!strncmp(param_name, p_name, sizeof(param_name))) {
+      //fprintf(stderr, "param_name %s param_value %s\n", param_name, param_value);
       flag = 1;
       break;      
     }
+
     line_ptr = strtok_r(NULL, ",", &save_ptr);
   }
 
   free(tmp_req_ptr);
+
   if(flag) {
     return(param_value);
   }
@@ -928,50 +931,43 @@ int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   uint32_t offset = 0;
   uint16_t version = 0;
 
-  arg_ptr[0]  = uidai_get_param(in_ptr, "stage");
-  arg_ptr[1]  = uidai_get_param(in_ptr, "request");
-  arg_ptr[2]  = uidai_get_param(in_ptr, "auth");
-  arg_ptr[3]  = uidai_get_param(in_ptr, "uses");
-  arg_ptr[4]  = uidai_get_param(in_ptr, "tkn");
-  arg_ptr[5]  = uidai_get_param(in_ptr, "meta");
-  offset = 6;
+  arg_ptr[0]  = uidai_get_param(in_ptr, "request");
+  arg_ptr[1]  = uidai_get_param(in_ptr, "auth");
+  offset = 2;
 
   /*Process auth attribute*/
-  auth_attr[0] = uidai_get_attr(arg_ptr[2], "ver");
-  auth_attr[1] = uidai_get_attr(arg_ptr[2], "request");
+  auth_attr[0] = uidai_get_attr(arg_ptr[1], "ver");
 
-  if(strncmp(auth_attr[0], "1.6", 2)) {
+  fprintf(stderr, "Version is %s & len is %d\n", auth_attr[0], strlen(auth_attr[0]));
+
+  if(!strncmp(auth_attr[0], "1.6", 3)) {
     /*version 1.6*/
     version = 16;
-  } else if(strncmp(auth_attr[0], "2.0", 2)) {
+    fprintf(stderr, "Version is 16\n");
+  } else if(!strncmp(auth_attr[0], "2.0", 3)) {
     /*version 2.0*/
     version = 20;
-  } else if(strncmp(auth_attr[0], "2.5", 2)) {
+  } else if(!strncmp(auth_attr[0], "2.5", 3)) {
     /*version 2.5*/
     version = 25;
   }
 
-  if(strncmp(auth_attr[2], "auth", 4)) {
+  free(auth_attr[0]);
+  if(!strncmp(arg_ptr[0], "auth", 4)) {
     /*auth_request*/
-  } else if(strncmp(auth_attr[1], "otp", 3)) {
+    auth_main_ex(in_ptr, in_len, version, rsp_fd);
+
+  } else if(!strncmp(arg_ptr[1], "otp", 3)) {
     /*otp request*/
-  } else if(strncmp(auth_attr[1], "ekyc", 4)) {
+    //otp_main_ex(in_ptr, in_len, version, rsp_fd);
+
+  } else if(!strncmp(arg_ptr[1], "ekyc", 4)) {
     /*ekyc request*/
+    //ekyc_main_ex(in_ptr, in_len, version, rsp_fd);
+
   }
 
-  fprintf(stderr, "Version is %s\n", auth_attr[0]);
-  #if 0
-  arg_ptr[6]  = uidai_get_param(in_ptr, "stage");
-  arg_ptr[7]  = uidai_get_param(in_ptr, "stage");
-  arg_ptr[8]  = uidai_get_param(in_ptr, "stage");
-  arg_ptr[9]  = uidai_get_param(in_ptr, "stage");
-  arg_ptr[10] = uidai_get_param(in_ptr, "stage");
-  arg_ptr[11] = uidai_get_param(in_ptr, "stage");
-  arg_ptr[12] = uidai_get_param(in_ptr, "stage");
-  #endif
-
   for(idx = 0; idx < offset; idx++) {
-    fprintf(stderr, "%s\n", arg_ptr[idx]);
     free(arg_ptr[idx]);
   }
 
@@ -1030,7 +1026,9 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
  *
  * @return it returns 0 if entire response is received else returns 1
  */
-int32_t uidai_process_gui_req(int32_t rd_fd[2], int32_t wr_fd[2], uint8_t *gui_name) {
+int32_t uidai_process_gui_req(int32_t rd_fd[2], 
+                              int32_t wr_fd[2], 
+                              uint8_t *gui_name) {
 
   int32_t ret = -1;
   uint32_t len = (sizeof(uint8_t) * 1024);

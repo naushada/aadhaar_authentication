@@ -136,4 +136,42 @@ int32_t uidai_init(uint32_t ip,
 
 void *uidai_main(void *tid);
 
+int32_t uidai_process_gui_req(int32_t rd_fd[2], 
+                              int32_t wr_fd[2], 
+                              uint8_t *gui_name);
+/**
+ * @brief This function spawns the gui whose stdin and stdout is mapped
+ * respectively. rd_fd[0] shall be used for receiving request
+ * and wr_fd[1] shall be used to send response to gui/user
+ *
+ * @param rd_fd is the file descriptor on which request is received from gui.
+ * @param wr_fd is the file descriptor on which response is sent to gui
+ *
+ * @return it returns 0 if entire response is received else returns 1
+ */
+int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]);
+
+/**
+ * @brief This function parses the request received from gui 
+ *
+ * @param in_ptr is the pointer to the received request from gui
+ * @param in_len is the length of the received request
+ * @param rsp_fd is the file descriptor on which response is sent to gui
+ *
+ * @return it returns 0 if entire response is received else returns 1
+ */
+int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd);
+
+/**
+ * @brief This function parses the attribute for a given argument 
+ *
+ * @param in_ptr is the pointer to the received request from gui
+ * @param in_len is the length of the received request
+ * @param rsp_fd is the file descriptor on which response is sent to gui
+ *
+ * @return it returns 0 if entire response is received else returns 1
+ */
+uint8_t *uidai_get_attr(uint8_t *req_ptr, 
+                        const uint8_t *p_name);
+
 #endif /* __UIDAI_H__ */

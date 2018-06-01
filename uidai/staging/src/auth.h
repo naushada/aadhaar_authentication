@@ -177,4 +177,22 @@ int32_t auth_process_ekyc_req(int32_t conn_fd,
                               uint8_t *req_xml,
                               uint32_t req_xml_size,
                               uint32_t *req_xml_len);
+
+
+int32_t auth_build_pv_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *pv_xml);
+
+int32_t auth_build_meta_xml_v16(uint8_t *in_ptr, 
+                                uint32_t in_len, 
+                                uint8_t *meta_tag, 
+                                uint8_t *c14n_meta);
+
+int32_t auth_build_tkn_xml_v16(uint8_t *in_ptr, 
+                               uint32_t in_len, 
+                               uint8_t *tkn_tag, 
+                               uint8_t *c14n_tkn);
+
+int32_t auth_main_ex(uint8_t *in_ptr, 
+                     uint32_t in_len, 
+                     uint16_t version, 
+                     int32_t rsp_fd);
 #endif /* __AUTH_H__ */

@@ -207,7 +207,7 @@ int32_t auth_init(const uint8_t *ac,
   strncpy(pAuthCtx->tid, tid, sizeof(pAuthCtx->tid));
   strncpy(pAuthCtx->txn, txn, sizeof(pAuthCtx->txn));
   strncpy(pAuthCtx->uri, uri, sizeof(pAuthCtx->uri));
-  strncpy(pAuthCtx->txn, password, sizeof(pAuthCtx->password));
+  strncpy(pAuthCtx->password, password, sizeof(pAuthCtx->password));
   memset((void *)pAuthCtx->iv, 0, sizeof(pAuthCtx->iv));
   memset((void *)pAuthCtx->aad, 0, sizeof(pAuthCtx->aad));
    
@@ -268,6 +268,78 @@ int32_t auth_pid_otp(uint8_t *pid_otp,
   fprintf(stderr, "\n%s:%d iv %s aad %s\n", __FILE__, __LINE__, pAuthCtx->iv, pAuthCtx->aad);
   return(0);
 }/*auth_pid_otp*/
+
+int32_t auth_data_v16(uint8_t *data, uint16_t data_size, uint8_t *pid_xml) {
+
+  uint8_t ciphered_data[512];
+  int32_t ciphered_data_len;
+  uint8_t b64[512];
+  uint16_t b64_len;
+  uint8_t plain_txt[512];
+  int32_t plain_txt_len;
+  uint8_t tag[16];
+  
+  memset((void *)ciphered_data, 0, sizeof(ciphered_data)); 
+  memset((void *)tag, 0, sizeof(tag));
+
+  auth_cipher_ecb(pid_xml, 
+                  strlen(pid_xml), 
+                  ciphered_data, 
+                  &ciphered_data_len);
+
+  memset((void *)b64, 0, sizeof(b64));
+  util_base64(ciphered_data, ciphered_data_len, b64, &b64_len);
+  memset((void *)data, 0, data_size);
+
+  snprintf(data,
+           data_size,
+           "%s%s%s",
+           "<Data type=\"X\">",
+           b64,
+           "</Data>");
+
+  return(0);
+}/*auth_data_v16*/
+
+int32_t auth_data_v20(uint8_t *data, uint16_t data_size, uint8_t *pid_xml) {
+
+  uint8_t ciphered_data[512];
+  int32_t ciphered_data_len;
+  uint8_t b64[512];
+  uint16_t b64_len;
+  uint8_t plain_txt[512];
+  int32_t plain_txt_len;
+  uint8_t tag[16];
+  
+  memset((void *)ciphered_data, 0, sizeof(ciphered_data)); 
+  memset((void *)tag, 0, sizeof(tag));
+
+  auth_cipher_gcm(pid_xml, 
+                  strlen(pid_xml), 
+                  ciphered_data, 
+                  &ciphered_data_len,
+                  tag,
+                  0/*is_hmac*/);
+
+  memset((void *)b64, 0, sizeof(b64));
+  util_base64(ciphered_data, ciphered_data_len, b64, &b64_len);
+#if 0
+  fprintf(stderr, "\n%s:%d ciphered data len %d b64_len %d\n", __FILE__, __LINE__, ciphered_data_len, b64_len);
+  auth_decipher(b64, b64_len, plain_txt, &plain_txt_len, tag);
+  fprintf(stderr, "\n%s:%d Plain txt \n%s len %d\n", __FILE__, __LINE__, plain_txt, plain_txt_len);
+#endif
+  memset((void *)data, 0, data_size);
+
+  snprintf(data,
+           data_size,
+           "%s%s%s",
+           "<Data type=\"X\">",
+           b64,
+           "</Data>");
+
+  return(0);
+}/*auth_data_v20*/
+
 
 int32_t auth_data(uint8_t *data, uint16_t data_size, uint8_t *pid_xml) {
 
@@ -608,6 +680,84 @@ int32_t auth_cipher_gcm(uint8_t *data,
   return(0); 
 }/*auth_cipher_gcm*/
 
+int32_t auth_hmac_v16(uint8_t *hmac,
+                      uint16_t hmac_size,
+                      uint8_t *pid_xml) {
+
+  uint8_t digest256[32];
+  int32_t ciphered_data_len = 0;
+  uint8_t ciphered_data[512];
+  uint8_t b64_hmac[512];
+  uint16_t b64_hmac_len;
+  uint8_t tag[16];
+  
+  auth_ctx_t *pAuthCtx = &auth_ctx_g;
+  SHA256_CTX ctx;
+
+  memset((void *)digest256, 0, sizeof(digest256));
+
+  SHA256_Init(&ctx);
+  SHA256_Update(&ctx, pid_xml, strlen((const char *)pid_xml));
+  SHA256_Final(digest256, &ctx);
+
+  memset((void *)tag, 0, sizeof(tag));
+  memset((void *)ciphered_data, 0, sizeof(ciphered_data));
+  auth_cipher_ecb(digest256, 32, ciphered_data, &ciphered_data_len);
+  fprintf(stderr, "\n%s:%d ciphered data len HMAC %d\n", __FILE__, __LINE__, ciphered_data_len);
+  memset((void *)b64_hmac, 0, sizeof(b64_hmac));
+  util_base64(ciphered_data, ciphered_data_len, b64_hmac, &b64_hmac_len);
+ 
+  memset((void *)hmac, 0, hmac_size);
+  snprintf(hmac, 
+           hmac_size, 
+           "%s%s%s",
+           "<Hmac>",
+           b64_hmac,
+           "</Hmac>");
+
+  return(0);
+}/*auth_hmac_v16*/
+
+int32_t auth_hmac_v20(uint8_t *hmac,
+                      uint16_t hmac_size,
+                      uint8_t *pid_xml) {
+
+  uint8_t digest256[32];
+  int32_t ciphered_data_len = 0;
+  uint8_t ciphered_data[512];
+  uint8_t b64_hmac[512];
+  uint16_t b64_hmac_len;
+  uint8_t tag[16];
+  
+  auth_ctx_t *pAuthCtx = &auth_ctx_g;
+  SHA256_CTX ctx;
+
+  memset((void *)digest256, 0, sizeof(digest256));
+
+  SHA256_Init(&ctx);
+  SHA256_Update(&ctx, pid_xml, strlen((const char *)pid_xml));
+  SHA256_Final(digest256, &ctx);
+
+  memset((void *)tag, 0, sizeof(tag));
+  memset((void *)ciphered_data, 0, sizeof(ciphered_data));
+  auth_cipher_gcm(digest256, 32, ciphered_data, &ciphered_data_len, tag, 1/*is_hmac*/);
+
+  //auth_cipher_ecb(digest256, 32, ciphered_data, &ciphered_data_len);
+  fprintf(stderr, "\n%s:%d ciphered data len HMAC %d\n", __FILE__, __LINE__, ciphered_data_len);
+  memset((void *)b64_hmac, 0, sizeof(b64_hmac));
+  util_base64(ciphered_data, ciphered_data_len, b64_hmac, &b64_hmac_len);
+ 
+  memset((void *)hmac, 0, hmac_size);
+  snprintf(hmac, 
+           hmac_size, 
+           "%s%s%s",
+           "<Hmac>",
+           b64_hmac,
+           "</Hmac>");
+
+  return(0);
+}/*auth_hmac_v20*/
+
 int32_t auth_hmac(uint8_t *hmac,
                   uint16_t hmac_size,
                   uint8_t *pid_xml) {
@@ -786,6 +936,62 @@ int32_t auth_skey(uint8_t *b64_skey, uint16_t b64_skey_size) {
   return(0); 
 }/*auth_skey*/
 
+int32_t auth_compose_xml_v16(uint8_t *auth_xml,
+                             uint16_t auth_xml_size,
+                             uint8_t *auth,
+                             uint8_t *uses,
+                             uint8_t *tkn,
+                             uint8_t *meta,
+                             uint8_t *skey,
+                             uint8_t *hmac,
+                             uint8_t *data) {
+  if(tkn) {
+    snprintf(auth_xml, 
+             auth_xml_size,
+             "%s%s%s%s%s"
+             "%s%s%s%s%s"
+             "%s%s%s%s%s",
+             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n",
+             auth,
+             "\n  ",
+             uses,
+             "\n  ",
+             tkn,
+             "\n  ",
+             meta,
+             "\n  ",
+             skey,
+             "\n  ",
+             hmac,
+             "\n  ",
+             data,
+             "\n");
+  } else {
+      
+    snprintf(auth_xml, 
+             auth_xml_size,
+             "%s%s%s%s%s"
+             "%s%s%s%s%s"
+             "%s%s%s",
+             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n",
+             auth,
+             "\n  ",
+             uses,
+             "\n  ",
+             meta,
+             "\n  ",
+             skey,
+             "\n  ",
+             hmac,
+             "\n  ",
+             data,
+             "\n");
+  }
+
+  return(0);
+}/*auth_compose_xml_v16*/
+
+
 int32_t auth_compose_xml(uint8_t *auth_xml,
                          uint16_t auth_xml_size,
                          uint16_t *auth_xml_len,
@@ -839,6 +1045,59 @@ int32_t auth_compose_xml(uint8_t *auth_xml,
            
   return(0);
 }/*auth_compose_xml*/
+
+int32_t auth_c14n_auth_xml_v16(uint8_t *c14n_auth_xml, 
+                               uint16_t c14n_auth_xml_size, 
+                               uint8_t *auth_xml,
+                               uint8_t *c14n_uses, 
+                               uint8_t *c14n_tkn,
+                               uint8_t *c14n_meta, 
+                               uint8_t *skey, 
+                               uint8_t *hmac, 
+                               uint8_t *data) {
+  if(c14n_tkn) {
+    snprintf(c14n_auth_xml, 
+             c14n_auth_xml_size,
+             "%s%s%s%s%s"
+             "%s%s%s%s%s"
+             "%s%s%s%s%s",
+             auth_xml,
+             "\n  ",
+             c14n_uses,
+             "\n  ",
+             c14n_tkn,
+             "\n  ",
+             c14n_meta,
+             "\n  ",
+             skey,
+             "\n  ",
+             hmac,
+             "\n  ",
+             data,
+             "\n  \n",
+             "</Auth>");
+    } else {
+      snprintf(c14n_auth_xml, 
+               c14n_auth_xml_size,
+               "%s%s%s%s%s"
+               "%s%s%s%s%s"
+               "%s%s%s",
+               auth_xml,
+               "\n  ",
+               c14n_uses,
+               "\n  ",
+               c14n_meta,
+               "\n  ",
+               skey,
+               "\n  ",
+               hmac,
+               "\n  ",
+               data,
+               "\n  \n",
+               "</Auth>");
+    }
+  return(0);
+}/*auth_c14n_auth_xml_v16*/
 
 int32_t auth_c14n_auth_xml(uint8_t *c14n_auth_xml, 
                            uint16_t c14n_auth_xml_size, 
@@ -1560,5 +1819,1435 @@ int32_t auth_main(int32_t conn_fd,
   
   return(0);
 }/*auth_main*/
+
+int32_t auth_build_demo_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *demo_xml) {
+
+  uint8_t *demo = NULL; 
+  uint8_t *demo_attr[8];
+  uint32_t offset = 0;
+  uint32_t len = sizeof(uint8_t) * 64;
+
+  demo_xml = (uint8_t *)malloc(len);
+  assert(demo_xml != NULL);
+  memset((void *)demo_xml, 0, len);
+
+  demo  = uidai_get_param(in_ptr, "demo");
+  assert(demo != NULL);
+
+  demo_attr[0] = uidai_get_attr(demo, "lang");
+  free(demo);
+
+  offset += snprintf(&demo_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "  <Demo");
+
+  if(strlen(demo_attr[0])) {
+    /*lang is present*/
+    offset += snprintf(&demo_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " lang=\"",
+                       demo_attr[0],
+                       "\"");
+  }
+  
+  offset += snprintf(&demo_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "/>\n");
+
+  free(demo_attr[0]);
+
+  return(0);
+}/*auth_build_demo_v16*/
+
+int32_t auth_build_pv_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *pv_xml) {
+
+  uint8_t *pv = NULL; 
+  uint8_t *pv_attr[8];
+  uint32_t offset = 0;
+  uint32_t len = sizeof(uint8_t) * 64;
+
+  pv_xml = (uint8_t *)malloc(len);
+  assert(pv_xml != NULL);
+  memset((void *)pv_xml, 0, len);
+
+  pv  = uidai_get_param(in_ptr, "pv");
+  assert(pv != NULL);
+
+  pv_attr[0] = uidai_get_attr(pv, "otp");
+  pv_attr[1] = uidai_get_attr(pv, "pin");
+
+  free(pv);
+  offset += snprintf(&pv_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "  <Pv");
+
+  if(strlen(pv_attr[0])) {
+    /*otp is present*/
+    offset += snprintf(&pv_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " otp=\"",
+                       pv_attr[0],
+                       "\"");
+  }
+
+  if(strlen(pv_attr[1])) {
+    /*pin is present*/
+    offset += snprintf(&pv_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " pin=\"",
+                       pv_attr[1],
+                       "\"");
+  }
+
+  offset += snprintf(&pv_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "/>\n");
+
+  for(offset = 0; offset < 2; offset++) {
+    free(pv_attr[offset]);
+  }
+
+  return(0);
+}/*auth_build_pv_v16*/
+
+int32_t auth_build_bio_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *bio_xml) {
+
+  uint8_t *bio = NULL; 
+  uint8_t *bio_attr[8];
+  uint32_t offset = 0;
+  uint32_t len = sizeof(uint8_t) * 512;
+
+  bio_xml = (uint8_t *)malloc(len);
+  assert(bio_xml != NULL);
+  memset((void *)bio_xml, 0, len);
+
+  bio  = uidai_get_param(in_ptr, "bio");
+  assert(bio != NULL);
+
+  bio_attr[0] = uidai_get_attr(bio, "type");
+  bio_attr[1] = uidai_get_attr(bio, "posh");
+  bio_attr[2] = uidai_get_attr(bio, "value");
+
+  free(bio);
+  offset += snprintf(&bio_xml[offset],
+                     (len - offset),
+                     "%s%s",
+                     "  <Bios>\n",
+                     "    <Bio");
+
+  if(strlen(bio_attr[0])) {
+    /*type is present*/
+    offset += snprintf(&bio_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " type=\"",
+                       bio_attr[0],
+                       "\"");
+  }
+
+  if(strlen(bio_attr[1])) {
+    /*type is present*/
+    offset += snprintf(&bio_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " posh=\"",
+                       bio_attr[1],
+                       "\"");
+  }
+
+  if(strlen(bio_attr[2])) {
+    /*type is present*/
+    offset += snprintf(&bio_xml[offset],
+                       (len - offset),
+                       "%s%s%s%s",
+                       ">",
+                       bio_attr[2],
+                       "</Bio>\n",
+                       "</Bios>\n");
+  }
+
+  for(offset = 0; offset < 4; offset++) {
+    free(bio_attr[offset]);
+  }
+
+  return(0);
+}/*auth_build_bio_v16*/
+
+int32_t auth_build_pfa_v16(uint8_t *in_ptr, 
+                           uint32_t in_len, 
+                           uint8_t *pfa_xml) {
+
+  uint8_t *pfa = NULL; 
+  uint8_t *pfa_attr[16];
+  uint32_t offset = 0;
+  uint32_t len = sizeof(uint8_t) * 256;
+
+  pfa_xml = (uint8_t *)malloc(len);
+  assert(pfa_xml != NULL);
+  memset((void *)pfa_xml, 0, len);
+
+  pfa  = uidai_get_param(in_ptr, "pfa");
+  assert(pfa != NULL);
+
+  pfa_attr[0] = uidai_get_attr(pfa, "ms");
+  pfa_attr[1] = uidai_get_attr(pfa, "co");
+  pfa_attr[2] = uidai_get_attr(pfa, "house");
+  pfa_attr[3] = uidai_get_attr(pfa, "street");
+  pfa_attr[4] = uidai_get_attr(pfa, "lm");
+  pfa_attr[5] = uidai_get_attr(pfa, "loc");
+  pfa_attr[6] = uidai_get_attr(pfa, "vtc");
+  pfa_attr[7] = uidai_get_attr(pfa, "subdist");
+  pfa_attr[8] = uidai_get_attr(pfa, "dist");
+  pfa_attr[9] = uidai_get_attr(pfa, "state");
+  pfa_attr[10] = uidai_get_attr(pfa, "pc");
+  pfa_attr[11] = uidai_get_attr(pfa, "po");
+
+  free(pfa);
+  offset += snprintf(&pfa_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "    <Pfa");
+
+  if(strlen(pfa_attr[0])) {
+    /*ms is present*/
+    offset += snprintf(&pfa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " ms=\"",
+                       pfa_attr[0],
+                       "\"");
+  }
+
+  if(strlen(pfa_attr[1])) {
+    /*mv is present*/
+    offset += snprintf(&pfa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " mv=\"",
+                       pfa_attr[1],
+                       "\"");
+  }
+  
+  if(strlen(pfa_attr[2])) {
+    /*av is present*/
+    offset += snprintf(&pfa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " av=\"",
+                       pfa_attr[2],
+                       "\"");
+  }
+  
+  if(strlen(pfa_attr[3])) {
+    /*lav is present*/
+    offset += snprintf(&pfa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " lav=\"",
+                       pfa_attr[3],
+                       "\"");
+  }
+  
+  if(strlen(pfa_attr[4])) {
+    /*lmv is present*/
+    offset += snprintf(&pfa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " lmv=\"",
+                       pfa_attr[4],
+                       "\"");
+  }
+
+  offset += snprintf(&pfa_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "/>\n");
+
+  /*freeing the allocated memory*/
+  for(offset = 0; offset < 5; offset++) {
+    free(pfa_attr[offset]);
+  }
+
+  return(0);
+}/*auth_build_pfa_v16*/
+
+int32_t auth_build_pa_v16(uint8_t *in_ptr, 
+                          uint32_t in_len, 
+                          uint8_t *pa_xml) {
+
+  uint8_t *pa = NULL; 
+  uint8_t *pa_attr[16];
+  uint32_t offset = 0;
+  uint32_t len = sizeof(uint8_t) * 256;
+
+  pa_xml = (uint8_t *)malloc(len);
+  assert(pa_xml != NULL);
+  memset((void *)pa_xml, 0, len);
+
+  pa  = uidai_get_param(in_ptr, "pa");
+  assert(pa != NULL);
+
+  pa_attr[0] = uidai_get_attr(pa, "ms");
+  pa_attr[1] = uidai_get_attr(pa, "co");
+  pa_attr[2] = uidai_get_attr(pa, "house");
+  pa_attr[3] = uidai_get_attr(pa, "street");
+  pa_attr[4] = uidai_get_attr(pa, "lm");
+  pa_attr[5] = uidai_get_attr(pa, "loc");
+  pa_attr[6] = uidai_get_attr(pa, "vtc");
+  pa_attr[7] = uidai_get_attr(pa, "subdist");
+  pa_attr[8] = uidai_get_attr(pa, "dist");
+  pa_attr[9] = uidai_get_attr(pa, "state");
+  pa_attr[10] = uidai_get_attr(pa, "pc");
+  pa_attr[11] = uidai_get_attr(pa, "po");
+
+  free(pa);
+  offset += snprintf(&pa_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "    <Pa");
+
+  if(strlen(pa_attr[0])) {
+    /*ms is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " ms=\"",
+                       pa_attr[0],
+                       "\"");
+  }
+
+  if(strlen(pa_attr[1])) {
+    /*co is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " co=\"",
+                       pa_attr[1],
+                       "\"");
+  }
+  
+  if(strlen(pa_attr[2])) {
+    /*house is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " name=\"",
+                       pa_attr[2],
+                       "\"");
+  }
+  
+  if(strlen(pa_attr[3])) {
+    /*street is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " street=\"",
+                       pa_attr[3],
+                       "\"");
+  }
+  
+  if(strlen(pa_attr[4])) {
+    /*lm is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " lm=\"",
+                       pa_attr[4],
+                       "\"");
+  }
+
+  if(strlen(pa_attr[5])) {
+    /*loc is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " loc=\"",
+                       pa_attr[5],
+                       "\"");
+  }
+
+  if(strlen(pa_attr[6])) {
+    /*vtc is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " vtc=\"",
+                       pa_attr[6],
+                       "\"");
+  }
+
+  if(strlen(pa_attr[7])) {
+    /*subdist is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " subdist=\"",
+                       pa_attr[7],
+                       "\"");
+  }
+
+  if(strlen(pa_attr[8])) {
+    /*dist is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " dist=\"",
+                       pa_attr[8],
+                       "\"");
+  }
+
+  if(strlen(pa_attr[9])) {
+    /*state is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " state=\"",
+                       pa_attr[9],
+                       "\"");
+  }
+
+  if(strlen(pa_attr[10])) {
+    /*pc is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " pc=\"",
+                       pa_attr[10],
+                       "\"");
+  }
+
+  if(strlen(pa_attr[11])) {
+    /*po is present*/
+    offset += snprintf(&pa_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " po=\"",
+                       pa_attr[11],
+                       "\"");
+  }
+
+  offset += snprintf(&pa_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "/>\n");
+
+  /*freeing the allocated memory*/
+  for(offset = 0; offset < 12; offset++) {
+    free(pa_attr[offset]);
+  }
+
+  return(0);
+}/*auth_build_pa_v16*/
+
+int32_t auth_restore_str(uint8_t *name_ptr, uint8_t *name_str) {
+  uint32_t idx = 0;
+
+  while(*name_ptr != '\0') {
+    if(*name_ptr == '+') {
+      name_str[idx++] = ' ';
+      name_ptr++;
+      continue;
+    }
+    name_str[idx++] = *name_ptr;
+    name_ptr++;
+  }
+}/*auth_restore_str*/
+
+int32_t auth_build_pi_v16(uint8_t *in_ptr, 
+                          uint32_t in_len, 
+                          uint8_t *pi_xml) {
+
+  uint8_t *pi = NULL; 
+  uint8_t *pi_attr[16];
+  uint32_t offset = 0;
+  uint8_t name_str[256];
+  uint32_t len = sizeof(uint8_t) * 256;
+
+  pi_xml = (uint8_t *)malloc(len);
+  assert(pi_xml != NULL);
+  memset((void *)pi_xml, 0, len);
+
+  pi  = uidai_get_param(in_ptr, "pi");
+  assert(pi != NULL);
+
+  pi_attr[0] = uidai_get_attr(pi, "ms");
+  pi_attr[1] = uidai_get_attr(pi, "mv");
+  pi_attr[2] = uidai_get_attr(pi, "name");
+  pi_attr[3] = uidai_get_attr(pi, "lname");
+  pi_attr[4] = uidai_get_attr(pi, "lmv");
+  pi_attr[5] = uidai_get_attr(pi, "gender");
+  pi_attr[6] = uidai_get_attr(pi, "dob");
+  pi_attr[7] = uidai_get_attr(pi, "dobt");
+  pi_attr[8] = uidai_get_attr(pi, "age");
+  pi_attr[9] = uidai_get_attr(pi, "phone");
+  pi_attr[10] = uidai_get_attr(pi, "email");
+
+  free(pi);
+  offset += snprintf(&pi_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "    <Pi");
+
+  if(strlen(pi_attr[0])) {
+    /*ms is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " ms=\"",
+                       pi_attr[0],
+                       "\"");
+  }
+
+  if(strlen(pi_attr[1])) {
+    /*mv is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " mv=\"",
+                       pi_attr[1],
+                       "\"");
+  }
+  
+  if(strlen(pi_attr[2])) {
+    /*name is present*/
+    memset((void *)name_str, 0, sizeof(name_str));
+    auth_restore_str(pi_attr[2], name_str);
+
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " name=\"",
+                       name_str,
+                       "\"");
+  }
+  
+  if(strlen(pi_attr[3])) {
+    /*lname is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " lname=\"",
+                       pi_attr[3],
+                       "\"");
+  }
+  
+  if(strlen(pi_attr[4])) {
+    /*lmv is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " lmv=\"",
+                       pi_attr[4],
+                       "\"");
+  }
+
+  if(strlen(pi_attr[5])) {
+    /*gender is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " gender=\"",
+                       pi_attr[5],
+                       "\"");
+  }
+
+  if(strlen(pi_attr[6])) {
+    /*dob is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " dob=\"",
+                       pi_attr[6],
+                       "\"");
+  }
+
+  if(strlen(pi_attr[7])) {
+    /*dobt is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " dobt=\"",
+                       pi_attr[7],
+                       "\"");
+  }
+
+  if(strlen(pi_attr[8])) {
+    /*age is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " age=\"",
+                       pi_attr[8],
+                       "\"");
+  }
+
+  if(strlen(pi_attr[9])) {
+    /*phone is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " phone=\"",
+                       pi_attr[9],
+                       "\"");
+  }
+
+  if(strlen(pi_attr[10])) {
+    /*email is present*/
+    offset += snprintf(&pi_xml[offset],
+                       (len - offset),
+                       "%s%s%s",
+                       " email=\"",
+                       pi_attr[10],
+                       "\"");
+  }
+
+  offset += snprintf(&pi_xml[offset],
+                     (len - offset),
+                     "%s",
+                     "/>\n");
+
+  /*freeing the allocated memory*/
+  for(offset = 0; offset < 11; offset++) {
+    free(pi_attr[offset]);
+  }
+
+  return(0);
+}/*auth_build_pi_v16*/
+
+int32_t auth_build_pid_final(uint8_t *pid_xml) {
+
+  uint32_t len = sizeof(uint8_t) * 32;
+
+  pid_xml = (uint8_t *)malloc(len);
+  assert(pid_xml != NULL);
+  memset((void *)pid_xml, 0, len);
+
+  snprintf(pid_xml,
+           len,
+           "%s",
+           "</Pid>\n");
+  
+  return(0);
+}/*auth_build_pid_final*/
+
+
+int32_t auth_build_demo(uint8_t *in_ptr, 
+                        uint32_t in_len, 
+                        uint16_t version, 
+                        uint8_t *demo_xml) {
+
+  if(16 == version) {
+    auth_build_demo_v16(in_ptr, in_len, demo_xml);
+  }
+
+  return(0);
+}/*auth_build_demo*/
+
+int32_t auth_build_pv(uint8_t *in_ptr, 
+                      uint32_t in_len, 
+                      uint16_t version, 
+                      uint8_t *pv_xml) {
+
+  if(16 == version) {
+    auth_build_pv_v16(in_ptr, in_len, pv_xml);
+  }
+
+  return(0);
+}/*auth_build_pv*/
+
+int32_t auth_build_bio(uint8_t *in_ptr, 
+                       uint32_t in_len, 
+                       uint16_t version, 
+                       uint8_t *bio_xml) {
+
+  if(16 == version) {
+    auth_build_bio_v16(in_ptr, in_len, bio_xml);
+  }
+
+  return(0);
+}/*auth_build_bio*/
+
+int32_t auth_build_pfa(uint8_t *in_ptr, 
+                       uint32_t in_len, 
+                       uint16_t version, 
+                       uint8_t *pa_xml) {
+
+  if(16 == version) {
+    auth_build_pfa_v16(in_ptr, in_len, pa_xml);
+  }
+
+  return(0);
+}/*auth_build_pfa*/
+
+int32_t auth_build_pa(uint8_t *in_ptr, 
+                      uint32_t in_len, 
+                      uint16_t version, 
+                      uint8_t *pa_xml) {
+
+  if(16 == version) {
+    auth_build_pa_v16(in_ptr, in_len, pa_xml);
+  }
+
+  return(0);
+}/*auth_build_pa*/
+
+int32_t auth_build_pi(uint8_t *in_ptr, 
+                      uint32_t in_len, 
+                      uint16_t version, 
+                      uint8_t *pi_xml) {
+
+  if(16 == version) {
+    auth_build_pi_v16(in_ptr, in_len, pi_xml);
+  }
+
+  return(0);
+}/*auth_build_pi*/
+
+int32_t auth_build_pid_init(uint8_t *in_ptr, 
+                            uint32_t in_len, 
+                            uint16_t version, 
+                            uint8_t *pid_init) {
+
+  uint32_t len = sizeof(uint8_t) * 128;
+  uint8_t ts[32];
+  uint16_t ts_size = sizeof(ts);
+  uint8_t pid_ver[4];
+
+  (void)in_ptr;
+  (void)in_len;
+
+  pid_init = (uint8_t *)malloc(len);
+  assert(pid_init != NULL);
+  memset((void *)pid_init, 0, len);
+
+  auth_compute_ts(ts, ts_size);
+  memset((void *)pid_ver, 0, sizeof(pid_ver));
+
+  if(16 == version) {
+    strncpy(pid_ver, "1.0", 3);
+
+  } else if((20 == version) || (25 == version)) {
+    strncpy(pid_ver, "2.0", 3);
+
+  } else {
+    /*unsupported version*/
+    return(1);
+  }
+
+  snprintf(pid_init, 
+           len,
+           "%s%s%s%s%s",
+           "<Pid ts=\"",
+           ts,
+           "\" ver=\"",
+           pid_ver,
+           "\">"); 
+
+  return(0);
+}/*auth_build_pid_init*/
+
+int32_t auth_build_pid_xml_v16(uint8_t *in_ptr, 
+                               uint32_t in_len, 
+                               uint8_t *pid_xml_ptr) {
+
+  uint8_t *arg_ptr[2];
+  uint8_t *pid_xml[16];
+  uint8_t *uses_attr[16];
+  uint32_t idx = 0;
+  uint32_t offset = 0;
+  uint16_t version = 16;
+
+  arg_ptr[0]  = uidai_get_param(in_ptr, "uses");
+
+  /*Extract Uses for demographic to be encoded*/
+  uses_attr[0] = uidai_get_attr(arg_ptr[0], "pi");
+  uses_attr[1] = uidai_get_attr(arg_ptr[1], "pa");
+  uses_attr[2] = uidai_get_attr(arg_ptr[2], "pfa");
+  uses_attr[3] = uidai_get_attr(arg_ptr[3], "bio");
+  uses_attr[4] = uidai_get_attr(arg_ptr[4], "pv");
+  uses_attr[5] = uidai_get_attr(arg_ptr[5], "demo");
+
+  free(arg_ptr[0]);
+
+  pid_xml[0] = NULL;
+  auth_build_pid_init(in_ptr, in_len, version, pid_xml[0]);
+
+  pid_xml[1] = NULL;
+  if(strncmp(uses_attr[0], "1", 1)) {
+    /*Pi to be encoded in auth xml*/
+    auth_build_pi(in_ptr, in_len, version, pid_xml[1]);
+  }
+
+  pid_xml[2] = NULL;
+  if(strncmp(uses_attr[1], "1", 1)) {
+    /*Pa to be encoded in auth xml*/
+    auth_build_pa(in_ptr, in_len, version, pid_xml[2]);
+  }
+
+  pid_xml[3] = NULL;
+  if(strncmp(uses_attr[2], "1", 1)) {
+    /*Pfa to be encoded in auth xml*/
+    auth_build_pfa(in_ptr, in_len, version, pid_xml[3]);
+  }
+
+  pid_xml[4] = NULL;
+  if(strncmp(uses_attr[3], "1", 1)) {
+    /*Bio to be encoded in auth xml*/
+    auth_build_bio(in_ptr, in_len, version, pid_xml[4]);
+  }
+
+  pid_xml[5] = NULL;
+  if(strncmp(uses_attr[4], "1", 1)) {
+    /*Pv to be encoded in auth xml*/
+    auth_build_pv(in_ptr, in_len, version, pid_xml[5]);
+  }
+
+  pid_xml[6] = NULL;
+  if(strncmp(uses_attr[5], "1", 1)) {
+    /*Demo to be encoded in auth xml*/
+    auth_build_demo(in_ptr, in_len, version, pid_xml[6]);
+  }
+
+  pid_xml[7] = NULL;
+  auth_build_pid_final(pid_xml[7]);
+
+  for(idx = 0; idx < 8; idx++) {
+
+    if(pid_xml[idx]) {
+      offset += sprintf(&pid_xml_ptr[offset],
+                        "%s",
+                        pid_xml[idx]);
+
+      /*freeing the allocated memory*/
+      free(pid_xml[idx]);
+    }
+  } 
+
+  /*Freeing the uses_attr memory*/
+  for(idx = 0; idx < 6; idx++) {
+    free(uses_attr[idx]);
+  }
+  return(0);
+}/*auth_build_pid_xml_v16*/
+
+int32_t auth_build_pid_xml(uint8_t *in_ptr, 
+                           uint32_t in_len,
+                           uint16_t version, 
+                           uint8_t *pid_xml) {
+
+  if(16 == version) {
+    
+    auth_build_pid_xml_v16(in_ptr, 
+                           in_len, 
+                           pid_xml);
+  } else if(20 == version) {
+
+    auth_build_pid_xml_v16(in_ptr, 
+                           in_len, 
+                           pid_xml);
+    
+  } else if (25 == version) {
+
+    auth_build_pid_xml_v16(in_ptr, 
+                           in_len, 
+                           pid_xml);
+    
+  }
+
+}/*auth_build_pid_xml*/
+
+int32_t auth_build_meta_xml(uint8_t *in_ptr, 
+                            uint32_t in_len, 
+                            uint16_t version, 
+                            uint8_t *meta_tag,
+                            uint8_t *c14n_meta) {
+
+  if(16 == version) {
+    auth_build_meta_xml_v16(in_ptr, in_len, meta_tag, c14n_meta);
+  }
+
+  return(0);
+}/*auth_build_meta_xml*/
+
+int32_t auth_build_tkn_xml(uint8_t *in_ptr, 
+                           uint32_t in_len, 
+                           uint16_t version, 
+                           uint8_t *tkn_tag,
+                           uint8_t *c14n_tkn) {
+
+  if(16 == version) {
+    auth_build_tkn_xml_v16(in_ptr, in_len, tkn_tag, c14n_tkn);
+  }
+
+  return(0);
+}/*auth_build_tkn_xml*/
+
+int32_t auth_build_meta_xml_v16(uint8_t *in_ptr, 
+                                uint32_t in_len, 
+                                uint8_t *meta_tag, 
+                                uint8_t *c14n_meta) {
+  uint8_t *meta = NULL;
+  uint8_t *meta_attr[16];
+  uint32_t offset = 0;
+ 
+  meta = uidai_get_param(in_ptr, "meta");
+
+  meta_attr[0] = uidai_get_attr(meta, "udc");
+  meta_attr[1] = uidai_get_attr(meta, "fdc");
+  meta_attr[2] = uidai_get_attr(meta, "idc");
+  meta_attr[3] = uidai_get_attr(meta, "pip");
+  meta_attr[4] = uidai_get_attr(meta, "lot");
+  meta_attr[5] = uidai_get_attr(meta, "lov");
+
+  offset += sprintf(&meta_tag[offset],
+                    "%s",
+                    "  <Meta");
+
+  offset += sprintf(&meta_tag[offset],
+                    "%s%s%s",
+                    " udc=\"",
+                    meta_attr[0],
+                    "\"");
+
+  offset += sprintf(&meta_tag[offset],
+                    "%s%s%s",
+                    " fdc=\"",
+                    meta_attr[1],
+                    "\"");
+
+  offset += sprintf(&meta_tag[offset],
+                    "%s%s%s",
+                    " idc=\"",
+                    meta_attr[2],
+                    "\"");
+ 
+  offset += sprintf(&meta_tag[offset],
+                    "%s%s%s",
+                    " pip=\"",
+                    meta_attr[3],
+                    "\"");
+
+  offset += sprintf(&meta_tag[offset],
+                    "%s%s%s",
+                    " lot=\"",
+                    meta_attr[4],
+                    "\"");
+
+  offset += sprintf(&meta_tag[offset],
+                    "%s%s%s",
+                    " lov=\"",
+                    meta_attr[5],
+                    "\"");
+
+  strncpy(c14n_meta, meta_tag, offset);
+
+  sprintf(&meta_tag[offset],
+          "%s",
+          "/>\n");
+
+  sprintf(&c14n_meta[offset],
+          "%s",
+          "></Meta>\n");
+
+  for(offset = 0; offset < 6; offset++) {
+    free(meta_attr[offset]);
+  }
+
+  return(0);
+}/*auth_build_meta_xml_v16*/
+
+int32_t auth_build_tkn_xml_v16(uint8_t *in_ptr, 
+                               uint32_t in_len, 
+                               uint8_t *tkn_tag, 
+                               uint8_t *c14n_tkn) {
+  uint8_t *tkn = NULL;
+  uint8_t *tkn_attr[16];
+  uint32_t offset = 0;
+ 
+  tkn = uidai_get_param(in_ptr, "tkn");
+
+  tkn_attr[0] = uidai_get_attr(tkn, "type");
+  tkn_attr[1] = uidai_get_attr(tkn, "vale");
+
+  free(tkn);
+  if(strncmp(tkn_attr[0], "NA", 2)) {
+    /*do not encode tkn tag of Auth xml*/
+    free(tkn_attr[0]);
+    free(tkn_attr[1]);
+    return(1);
+
+  } else {
+    offset += sprintf(&tkn_tag[offset],
+                      "%s",
+                      "  <Tkn");
+
+    offset += sprintf(&tkn_tag[offset],
+                      "%s%s%s",
+                      " type=\"",
+                      tkn_attr[0],
+                      "\"");
+
+    offset += sprintf(&tkn_tag[offset],
+                      "%s%s%s",
+                      " value=\"",
+                      tkn_attr[1],
+                      "\"");
+
+    strncmp(c14n_tkn, tkn_tag, offset);
+
+    sprintf(&tkn_tag[offset],
+           "%s",
+           "/>");
+
+    sprintf(&c14n_tkn[offset],
+           "%s",
+           "></Tkn>");
+  }
+
+  free(tkn_attr[0]);
+  free(tkn_attr[1]);
+
+  return(0);
+}/*auth_build_tkn_xml_v16*/
+
+int32_t auth_build_uses_xml_v16(uint8_t *in_ptr, 
+                                uint32_t in_len, 
+                                uint8_t *uses_tag, 
+                                uint8_t *c14n_uses) {
+
+  uint8_t *uses = NULL;
+  uint8_t *uses_attr[16];
+  uint32_t offset = 0;
+  uint8_t *pv = NULL;
+  uint8_t *pv_attr[8];
+ 
+  uses = uidai_get_param(in_ptr, "uses");
+
+  uses_attr[0] = uidai_get_attr(uses, "pi");
+  uses_attr[1] = uidai_get_attr(uses, "pa");
+  uses_attr[2] = uidai_get_attr(uses, "pfa");
+  uses_attr[3] = uidai_get_attr(uses, "bio");
+  uses_attr[4] = uidai_get_attr(uses, "pv");
+  uses_attr[5] = uidai_get_attr(uses, "demo");
+
+  offset += sprintf(&uses_tag[offset],
+                    "%s",
+                    "  <Uses");
+
+  if(!strncmp(uses_attr[0], "1", 1)) {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pi=\"y\"");
+  } else {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pi=\"n\"");
+  }
+
+  if(!strncmp(uses_attr[1], "1", 1)) {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pa=\"y\"");
+  } else {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pa=\"n\"");
+  }
+       
+  if(!strncmp(uses_attr[2], "1", 1)) {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pfa=\"y\"");
+  } else {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pfa=\"n\"");
+  }
+
+  if(!strncmp(uses_attr[3], "1", 1)) {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " bio=\"y\"");
+
+    /*bt has to be present*/
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " bio=\"y\"");
+  } else {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " bio=\"n\"");
+  }
+
+  if(!strncmp(uses_attr[4], "1", 1)) {
+    pv = uidai_get_param(in_ptr, "pv");
+    pv_attr[0] = uidai_get_attr(pv, "pin");
+    pv_attr[1] = uidai_get_attr(pv, "otp");
+    free(pv);
+
+    if(strlen(pv_attr[0])) {
+      offset += sprintf(&uses_tag[offset],
+                        "%s",
+                        " pin=\"y\"");
+    } else {
+      offset += sprintf(&uses_tag[offset],
+                        "%s",
+                        " pin=\"n\"");
+    }
+
+    if(strlen(pv_attr[1])) {
+      offset += sprintf(&uses_tag[offset],
+                        "%s",
+                        " otp=\"y\"");
+    } else {
+      offset += sprintf(&uses_tag[offset],
+                        "%s",
+                        " otp=\"n\"");
+    }
+
+    free(pv_attr[0]);
+    free(pv_attr[1]);
+  } else {
+
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pin=\"n\"");
+
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " otp=\"n\"");
+  }
+
+  strncpy(c14n_uses, uses_tag, offset);
+
+  sprintf(&uses_tag[offset],
+          "%s",
+          "/>\n");
+
+  sprintf(&c14n_uses[offset],
+          "%s",
+          "></Uses>\n");
+
+  /*ferring uses attr*/
+  for(offset = 0; offset < 6; offset++) {
+    free(uses_attr[offset]);
+  }
+
+  return(0);
+}/*auth_build_uses_xml_v16*/
+
+int32_t auth_build_uses_xml(uint8_t *in_ptr, 
+                            uint32_t in_len, 
+                            uint16_t version, 
+                            uint8_t *uses_tag,
+                            uint8_t *c14n_uses) {
+
+  if(16 == version) {
+    auth_build_uses_xml_v16(in_ptr, in_len, uses_tag, c14n_uses);
+  }
+
+  return(0);
+}/*auth_build_uses_xml*/
+
+int32_t auth_build_auth_xml_v16(uint8_t *in_ptr, 
+                                uint32_t in_len, 
+                                uint8_t *auth_tag) {
+
+  uint8_t *auth = NULL;
+  uint8_t *auth_attr[16];
+  uint32_t idx = 0;
+ 
+  auth = uidai_get_param(in_ptr, "auth");
+
+  auth_attr[0] = uidai_get_attr(auth, "uid");
+  auth_attr[1] = uidai_get_attr(auth, "tid");
+  auth_attr[2] = uidai_get_attr(auth, "ac");
+  auth_attr[3] = uidai_get_attr(auth, "sa");
+  auth_attr[4] = uidai_get_attr(auth, "ver");
+  auth_attr[5] = uidai_get_attr(auth, "txn");
+  auth_attr[6] = uidai_get_attr(auth, "lk");
+ 
+  free(auth);
+  sprintf(auth_tag,
+          "%s%s%s%s%s"
+          "%s%s%s%s%s"
+          "%s%s%s%s%s",
+          "<Auth uid=\"",
+          auth_attr[0],
+          "\" tid=\"",
+          auth_attr[1],
+          "\" ac=\"",
+          auth_attr[2],
+          "\" sa=\"",
+          auth_attr[3],
+          "\" ver=\"",
+          auth_attr[4],
+          "\" txn=\"",
+          auth_attr[5],
+          "\" lk=\"",
+          auth_attr[6],
+          "\">\n");
+
+  for(idx = 0; idx < 7; idx++) {
+    free(auth_attr[idx]);
+  }
+
+  return(0);
+}/*auth_build_auth_xml_v16*/
+
+int32_t auth_build_auth_xml(uint8_t *in_ptr, 
+                            uint32_t in_len, 
+                            uint16_t version, 
+                            uint8_t *auth_tag) {
+
+  if(16 == version) {
+    auth_build_auth_xml_v16(in_ptr, in_len, auth_tag);
+  }
+
+  return(0);
+}/*auth_build_auth_xml*/
+
+int32_t auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
+
+  uint8_t *crypto = NULL;
+  uint8_t *crypto_attr[8];
+  uint8_t *uidai = NULL;
+  uint8_t *uidai_attr[8];
+  auth_ctx_t *pAuthCtx = &auth_ctx_g;
+
+  crypto = uidai_get_param(in_ptr, "crypto");
+  crypto_attr[0] = uidai_get_attr(crypto, "public");
+  crypto_attr[1] = uidai_get_attr(crypto, "private");
+  crypto_attr[2] = uidai_get_attr(crypto, "password");
+  free(crypto);
+
+  strncpy(pAuthCtx->public_key, crypto_attr[0], sizeof(pAuthCtx->public_key));
+  strncpy(pAuthCtx->private_key, crypto_attr[1], sizeof(pAuthCtx->private_key)); 
+  strncpy(pAuthCtx->password, crypto_attr[2], sizeof(pAuthCtx->password));
+ 
+  free(crypto_attr[0]); 
+  free(crypto_attr[1]); 
+  free(crypto_attr[2]); 
+  
+  uidai = uidai_get_param(in_ptr, "uidai");
+  uidai_attr[0] = uidai_get_attr(uidai, "uri");
+  uidai_attr[1] = uidai_get_attr(uidai, "host");
+  free(uidai);
+
+  strncpy(pAuthCtx->uri, uidai_attr[0], sizeof(pAuthCtx->uri));
+  strncpy(pAuthCtx->uidai_host_name, uidai_attr[1], sizeof(pAuthCtx->uidai_host_name)); 
+
+  free(uidai_attr[0]); 
+  free(uidai_attr[1]); 
+
+  return(0);
+}/*auth_init_ex*/
+
+uint8_t *auth_main_ex_v16(uint8_t *in_ptr, 
+                          uint32_t in_len, 
+                          uint32_t *rsp_len) {
+  
+  uint8_t *pid_xml = NULL;
+  uint8_t *auth_xml_tag[16];
+  uint8_t *c14n[4];
+  uint16_t version = 16;
+  uint32_t idx = 0;
+  int32_t opt_tkn = 0;
+  uint8_t skey[64];
+  uint8_t *data_x = NULL;
+  uint16_t data_x_len = 512;
+  uint8_t *hmac = NULL;
+  uint16_t hmac_len = 256;
+  uint8_t *c14n_auth_xml = NULL;
+  uint16_t c14n_len = 512;
+  uint8_t *final_xml = NULL;
+  uint16_t final_xml_size = 4000;
+  uint8_t *b64_digest = NULL;
+  uint8_t *b64_signature = NULL;
+  uint8_t *b64_subject = NULL;
+  uint8_t *b64_certificate = NULL;
+
+  
+  for(idx = 0; idx < 4; idx++) {
+    auth_xml_tag[idx] = (uint8_t *)malloc(sizeof(uint8_t) * 256);
+    assert(auth_xml_tag[idx] != NULL);
+    memset((void *)auth_xml_tag[idx], 0, sizeof(uint8_t) * 256);
+  }
+
+  for(idx = 0; idx < 3; idx++) {
+    c14n[idx] = (uint8_t *)malloc(sizeof(uint8_t) * 256);
+    assert(c14n[idx] != NULL);
+    memset((void *)c14n[idx], 0, sizeof(uint8_t) * 256);
+  }
+
+  auth_build_auth_xml(in_ptr, 
+                      in_len, 
+                      version, 
+                      auth_xml_tag[0]);
+
+  auth_build_uses_xml(in_ptr, 
+                      in_len, 
+                      version, 
+                      auth_xml_tag[1], 
+                      c14n[0]);
+
+  fprintf(stderr, "auth_xml_tag %s\n %s\n %s\n", auth_xml_tag[0], auth_xml_tag[1], c14n[0]);
+
+  opt_tkn = auth_build_tkn_xml(in_ptr, 
+                               in_len, 
+                               version, 
+                               auth_xml_tag[2], 
+                               c14n[1]);
+
+  auth_build_meta_xml(in_ptr, 
+                      in_len, 
+                      version, 
+                      auth_xml_tag[3], 
+                      c14n[2]);
+
+  pid_xml = (uint8_t *)malloc(sizeof(uint8_t) * 1024);
+  assert(pid_xml != NULL);
+  memset((void *)pid_xml, 0, sizeof(uint8_t) * 1024);
+
+  auth_build_pid_xml(in_ptr, 
+                     in_len,
+                     version, 
+                     pid_xml);
+
+  auth_init_ex(in_ptr, in_len);
+
+  /*Skey tag of Final AUTH XML <Skey ..></Skey>*/
+  memset((void *)skey, 0, sizeof(skey));
+  auth_skey(skey, sizeof(skey));
+
+  data_x = (uint8_t *)malloc(sizeof(uint8_t) * data_x_len);
+  assert(data_x != NULL);
+  memset((void *)data_x, 0, data_x_len);
+  auth_data_v16(data_x, data_x_len, pid_xml);
+  
+  hmac = (uint8_t *)malloc(sizeof(uint8_t) * hmac_len);
+  assert(hmac != NULL);
+  memset((void *)hmac, 0, hmac_len);
+  auth_hmac_v16(hmac, hmac_len, pid_xml);
+
+  free(pid_xml);
+  pid_xml = NULL;
+
+  /*signature of Auth XML*/
+  c14n_auth_xml = (uint8_t *)malloc(sizeof(uint8_t) * c14n_len);
+  assert(c14n_auth_xml != NULL);
+  memset((void *)c14n_auth_xml, 0, c14n_len);
+  
+  auth_c14n_auth_xml_v16(c14n_auth_xml, 
+                         c14n_len, 
+                         auth_xml_tag[0],
+                         c14n[0], 
+                         (opt_tkn == 1) ? NULL: c14n[1],
+                         c14n[2], 
+                         skey, 
+                         hmac, 
+                         data_x);
+  free(c14n[0]);
+  free(c14n[1]);
+  free(c14n[2]);
+
+  b64_digest = (uint8_t *)malloc(sizeof(uint8_t) * 2048);
+  assert(b64_digest != NULL);
+  memset((void *)b64_digest, 0, 2048);
+  
+  b64_signature = (uint8_t *)malloc(sizeof(uint8_t) * 2048);
+  assert(b64_signature != NULL);
+  memset((void *)b64_signature, 0, 2048);
+
+  b64_subject = (uint8_t *)malloc(sizeof(uint8_t) * 2048);
+  assert(b64_subject != NULL);
+  memset((void *)b64_subject, 0, 2048);
+
+  b64_certificate = (uint8_t *)malloc(sizeof(uint8_t) * 2048);
+  assert(b64_certificate != NULL);
+  memset((void *)b64_certificate, 0, 2048);
+
+  auth_c14n_sign(c14n_auth_xml,
+                 b64_digest,
+                 b64_signature,
+                 b64_subject,
+                 b64_certificate);
+
+  free(c14n_auth_xml);
+  c14n_auth_xml = NULL;
+
+  final_xml = (uint8_t *)malloc(sizeof(uint8_t) * final_xml_size);
+  assert(final_xml != NULL);
+  memset((void *)final_xml, 0, final_xml_size);
+
+  auth_compose_xml_v16(final_xml,
+                       final_xml_size,
+                       auth_xml_tag[0],
+                       auth_xml_tag[1],
+                       (opt_tkn == 1) ? NULL : auth_xml_tag[2],
+                       auth_xml_tag[3],
+                       skey,
+                       hmac,
+                       data_x);
+
+  free(auth_xml_tag[0]);
+  free(auth_xml_tag[1]);
+  free(auth_xml_tag[2]);
+  free(auth_xml_tag[3]);
+
+  uint16_t final_xml_len = 0;
+  uint16_t tmp_len = strlen(final_xml);
+
+  util_compose_final_xml(&final_xml[tmp_len], 
+                         (final_xml_size - tmp_len), 
+                         &final_xml_len,
+                         /*digest*/
+                         b64_digest,
+                         /*Signature Value*/
+                         b64_signature,
+                         /*Subject Name*/
+                         b64_subject,
+                         /*Certificate*/
+                         b64_certificate); 
+
+  final_xml_len += tmp_len;
+  snprintf(&final_xml[final_xml_len], 
+           final_xml_size, 
+           "%s", 
+           "</Auth>");
+
+  free(b64_digest);
+  free(b64_signature);
+  free(b64_subject);
+  free(b64_certificate);
+
+  fprintf(stderr, "Final XML \n%s\n", final_xml);
+
+  free(final_xml);
+  final_xml = NULL;
+  return(0);
+}/*auth_main_ex_v16*/
+
+int32_t auth_main_ex(uint8_t *in_ptr, 
+                     uint32_t in_len, 
+                     uint16_t version, 
+                     int32_t rsp_fd) {
+
+  uint32_t rsp_len = 0;
+  uint8_t *rsp_ptr = NULL;
+
+  if(16 == version) {
+    rsp_ptr = auth_main_ex_v16(in_ptr, in_len, &rsp_len);
+  }
+
+  return(0);
+}/*auth_main_ex*/
 
 #endif /* __AUTH_C__ */
