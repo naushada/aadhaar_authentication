@@ -179,7 +179,9 @@ int32_t auth_process_ekyc_req(int32_t conn_fd,
                               uint32_t *req_xml_len);
 
 
-int32_t auth_build_pv_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *pv_xml);
+int32_t auth_build_pv_v16(uint8_t *in_ptr, 
+                          uint32_t in_len, 
+                          uint8_t **pv_xml);
 
 int32_t auth_build_meta_xml_v16(uint8_t *in_ptr, 
                                 uint32_t in_len, 

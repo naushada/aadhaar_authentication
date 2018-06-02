@@ -1820,17 +1820,21 @@ int32_t auth_main(int32_t conn_fd,
   return(0);
 }/*auth_main*/
 
-int32_t auth_build_demo_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *demo_xml) {
+int32_t auth_build_demo_v16(uint8_t *in_ptr, 
+                            uint32_t in_len, 
+                            uint8_t **demo_xml_ptr) {
 
   uint8_t *demo = NULL; 
   uint8_t *demo_attr[8];
   uint32_t offset = 0;
+  uint8_t *demo_xml;
   uint32_t len = sizeof(uint8_t) * 64;
 
   demo_xml = (uint8_t *)malloc(len);
   assert(demo_xml != NULL);
   memset((void *)demo_xml, 0, len);
 
+  *demo_xml_ptr = demo_xml;
   demo  = uidai_get_param(in_ptr, "demo");
   assert(demo != NULL);
 
@@ -1862,17 +1866,21 @@ int32_t auth_build_demo_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *demo_xml)
   return(0);
 }/*auth_build_demo_v16*/
 
-int32_t auth_build_pv_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *pv_xml) {
+int32_t auth_build_pv_v16(uint8_t *in_ptr, 
+                          uint32_t in_len, 
+                          uint8_t **pv_xml_ptr) {
 
   uint8_t *pv = NULL; 
   uint8_t *pv_attr[8];
   uint32_t offset = 0;
+  uint8_t *pv_xml;
   uint32_t len = sizeof(uint8_t) * 64;
 
   pv_xml = (uint8_t *)malloc(len);
   assert(pv_xml != NULL);
   memset((void *)pv_xml, 0, len);
 
+  *pv_xml_ptr = pv_xml;
   pv  = uidai_get_param(in_ptr, "pv");
   assert(pv != NULL);
 
@@ -1917,17 +1925,21 @@ int32_t auth_build_pv_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *pv_xml) {
   return(0);
 }/*auth_build_pv_v16*/
 
-int32_t auth_build_bio_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *bio_xml) {
+int32_t auth_build_bio_v16(uint8_t *in_ptr, 
+                           uint32_t in_len, 
+                           uint8_t **bio_xml_ptr) {
 
   uint8_t *bio = NULL; 
   uint8_t *bio_attr[8];
   uint32_t offset = 0;
+  uint8_t *bio_xml;
   uint32_t len = sizeof(uint8_t) * 512;
 
   bio_xml = (uint8_t *)malloc(len);
   assert(bio_xml != NULL);
   memset((void *)bio_xml, 0, len);
 
+  *bio_xml_ptr = bio_xml;
   bio  = uidai_get_param(in_ptr, "bio");
   assert(bio != NULL);
 
@@ -1973,7 +1985,8 @@ int32_t auth_build_bio_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *bio_xml) {
                        "</Bios>\n");
   }
 
-  for(offset = 0; offset < 4; offset++) {
+  fprintf(stderr, "\n%s:%d bio %s\n", __FILE__, __LINE__, bio_xml);
+  for(offset = 0; offset < 3; offset++) {
     free(bio_attr[offset]);
   }
 
@@ -1982,17 +1995,19 @@ int32_t auth_build_bio_v16(uint8_t *in_ptr, uint32_t in_len, uint8_t *bio_xml) {
 
 int32_t auth_build_pfa_v16(uint8_t *in_ptr, 
                            uint32_t in_len, 
-                           uint8_t *pfa_xml) {
+                           uint8_t **pfa_xml_ptr) {
 
   uint8_t *pfa = NULL; 
   uint8_t *pfa_attr[16];
   uint32_t offset = 0;
+  uint8_t *pfa_xml;
   uint32_t len = sizeof(uint8_t) * 256;
 
   pfa_xml = (uint8_t *)malloc(len);
   assert(pfa_xml != NULL);
   memset((void *)pfa_xml, 0, len);
 
+  *pfa_xml_ptr = pfa_xml;
   pfa  = uidai_get_param(in_ptr, "pfa");
   assert(pfa != NULL);
 
@@ -2069,7 +2084,7 @@ int32_t auth_build_pfa_v16(uint8_t *in_ptr,
                      (len - offset),
                      "%s",
                      "/>\n");
-
+  fprintf(stderr, "\n%s:%d pfa %s\n", __FILE__, __LINE__, pfa_xml);
   /*freeing the allocated memory*/
   for(offset = 0; offset < 5; offset++) {
     free(pfa_attr[offset]);
@@ -2080,17 +2095,19 @@ int32_t auth_build_pfa_v16(uint8_t *in_ptr,
 
 int32_t auth_build_pa_v16(uint8_t *in_ptr, 
                           uint32_t in_len, 
-                          uint8_t *pa_xml) {
+                          uint8_t **pa_xml_ptr) {
 
   uint8_t *pa = NULL; 
   uint8_t *pa_attr[16];
   uint32_t offset = 0;
+  uint8_t *pa_xml;
   uint32_t len = sizeof(uint8_t) * 256;
 
   pa_xml = (uint8_t *)malloc(len);
   assert(pa_xml != NULL);
   memset((void *)pa_xml, 0, len);
 
+  *pa_xml_ptr = pa_xml;
   pa  = uidai_get_param(in_ptr, "pa");
   assert(pa != NULL);
 
@@ -2110,7 +2127,8 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
   free(pa);
   offset += snprintf(&pa_xml[offset],
                      (len - offset),
-                     "%s",
+                     "%s%s",
+                     "\n",
                      "    <Pa");
 
   if(strlen(pa_attr[0])) {
@@ -2238,6 +2256,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                      "%s",
                      "/>\n");
 
+  fprintf(stderr, "\n%s:%d pa_xml[2] %s\n",__FILE__, __LINE__, pa_xml);
   /*freeing the allocated memory*/
   for(offset = 0; offset < 12; offset++) {
     free(pa_attr[offset]);
@@ -2262,17 +2281,20 @@ int32_t auth_restore_str(uint8_t *name_ptr, uint8_t *name_str) {
 
 int32_t auth_build_pi_v16(uint8_t *in_ptr, 
                           uint32_t in_len, 
-                          uint8_t *pi_xml) {
+                          uint8_t **pi_xml_ptr) {
 
   uint8_t *pi = NULL; 
   uint8_t *pi_attr[16];
   uint32_t offset = 0;
   uint8_t name_str[256];
+  uint8_t *pi_xml;
   uint32_t len = sizeof(uint8_t) * 256;
 
   pi_xml = (uint8_t *)malloc(len);
   assert(pi_xml != NULL);
   memset((void *)pi_xml, 0, len);
+
+  *pi_xml_ptr = pi_xml;
 
   pi  = uidai_get_param(in_ptr, "pi");
   assert(pi != NULL);
@@ -2292,7 +2314,8 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
   free(pi);
   offset += snprintf(&pi_xml[offset],
                      (len - offset),
-                     "%s",
+                     "%s%s",
+                     "\n",
                      "    <Pi");
 
   if(strlen(pi_attr[0])) {
@@ -2413,6 +2436,8 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                      "%s",
                      "/>\n");
 
+  fprintf(stderr, "\n%s:%d %s\n", __FILE__, __LINE__, pi_xml);
+
   /*freeing the allocated memory*/
   for(offset = 0; offset < 11; offset++) {
     free(pi_attr[offset]);
@@ -2421,15 +2446,15 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
   return(0);
 }/*auth_build_pi_v16*/
 
-int32_t auth_build_pid_final(uint8_t *pid_xml) {
+int32_t auth_build_pid_final(uint8_t **pid_xml) {
 
   uint32_t len = sizeof(uint8_t) * 32;
 
-  pid_xml = (uint8_t *)malloc(len);
-  assert(pid_xml != NULL);
-  memset((void *)pid_xml, 0, len);
+  *pid_xml = (uint8_t *)malloc(len);
+  assert(*pid_xml != NULL);
+  memset((void *)*pid_xml, 0, len);
 
-  snprintf(pid_xml,
+  snprintf(*pid_xml,
            len,
            "%s",
            "</Pid>\n");
@@ -2441,7 +2466,7 @@ int32_t auth_build_pid_final(uint8_t *pid_xml) {
 int32_t auth_build_demo(uint8_t *in_ptr, 
                         uint32_t in_len, 
                         uint16_t version, 
-                        uint8_t *demo_xml) {
+                        uint8_t **demo_xml) {
 
   if(16 == version) {
     auth_build_demo_v16(in_ptr, in_len, demo_xml);
@@ -2453,7 +2478,7 @@ int32_t auth_build_demo(uint8_t *in_ptr,
 int32_t auth_build_pv(uint8_t *in_ptr, 
                       uint32_t in_len, 
                       uint16_t version, 
-                      uint8_t *pv_xml) {
+                      uint8_t **pv_xml) {
 
   if(16 == version) {
     auth_build_pv_v16(in_ptr, in_len, pv_xml);
@@ -2465,7 +2490,7 @@ int32_t auth_build_pv(uint8_t *in_ptr,
 int32_t auth_build_bio(uint8_t *in_ptr, 
                        uint32_t in_len, 
                        uint16_t version, 
-                       uint8_t *bio_xml) {
+                       uint8_t **bio_xml) {
 
   if(16 == version) {
     auth_build_bio_v16(in_ptr, in_len, bio_xml);
@@ -2477,7 +2502,7 @@ int32_t auth_build_bio(uint8_t *in_ptr,
 int32_t auth_build_pfa(uint8_t *in_ptr, 
                        uint32_t in_len, 
                        uint16_t version, 
-                       uint8_t *pa_xml) {
+                       uint8_t **pa_xml) {
 
   if(16 == version) {
     auth_build_pfa_v16(in_ptr, in_len, pa_xml);
@@ -2489,7 +2514,7 @@ int32_t auth_build_pfa(uint8_t *in_ptr,
 int32_t auth_build_pa(uint8_t *in_ptr, 
                       uint32_t in_len, 
                       uint16_t version, 
-                      uint8_t *pa_xml) {
+                      uint8_t **pa_xml) {
 
   if(16 == version) {
     auth_build_pa_v16(in_ptr, in_len, pa_xml);
@@ -2501,7 +2526,7 @@ int32_t auth_build_pa(uint8_t *in_ptr,
 int32_t auth_build_pi(uint8_t *in_ptr, 
                       uint32_t in_len, 
                       uint16_t version, 
-                      uint8_t *pi_xml) {
+                      uint8_t **pi_xml) {
 
   if(16 == version) {
     auth_build_pi_v16(in_ptr, in_len, pi_xml);
@@ -2510,10 +2535,9 @@ int32_t auth_build_pi(uint8_t *in_ptr,
   return(0);
 }/*auth_build_pi*/
 
-int32_t auth_build_pid_init(uint8_t *in_ptr, 
-                            uint32_t in_len, 
-                            uint16_t version, 
-                            uint8_t *pid_init) {
+int32_t auth_build_pid_v16(uint8_t *in_ptr, 
+                           uint32_t in_len, 
+                           uint8_t **pid_init) {
 
   uint32_t len = sizeof(uint8_t) * 128;
   uint8_t ts[32];
@@ -2523,25 +2547,16 @@ int32_t auth_build_pid_init(uint8_t *in_ptr,
   (void)in_ptr;
   (void)in_len;
 
-  pid_init = (uint8_t *)malloc(len);
-  assert(pid_init != NULL);
-  memset((void *)pid_init, 0, len);
+  *pid_init = (uint8_t *)malloc(len);
+  assert(*pid_init != NULL);
+  memset((void *)*pid_init, 0, len);
 
   auth_compute_ts(ts, ts_size);
   memset((void *)pid_ver, 0, sizeof(pid_ver));
 
-  if(16 == version) {
-    strncpy(pid_ver, "1.0", 3);
+  strncpy(pid_ver, "1.0", 3);
 
-  } else if((20 == version) || (25 == version)) {
-    strncpy(pid_ver, "2.0", 3);
-
-  } else {
-    /*unsupported version*/
-    return(1);
-  }
-
-  snprintf(pid_init, 
+  snprintf(*pid_init, 
            len,
            "%s%s%s%s%s",
            "<Pid ts=\"",
@@ -2550,6 +2565,16 @@ int32_t auth_build_pid_init(uint8_t *in_ptr,
            pid_ver,
            "\">"); 
 
+  return(0);
+}/*auth_build_pid_v16*/
+
+int32_t auth_build_pid_init(uint8_t *in_ptr, 
+                            uint32_t in_len, 
+                            uint16_t version, 
+                            uint8_t **pid_ptr) {
+  if(16 == version) {
+    auth_build_pid_v16(in_ptr, in_len, pid_ptr);
+  }
   return(0);
 }/*auth_build_pid_init*/
 
@@ -2568,59 +2593,61 @@ int32_t auth_build_pid_xml_v16(uint8_t *in_ptr,
 
   /*Extract Uses for demographic to be encoded*/
   uses_attr[0] = uidai_get_attr(arg_ptr[0], "pi");
-  uses_attr[1] = uidai_get_attr(arg_ptr[1], "pa");
-  uses_attr[2] = uidai_get_attr(arg_ptr[2], "pfa");
-  uses_attr[3] = uidai_get_attr(arg_ptr[3], "bio");
-  uses_attr[4] = uidai_get_attr(arg_ptr[4], "pv");
-  uses_attr[5] = uidai_get_attr(arg_ptr[5], "demo");
+  uses_attr[1] = uidai_get_attr(arg_ptr[0], "pa");
+  uses_attr[2] = uidai_get_attr(arg_ptr[0], "pfa");
+  uses_attr[3] = uidai_get_attr(arg_ptr[0], "bio");
+  uses_attr[4] = uidai_get_attr(arg_ptr[0], "pv");
+  uses_attr[5] = uidai_get_attr(arg_ptr[0], "demo");
 
   free(arg_ptr[0]);
 
   pid_xml[0] = NULL;
-  auth_build_pid_init(in_ptr, in_len, version, pid_xml[0]);
+  auth_build_pid_init(in_ptr, in_len, version, &pid_xml[0]);
 
   pid_xml[1] = NULL;
-  if(strncmp(uses_attr[0], "1", 1)) {
+  if(!strncmp(uses_attr[0], "1", 1)) {
     /*Pi to be encoded in auth xml*/
-    auth_build_pi(in_ptr, in_len, version, pid_xml[1]);
+    auth_build_pi(in_ptr, in_len, version, &pid_xml[1]);
   }
 
+  fprintf(stderr, "\npid_xml[1] %s\n", pid_xml[1]);
   pid_xml[2] = NULL;
-  if(strncmp(uses_attr[1], "1", 1)) {
+  if(!strncmp(uses_attr[1], "1", 1)) {
     /*Pa to be encoded in auth xml*/
-    auth_build_pa(in_ptr, in_len, version, pid_xml[2]);
+    auth_build_pa(in_ptr, in_len, version, &pid_xml[2]);
   }
 
   pid_xml[3] = NULL;
-  if(strncmp(uses_attr[2], "1", 1)) {
+  if(!strncmp(uses_attr[2], "1", 1)) {
     /*Pfa to be encoded in auth xml*/
-    auth_build_pfa(in_ptr, in_len, version, pid_xml[3]);
+    auth_build_pfa(in_ptr, in_len, version, &pid_xml[3]);
   }
 
   pid_xml[4] = NULL;
-  if(strncmp(uses_attr[3], "1", 1)) {
+  if(!strncmp(uses_attr[3], "1", 1)) {
     /*Bio to be encoded in auth xml*/
-    auth_build_bio(in_ptr, in_len, version, pid_xml[4]);
+    auth_build_bio(in_ptr, in_len, version, &pid_xml[4]);
   }
 
   pid_xml[5] = NULL;
-  if(strncmp(uses_attr[4], "1", 1)) {
+  if(!strncmp(uses_attr[4], "1", 1)) {
     /*Pv to be encoded in auth xml*/
-    auth_build_pv(in_ptr, in_len, version, pid_xml[5]);
+    auth_build_pv(in_ptr, in_len, version, &pid_xml[5]);
   }
 
   pid_xml[6] = NULL;
-  if(strncmp(uses_attr[5], "1", 1)) {
+  if(!strncmp(uses_attr[5], "1", 1)) {
     /*Demo to be encoded in auth xml*/
-    auth_build_demo(in_ptr, in_len, version, pid_xml[6]);
+    auth_build_demo(in_ptr, in_len, version, &pid_xml[6]);
   }
 
   pid_xml[7] = NULL;
-  auth_build_pid_final(pid_xml[7]);
+  auth_build_pid_final(&pid_xml[7]);
 
   for(idx = 0; idx < 8; idx++) {
 
     if(pid_xml[idx]) {
+      fprintf(stderr, "\n idx %d\n", idx);
       offset += sprintf(&pid_xml_ptr[offset],
                         "%s",
                         pid_xml[idx]);
@@ -2643,7 +2670,6 @@ int32_t auth_build_pid_xml(uint8_t *in_ptr,
                            uint8_t *pid_xml) {
 
   if(16 == version) {
-    
     auth_build_pid_xml_v16(in_ptr, 
                            in_len, 
                            pid_xml);
@@ -3120,7 +3146,7 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
                      in_len,
                      version, 
                      pid_xml);
-
+  fprintf(stderr, "\npid xml is %s\n", pid_xml);
   auth_init_ex(in_ptr, in_len);
 
   /*Skey tag of Final AUTH XML <Skey ..></Skey>*/

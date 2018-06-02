@@ -888,7 +888,7 @@ uint8_t *uidai_get_attr(uint8_t *req_ptr,
   param_value = (uint8_t *)malloc(sizeof(uint8_t) * 1024);
   assert(param_value != NULL);
   memset((void *)param_value, 0, (sizeof(uint8_t) * 1024));
-  sscanf(req_ptr, "{%s}", tmp_req_ptr);
+  sscanf(req_ptr, "{%[^}]}", tmp_req_ptr);
   line_ptr = strtok_r(tmp_req_ptr, ",", &save_ptr);
 
   while(line_ptr) {
@@ -995,14 +995,14 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
     return(0);
   }
 
-  close(rd_fd[0]);
+  //close(rd_fd[0]);
   /*mapp stdout to wr_fd[1]*/
   if(dup2(wr_fd[1], 1) < 0) {
     perror("dup:wr_fd[1]");
     return(0);
   }
 
-  close(wr_fd[1]);
+  //close(wr_fd[1]);
   if(execlp(cmd, cmd, NULL) < 0) {
     /*launching/instantiating of wish failed*/
     perror("execlp:");
