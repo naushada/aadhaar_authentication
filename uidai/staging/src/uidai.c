@@ -724,7 +724,8 @@ int32_t uidai_init(uint32_t ip_addr,
   strncpy(pUidaiCtx->private_fname, private_fname, strlen(private_fname));
 
   util_init(pUidaiCtx->public_fname,
-            pUidaiCtx->private_fname);
+            pUidaiCtx->private_fname,
+            "public");
 
   otp_init(ac, 
            sa, 
@@ -884,17 +885,18 @@ uint8_t *uidai_get_attr(uint8_t *req_ptr,
   assert(tmp_req_ptr != NULL);
   memset((void *)tmp_req_ptr, 0, (sizeof(uint8_t) * req_len));
 
-  memset((void *)param_name, 0, sizeof(param_name));
   param_value = (uint8_t *)malloc(sizeof(uint8_t) * 1024);
   assert(param_value != NULL);
-  memset((void *)param_value, 0, (sizeof(uint8_t) * 1024));
+
   sscanf(req_ptr, "{%[^}]}", tmp_req_ptr);
   line_ptr = strtok_r(tmp_req_ptr, ",", &save_ptr);
 
   while(line_ptr) {
+    memset((void *)param_value, 0, (sizeof(uint8_t) * 1024));
+    memset((void *)param_name, 0, sizeof(param_name));
     sscanf(line_ptr, "%[^=]=%s", param_name, param_value);
 
-    if(!strncmp(param_name, p_name, sizeof(param_name))) {
+    if(!strncmp(param_name, p_name, (sizeof(param_name) - 1))) {
       //fprintf(stderr, "param_name %s param_value %s\n", param_name, param_value);
       flag = 1;
       break;      
@@ -995,15 +997,15 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
     return(0);
   }
 
-  //close(rd_fd[0]);
   /*mapp stdout to wr_fd[1]*/
   if(dup2(wr_fd[1], 1) < 0) {
+    close(rd_fd[0]);
     perror("dup:wr_fd[1]");
     return(0);
   }
 
-  //close(wr_fd[1]);
   if(execlp(cmd, cmd, NULL) < 0) {
+    close(wr_fd[1]);
     /*launching/instantiating of wish failed*/
     perror("execlp:");
     exit(0);
@@ -1052,8 +1054,8 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
     memset((void *)req_ptr, 0, len);
 
     ret = read(rd_fd[0], req_ptr, len);
-    uidai_parse_req(req_ptr, (uint32_t)ret, wr_fd[1]);
     ret = write(2, req_ptr, ret);
+    uidai_parse_req(req_ptr, (uint32_t)ret, wr_fd[1]);
   }
 
   close(rd_fd[0]);
@@ -1092,10 +1094,10 @@ int32_t main(int32_t argc, char *argv[]) {
  
   } else if(gui_process) {
     /*Parent Process*/
-    uidai_spawn_gui(rd_fd, wr_fd);
+    uidai_process_gui_req(wr_fd, rd_fd, gui_path);
   } else {
     /*child process*/
-    uidai_process_gui_req(wr_fd, rd_fd, gui_path);
+    uidai_spawn_gui(rd_fd, wr_fd);
   }
 }/*main*/
 

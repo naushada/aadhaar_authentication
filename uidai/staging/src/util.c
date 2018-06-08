@@ -6,15 +6,18 @@
 
 util_ctx_t util_ctx_g;
 
-int32_t util_init(uint8_t *public_key, uint8_t *private_key) {
+int32_t util_init(uint8_t *public_key, uint8_t *private_key, uint8_t *password) {
 
   util_ctx_t *pUtilCtx = &util_ctx_g;
 
   memset((void *)pUtilCtx->public_key_file, 0, sizeof(pUtilCtx->public_key_file));
   memset((void *)pUtilCtx->private_key_file, 0, sizeof(pUtilCtx->private_key_file));
+  memset((void *)pUtilCtx->password, 0, sizeof(pUtilCtx->password));
 
-  strncpy(pUtilCtx->public_key_file, public_key, strlen(public_key));
-  strncpy(pUtilCtx->private_key_file, private_key, strlen(private_key));
+  strncpy(pUtilCtx->public_key_file, public_key, sizeof(pUtilCtx->public_key_file));
+  strncpy(pUtilCtx->private_key_file, private_key, sizeof(pUtilCtx->private_key_file));
+  strncpy(pUtilCtx->password, password, sizeof(pUtilCtx->password));
+
   return(0); 
 }/*util_init*/
 
@@ -489,17 +492,13 @@ int32_t util_compute_rsa_signature(uint8_t *signed_info,
   util_ctx_t *pUtilCtx = &util_ctx_g;
 
   fp = fopen(pUtilCtx->private_key_file, "r");
-
-  if(!fp) {
-    fprintf(stderr, "\n%s:%d Opening of private key file failed\n", __FILE__, __LINE__);
-    return(-1);
-  }
+  assert(fp != NULL);
 
   x509 = X509_new();
 
   p12 = d2i_PKCS12_fp(fp, NULL);
 
-  PKCS12_parse(p12, "public", &pkey, &x509, &ca);
+  PKCS12_parse(p12, pUtilCtx->password, &pkey, &x509, &ca);
   PKCS12_free(p12);
 
   fclose(fp);

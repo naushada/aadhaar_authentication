@@ -5,6 +5,7 @@ typedef struct {
   
   uint8_t private_key_file[128];
   uint8_t public_key_file[128];
+  uint8_t password[128];
 
 }util_ctx_t;
 
@@ -42,7 +43,7 @@ int32_t util_compose_final_xml(uint8_t *out_xml,
                                uint8_t *subject,
                                uint8_t *certificate);
 
-int32_t util_init(uint8_t *public_key, uint8_t *private_key);
+int32_t util_init(uint8_t *public_key, uint8_t *private_key, uint8_t *password);
 
 int32_t util_decrypt_skey(uint8_t *in, uint32_t inl, uint8_t *out, uint32_t *outl);
 
