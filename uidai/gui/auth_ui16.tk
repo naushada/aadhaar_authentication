@@ -146,15 +146,15 @@ proc staging_pi_attr_v16 {} {
  
   ComboBox .pi.mse  -width 30 -values {P E} -text "E"
   entry .pi.mve     -width 30 -textvariable  staging_pi_mve_v16
-  entry .pi.namee   -width 30
-  entry .pi.lnamee  -width 30
-  entry .pi.lmve    -width 30
+  entry .pi.namee   -width 30 -textvariable staging_pi_namee_v16
+  entry .pi.lnamee  -width 30 -textvariable staging_pi_lnamee_v16
+  entry .pi.lmve    -width 30 -textvariable staging_pi_lmve_v16
   ComboBox .pi.gendere -width 30 -values {M F T} -text "M"
   entry .pi.dobe    -width 30
   ComboBox .pi.dobte -width 30 -values {D V A} -text "V"
-  entry .pi.agee    -width 30
-  entry .pi.phonee  -width 30
-  entry .pi.emaile  -width 30
+  entry .pi.agee    -width 30 -textvariable staging_pi_age_v16
+  entry .pi.phonee  -width 30 -textvariable staging_pi_phonee_v16
+  entry .pi.emaile  -width 30 -textvariable staging_pi_emaile_v16
  
   grid .pi.ms     .pi.mse     -pady 2 -padx 4 -sticky news
   grid .pi.mv     .pi.mve     -pady 2 -padx 4 -sticky news
@@ -588,8 +588,17 @@ proc staging_get_pi_attr_value {offset} {
   set attr [lindex $staging_wi_pname_v16 $offset]
 
   foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
+
+    if {$val == "pi.namee"} {
+      set name [.$val get]
+      set name [regsub -all {\s+} $name +]
+      set str [concat $str [lindex $arg $idx]=$name]
+
+    } else {
+      set str [concat $str [lindex $arg $idx]=[.$val get]]
+    }
+
+    incr idx
   }
 
   set str [regsub -all {\s+} $str ,]
