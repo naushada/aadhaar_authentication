@@ -670,6 +670,50 @@ int32_t uidai_connect_uidai(void) {
   return (0);
 }/*uidai_connect_uidai*/
 
+int32_t uidai_init_ex(uint8_t *ip_addr, 
+                      uint32_t port, 
+                      uint8_t *uidai_host, 
+                      uint32_t uidai_port) {
+  int32_t fd;
+  struct sockaddr_in addr;
+  size_t addr_len = sizeof(addr);
+  uidai_ctx_t *pUidaiCtx = &uidai_ctx_g;
+
+  fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  if(fd < 0) {
+    fprintf(stderr, "\n%s:%d Creation of Socket failed\n", 
+                    __FILE__, 
+                    __LINE__);
+    return(-1);
+  }
+  
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(port);
+  //addr.sin_addr.s_addr = htonl(ip_addr);
+  addr.sin_addr.s_addr = inet_addr(ip_addr);
+
+  memset((void *)addr.sin_zero, 0, sizeof(addr.sin_zero));
+ 
+  if(bind(fd, (struct sockaddr *)&addr, addr_len)) {
+    fprintf(stderr, "\n%s:%d bind failed\n", __FILE__, __LINE__);
+    return(-2);
+  }
+
+  listen(fd, 5/*number of simultaneous connection*/);
+  pUidaiCtx->fd = fd;
+  pUidaiCtx->port = port;
+  pUidaiCtx->ip = addr.sin_addr.s_addr;
+
+  memset((void *)pUidaiCtx->uidai_host_name, 0, sizeof(pUidaiCtx->uidai_host_name));
+  strncpy(pUidaiCtx->uidai_host_name, uidai_host, sizeof(pUidaiCtx->uidai_host_name));
+
+  pUidaiCtx->uidai_port = uidai_port;
+  pUidaiCtx->uidai_fd = -1;
+
+  return(0);
+}/*uidai_init_ex*/
+
 
 int32_t uidai_init(uint32_t ip_addr, 
                    uint32_t port, 
@@ -923,7 +967,8 @@ uint8_t *uidai_get_attr(uint8_t *req_ptr,
  *
  * @return it returns 0 if entire response is received else returns 1
  */
-int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
+uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
+
   uint8_t *arg_ptr[256];
   uint8_t *auth_attr[32];
   uint8_t *uses_attr[32];
@@ -932,6 +977,7 @@ int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   uint32_t idx = 0;
   uint32_t offset = 0;
   uint16_t version = 0;
+  uint8_t *rsp_ptr = NULL;
 
   arg_ptr[0]  = uidai_get_param(in_ptr, "request");
   arg_ptr[1]  = uidai_get_param(in_ptr, "auth");
@@ -957,7 +1003,7 @@ int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   free(auth_attr[0]);
   if(!strncmp(arg_ptr[0], "auth", 4)) {
     /*auth_request*/
-    auth_main_ex(in_ptr, in_len, version, rsp_fd);
+    rsp_ptr = auth_main_ex(in_ptr, in_len, version, rsp_fd);
 
   } else if(!strncmp(arg_ptr[1], "otp", 3)) {
     /*otp request*/
@@ -973,6 +1019,7 @@ int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
     free(arg_ptr[idx]);
   }
 
+  return(rsp_ptr);
 }/*uidai_parse_req*/
 
 /**
@@ -1016,6 +1063,38 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
 
   return(0);
 }/*uidai_spawn_gui*/
+uint8_t *uidai_chunked_rsp(int32_t fd, uint32_t *rsp_len) {
+  uint8_t wait_for_more_data;
+  uint8_t *buffer = NULL;
+  uint32_t buffer_size = 3500;
+  uint32_t buffer_len = 0;
+
+  /*Allocate the memory*/
+  buffer = (uint8_t *)malloc(sizeof(uint8_t) * buffer_size);
+  assert(buffer != NULL);
+
+  /*Response UIDAI Server*/
+  do {
+    memset((void *)buffer, 0, buffer_size);
+    buffer_len = buffer_size;
+    uidai_recv(fd, buffer, &buffer_len, MSG_PEEK);
+    wait_for_more_data = uidai_pre_process_uidai_rsp(fd, 
+                                                     buffer, 
+                                                     buffer_len);
+  }while(wait_for_more_data);
+
+  if(buffer_len) {
+    memset((void *)buffer, 0, buffer_size);
+    buffer_len = buffer_size;
+    uidai_recv(fd, 
+               buffer, 
+               &buffer_len, 
+               0);
+  }
+
+  *rsp_len = buffer_len;
+  return(buffer);
+}/*uidai_chunked_rsp*/
 
 /**
  * @brief This function processes the received request fro gui
@@ -1035,7 +1114,10 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
   int32_t ret = -1;
   uint32_t len = (sizeof(uint8_t) * 1024);
   uint8_t *req_ptr = NULL;
-
+  uint8_t *rsp_ptr = NULL;
+  uint32_t rsp_len = 0;
+  uidai_ctx_t *pUidaiCtx = &uidai_ctx_g; 
+  
   close(rd_fd[1]);
   close(wr_fd[0]);
   ret = write(wr_fd[1], gui_name, strlen(gui_name));
@@ -1055,7 +1137,21 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
 
     ret = read(rd_fd[0], req_ptr, len);
     ret = write(2, req_ptr, ret);
-    uidai_parse_req(req_ptr, (uint32_t)ret, wr_fd[1]);
+    rsp_ptr = uidai_parse_req(req_ptr, (uint32_t)ret, wr_fd[1]);
+    /*send the packet*/
+    if(pUidaiCtx->uidai_fd < 0) {
+      uidai_connect_uidai();
+    }
+
+    uidai_send(pUidaiCtx->uidai_fd, rsp_ptr, strlen(rsp_ptr));
+    free(rsp_ptr);
+    rsp_ptr = NULL;
+
+    /*Response from UIDAI*/
+    rsp_ptr = uidai_chunked_rsp(pUidaiCtx->uidai_fd, &rsp_len);
+    fprintf(stderr, "\n%s\n", rsp_ptr); 
+    free(rsp_ptr);
+    rsp_ptr = NULL;
   }
 
   close(rd_fd[0]);

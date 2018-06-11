@@ -160,7 +160,7 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]);
  *
  * @return it returns 0 if entire response is received else returns 1
  */
-int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd);
+uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd);
 
 /**
  * @brief This function parses the attribute for a given argument 
@@ -173,5 +173,10 @@ int32_t uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd);
  */
 uint8_t *uidai_get_attr(uint8_t *req_ptr, 
                         const uint8_t *p_name);
+
+int32_t uidai_init_ex(uint8_t *ip_addr, 
+                      uint32_t port, 
+                      uint8_t *uidai_host, 
+                      uint32_t uidai_port);
 
 #endif /* __UIDAI_H__ */

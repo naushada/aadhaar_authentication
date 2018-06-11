@@ -150,7 +150,6 @@ int32_t auth_symmetric_keys(uint8_t *out_ptr, uint32_t out_len) {
 
 int32_t auth_compute_ts(uint8_t *ts, uint16_t ts_size) {
 
-  FILE *fp = NULL;
   time_t curr_time;
   struct tm *local_time;
   auth_ctx_t *pAuthCtx = &auth_ctx_g;
@@ -914,9 +913,9 @@ int32_t auth_skey(uint8_t *b64_skey, uint16_t b64_skey_size) {
   }
 
   util_base64(ci_txt, 
-               ci_len, 
-               b64_cipher, 
-               &b64_cipher_len);
+              ci_len, 
+              b64_cipher, 
+              &b64_cipher_len);
 
   memset((void *)b64_skey, 0, b64_skey_size);
   snprintf(b64_skey,
@@ -1063,19 +1062,19 @@ int32_t auth_c14n_auth_xml_v16(uint8_t *c14n_auth_xml,
              "%s%s%s%s%s"
              "%s%s%s%s%s",
              auth_xml,
-             "\n",
+             "\n  ",
              c14n_uses,
-             "\n",
+             "\n  ",
              c14n_tkn,
-             "\n",
+             "\n  ",
              c14n_meta,
-             "\n",
+             "\n  ",
              skey,
-             "\n",
+             "\n  ",
              hmac,
-             "\n",
+             "\n  ",
              data,
-             "\n\n  ",
+             "\n  \n",
              "</Auth>");
     } else {
       snprintf(c14n_auth_xml, 
@@ -1084,17 +1083,17 @@ int32_t auth_c14n_auth_xml_v16(uint8_t *c14n_auth_xml,
                "%s%s%s%s%s"
                "%s%s%s",
                auth_xml,
-               "\n",
+               "\n  ",
                c14n_uses,
-               "\n",
+               "\n  ",
                c14n_meta,
-               "\n",
+               "\n  ",
                skey,
-               "\n",
+               "\n  ",
                hmac,
-               "\n",
+               "\n  ",
                data,
-               "\n\n  ",
+               "\n  \n",
                "</Auth>");
     }
   return(0);
@@ -1354,15 +1353,14 @@ int32_t auth_req_auth(uint8_t *req_xml,
 
   *req_xml_len = snprintf(req_xml, 
            req_xml_size,
-           "%s%s%s%s%s"
+           "%s%s%s%s"
            "%s%s%c%s%c"
            "%s%s%s%s%s"
            "%s%s%s%s%d"
            "%s%s%s",
            "POST http://",
            pAuthCtx->uidai_host_name,
-           "/",
-           /*pAuthCtx->version*/"auth",
+           pAuthCtx->uri,
            "/",
            pAuthCtx->ac,
            "/",
@@ -2752,12 +2750,12 @@ int32_t auth_build_tkn_xml(uint8_t *in_ptr,
                            uint16_t version, 
                            uint8_t *tkn_tag,
                            uint8_t *c14n_tkn) {
-
+  int32_t ret_val = 0;
   if(16 == version) {
-    auth_build_tkn_xml_v16(in_ptr, in_len, tkn_tag, c14n_tkn);
+    ret_val = auth_build_tkn_xml_v16(in_ptr, in_len, tkn_tag, c14n_tkn);
   }
 
-  return(0);
+  return(ret_val);
 }/*auth_build_tkn_xml*/
 
 int32_t auth_build_meta_xml_v16(uint8_t *in_ptr, 
@@ -2781,40 +2779,43 @@ int32_t auth_build_meta_xml_v16(uint8_t *in_ptr,
                     "%s",
                     "<Meta");
 
-  offset += sprintf(&meta_tag[offset],
-                    "%s%s%s",
-                    " udc=\"",
-                    meta_attr[0],
-                    "\"");
-
+  /*fdc*/
   offset += sprintf(&meta_tag[offset],
                     "%s%s%s",
                     " fdc=\"",
                     meta_attr[1],
                     "\"");
-
+  /*idc*/
   offset += sprintf(&meta_tag[offset],
                     "%s%s%s",
                     " idc=\"",
                     meta_attr[2],
                     "\"");
- 
-  offset += sprintf(&meta_tag[offset],
-                    "%s%s%s",
-                    " pip=\"",
-                    meta_attr[3],
-                    "\"");
 
+  /*lot*/
   offset += sprintf(&meta_tag[offset],
                     "%s%s%s",
                     " lot=\"",
                     meta_attr[4],
                     "\"");
 
+  /*lov*/
   offset += sprintf(&meta_tag[offset],
                     "%s%s%s",
                     " lov=\"",
                     meta_attr[5],
+                    "\"");
+  /*pip*/
+  offset += sprintf(&meta_tag[offset],
+                    "%s%s%s",
+                    " pip=\"",
+                    meta_attr[3],
+                    "\"");
+  /*udc*/
+  offset += sprintf(&meta_tag[offset],
+                    "%s%s%s",
+                    " udc=\"",
+                    meta_attr[0],
                     "\"");
 
   strncpy(c14n_meta, meta_tag, offset);
@@ -2849,10 +2850,12 @@ int32_t auth_build_tkn_xml_v16(uint8_t *in_ptr,
 
   free(tkn);
   fprintf(stderr, "\n%s:%d type is %s\n", __FILE__, __LINE__, tkn_attr[0]);
+
   if(!strncmp(tkn_attr[0], "NA", 2)) {
     /*do not encode tkn tag of Auth xml*/
     free(tkn_attr[0]);
     free(tkn_attr[1]);
+    fprintf(stderr, "\n%s:%d 1.type is %s\n", __FILE__, __LINE__, tkn_attr[0]);
     return(1);
 
   } else {
@@ -2913,37 +2916,7 @@ int32_t auth_build_uses_xml_v16(uint8_t *in_ptr,
   offset += sprintf(&uses_tag[offset],
                     "%s",
                     "<Uses");
-
-  if(!strncmp(uses_attr[0], "1", 1)) {
-    offset += sprintf(&uses_tag[offset],
-                      "%s",
-                      " pi=\"y\"");
-  } else {
-    offset += sprintf(&uses_tag[offset],
-                      "%s",
-                      " pi=\"n\"");
-  }
-
-  if(!strncmp(uses_attr[1], "1", 1)) {
-    offset += sprintf(&uses_tag[offset],
-                      "%s",
-                      " pa=\"y\"");
-  } else {
-    offset += sprintf(&uses_tag[offset],
-                      "%s",
-                      " pa=\"n\"");
-  }
-       
-  if(!strncmp(uses_attr[2], "1", 1)) {
-    offset += sprintf(&uses_tag[offset],
-                      "%s",
-                      " pfa=\"y\"");
-  } else {
-    offset += sprintf(&uses_tag[offset],
-                      "%s",
-                      " pfa=\"n\"");
-  }
-
+  /*Bio*/ 
   if(!strncmp(uses_attr[3], "1", 1)) {
     offset += sprintf(&uses_tag[offset],
                       "%s",
@@ -2952,13 +2925,14 @@ int32_t auth_build_uses_xml_v16(uint8_t *in_ptr,
     /*bt has to be present*/
     offset += sprintf(&uses_tag[offset],
                       "%s",
-                      " bio=\"y\"");
+                      " bt=\"y\"");
   } else {
     offset += sprintf(&uses_tag[offset],
                       "%s",
                       " bio=\"n\"");
   }
 
+  /*Otp*/
   if(!strncmp(uses_attr[4], "1", 1)) {
     pv = uidai_get_param(in_ptr, "pv");
     pv_attr[0] = uidai_get_attr(pv, "pin");
@@ -2991,12 +2965,45 @@ int32_t auth_build_uses_xml_v16(uint8_t *in_ptr,
 
     offset += sprintf(&uses_tag[offset],
                       "%s",
-                      " pin=\"n\"");
-
-    offset += sprintf(&uses_tag[offset],
-                      "%s",
                       " otp=\"n\"");
   }
+
+  /*Pa*/
+  if(!strncmp(uses_attr[1], "1", 1)) {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pa=\"y\"");
+  } else {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pa=\"n\"");
+  }
+
+  /*Pfa*/       
+  if(!strncmp(uses_attr[2], "1", 1)) {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pfa=\"y\"");
+  } else {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pfa=\"n\"");
+  }
+
+  /*Pi*/
+  if(!strncmp(uses_attr[0], "1", 1)) {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pi=\"y\"");
+  } else {
+    offset += sprintf(&uses_tag[offset],
+                      "%s",
+                      " pi=\"n\"");
+  }
+
+  offset += sprintf(&uses_tag[offset],
+                    "%s",
+                    " pin=\"n\"");
 
   strncpy(c14n_uses, uses_tag, offset);
 
@@ -3048,24 +3055,25 @@ int32_t auth_build_auth_xml_v16(uint8_t *in_ptr,
   auth_attr[6] = uidai_get_attr(auth, "lk");
  
   free(auth);
+
   sprintf(auth_tag,
           "%s%s%s%s%s"
           "%s%s%s%s%s"
           "%s%s%s%s%s",
-          "<Auth uid=\"",
-          auth_attr[0],
-          "\" tid=\"",
-          auth_attr[1],
-          "\" ac=\"",
+          "<Auth ac=\"",
           auth_attr[2],
-          "\" sa=\"",
-          auth_attr[3],
-          "\" ver=\"",
-          auth_attr[4],
-          "\" txn=\"",
-          auth_attr[5],
           "\" lk=\"",
           auth_attr[6],
+          "\" sa=\"",
+          auth_attr[3],
+          "\" tid=\"",
+          auth_attr[1],
+          "\" txn=\"",
+          auth_attr[5],
+          "\" uid=\"",
+          auth_attr[0],
+          "\" ver=\"",
+          auth_attr[4],
           "\">");
 
   for(idx = 0; idx < 7; idx++) {
@@ -3136,18 +3144,22 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
   uint32_t idx = 0;
   int32_t opt_tkn = 0;
   uint8_t skey[512];
+  uint16_t skey_size = sizeof(skey);
   uint8_t *data_x = NULL;
   uint16_t data_x_len = 512;
   uint8_t *hmac = NULL;
   uint16_t hmac_len = 256;
   uint8_t *c14n_auth_xml = NULL;
-  uint16_t c14n_len = 512;
+  uint16_t c14n_len = 4000;
   uint8_t *final_xml = NULL;
   uint16_t final_xml_size = 4000;
   uint8_t *b64_digest = NULL;
   uint8_t *b64_signature = NULL;
   uint8_t *b64_subject = NULL;
   uint8_t *b64_certificate = NULL;
+  uint8_t *auth_req = NULL;
+  uint32_t auth_req_len;
+  uint32_t auth_req_size = 4000;
 
   
   for(idx = 0; idx < 4; idx++) {
@@ -3173,14 +3185,11 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
                       auth_xml_tag[1], 
                       c14n[0]);
 
-  fprintf(stderr, "auth_xml_tag %s\n %s\n %s\n", auth_xml_tag[0], auth_xml_tag[1], c14n[0]);
-
   opt_tkn = auth_build_tkn_xml(in_ptr, 
                                in_len, 
                                version, 
                                auth_xml_tag[2], 
                                c14n[1]);
-
   auth_build_meta_xml(in_ptr, 
                       in_len, 
                       version, 
@@ -3199,7 +3208,7 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
 
   /*Skey tag of Final AUTH XML <Skey ..></Skey>*/
   memset((void *)skey, 0, sizeof(skey));
-  auth_skey(skey, sizeof(skey));
+  auth_skey(skey, skey_size);
 
   data_x = (uint8_t *)malloc(sizeof(uint8_t) * data_x_len);
   assert(data_x != NULL);
@@ -3219,7 +3228,6 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
   assert(c14n_auth_xml != NULL);
   memset((void *)c14n_auth_xml, 0, c14n_len);
  
-  fprintf(stderr, "\n%s:%d opt_tkn %d\n", __FILE__,__LINE__, opt_tkn); 
   auth_c14n_auth_xml_v16(c14n_auth_xml, 
                          c14n_len, 
                          auth_xml_tag[0],
@@ -3249,6 +3257,7 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
   assert(b64_certificate != NULL);
   memset((void *)b64_certificate, 0, 2048);
 
+  fprintf(stderr,"\n%s:%d c14n auth xml is \n%s\n", __FILE__, __LINE__, c14n_auth_xml);
   auth_c14n_sign(c14n_auth_xml,
                  b64_digest,
                  b64_signature,
@@ -3305,9 +3314,24 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
 
   fprintf(stderr, "Final XML \n%s\n", final_xml);
 
+  auth_req = (uint8_t *)malloc(sizeof(uint8_t) * auth_req_size);
+  assert(auth_req != NULL);
+
+  uint8_t *auth = uidai_get_param(in_ptr, "auth");
+  assert(auth != NULL);
+  uint8_t *uid = uidai_get_attr(auth, "uid");
+  free(auth);
+  auth_req_auth(auth_req, 
+                auth_req_size, 
+                &auth_req_len, 
+                final_xml,
+                uid);
+  free(uid);
   free(final_xml);
   final_xml = NULL;
-  return(0);
+  fprintf(stderr, "\n%s:%d req xml \n%s\n", __FILE__, __LINE__,auth_req);
+
+  return(auth_req);
 }/*auth_main_ex_v16*/
 
 void auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
@@ -3353,6 +3377,7 @@ void auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
             auth_attr[5],
             uidai_attr[2]);
   util_init(crypto_attr[0], crypto_attr[1], crypto_attr[2]);
+  uidai_init_ex("192.168.1.3", 8080, uidai_attr[1], 80);
 
   for(idx = 0; idx < 7; idx++) {
     free(auth_attr[idx]);
@@ -3369,10 +3394,10 @@ void auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
 }/*auth_init_ex*/
 
 
-int32_t auth_main_ex(uint8_t *in_ptr, 
-                     uint32_t in_len, 
-                     uint16_t version, 
-                     int32_t rsp_fd) {
+uint8_t *auth_main_ex(uint8_t *in_ptr, 
+                      uint32_t in_len, 
+                      uint16_t version, 
+                      int32_t rsp_fd) {
 
   uint32_t rsp_len = 0;
   uint8_t *rsp_ptr = NULL;
@@ -3382,7 +3407,7 @@ int32_t auth_main_ex(uint8_t *in_ptr,
     rsp_ptr = auth_main_ex_v16(in_ptr, in_len, &rsp_len);
   }
 
-  return(0);
+  return(rsp_ptr);
 }/*auth_main_ex*/
 
 #endif /* __AUTH_C__ */
