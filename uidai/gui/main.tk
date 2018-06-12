@@ -65,137 +65,137 @@ proc Exit {arg} {
  
 proc staging_auth {version} {
 
-  init_frame container 
-  staging_auth_form container $version 
-  staging_uses_form container $version
-  staging_tkn_form  container $version
-  staging_meta_form container $version
-  staging_pi_form   container $version
-  staging_pa_form   container $version
-  staging_pfa_form  container $version
-  staging_bio_form  container $version
-  staging_pv_form   container $version
-  staging_demo_form container $version
-  staging_uidai_form container $version
-  crypto_widget container $version
-  btn_widget container staging $version
+  set container [init_frame container ]
+  staging_auth_form $container $version 
+  staging_uses_form $container $version
+  staging_tkn_form  $container $version
+  staging_meta_form $container $version
+  staging_pi_form   $container $version
+  staging_pa_form   $container $version
+  staging_pfa_form  $container $version
+  staging_bio_form  $container $version
+  staging_pv_form   $container $version
+  staging_demo_form $container $version
+  staging_uidai_form $container $version
+  crypto_widget $container $version
+  btn_widget $container staging $version
 
 };#/*staging_auth*/
 
 proc staging_pi_form {f_name version} {
 
-  labelframe .staging_pi -text "Pi (Attributes)"
-  grid .staging_pi -sticky news -pady 2 -padx 1 -row 1 -column 1 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_pi -text "Pi (Attributes)"]
+  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 1
 
   if {$version == "1.6"} {
-    staging_pi_attr_v16
+    staging_pi_attr_v16 $lbl_frm
   }
 };#/*staging_pi_form*/
 
 proc staging_pa_form {f_name version} {
 
-  labelframe .staging_pa -text "Pa (Attributes)"
-  grid .staging_pa -sticky news -pady 2 -padx 1 -row 1 -column 2 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_pa -text "Pa (Attributes)"]
+  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 2
 
   if {$version == "1.6"} {
-    staging_pa_attr_v16
+    staging_pa_attr_v16 $lbl_frm
   }
 };#/*staging_pa_form*/
 
 proc staging_pfa_form {f_name version} {
 
-  labelframe .staging_pfa -text "Pfa (Attributes)"
-  grid .staging_pfa -sticky news -pady 2 -padx 1 -row 2 -column 0 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_pfa -text "Pfa (Attributes)"]
+  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 0
 
   if {$version == "1.6"} {
-    staging_pfa_attr_v16
+    staging_pfa_attr_v16 $lbl_frm
   }
 };#/*staging_pfa_form*/
 
 proc staging_bio_form {f_name version} {
 
-  labelframe .staging_bio -text "Bio (Attributes)"
-  grid .staging_bio -sticky news -pady 2 -padx 1 -row 2 -column 1 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_bio -text "Bio (Attributes)"]
+  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 1
 
   if {$version == "1.6"} {
-    staging_bio_attr_v16
+    staging_bio_attr_v16 $lbl_frm
   }
 };#/*staging_bio_form*/
 
 proc staging_pv_form {f_name version} {
 
-  labelframe .staging_pv -text "Pv (Attributes)"
-  grid .staging_pv -sticky news -pady 2 -padx 1 -row 2 -column 2 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_pv -text "Pv (Attributes)"]
+  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 2
 
   if {$version == "1.6"} {
-    staging_pv_attr_v16
+    staging_pv_attr_v16 $lbl_frm
   }
 };#/*staging_pv_form*/
 
 proc staging_demo_form {f_name version} {
 
-  labelframe .staging_demo -text "Demo (Attributes)"
-  grid .staging_demo -sticky news -pady 2 -padx 1 -row 3 -column 0 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_demo -text "Demo (Attributes)"]
+  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 3 -column 0
 
   if {$version == "1.6"} {
-    staging_demo_attr_v16
+    staging_demo_attr_v16 $lbl_frm
   }
 };#/*staging_demo_form*/
 
 proc staging_uidai_form {f_name version} {
 
-  labelframe .staging_uidai -text "Uidai Host (Attributes)"
-  grid .staging_uidai -sticky news -pady 2 -padx 1 -row 3 -column 1 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
+  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 3 -column 1
 
   if {$version == "1.6"} {
-    staging_uidai_server
+    staging_uidai_server $lbl_frm
   }
 };#/*staging_uidai_form*/
 
 
 proc staging_auth_form {f_name version} {
-  labelframe .staging_auth -text "Auth* (Attributes)"
-  grid .staging_auth -sticky news -row 0 -column 0 -pady 2 -padx 1 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_auth -text "Auth* (Attributes)"]
+  grid $lbl_frm -sticky news -row 0 -column 0 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    staging_auth_attr_v16
+    staging_auth_attr_v16 $lbl_frm
 
   } elseif {$version == "2.0"} {
-    staging_auth_attr_v20
+    staging_auth_attr_v20 $lbl_frm
 
   } elseif {$version == "2.5"} {
-    staging_auth_attr_v25
+    staging_auth_attr_v25 $lbl_frm
 
   }
  
 };#/*staging_auth_form*/
 
 proc staging_uses_form {f_name version} {
-  labelframe .staging_uses -text "Uses* (Attributes)"
-  grid .staging_uses -sticky news -row 0 -column 1 -row 0 -pady 2 -padx 1 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_uses -text "Uses* (Attributes)"]
+  grid $lbl_frm -sticky news -row 0 -column 1 -row 0 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    staging_uses_attr_v16
+    staging_uses_attr_v16 $lbl_frm
   }
 
 };#/*staging_uses_form*/
 
 proc staging_tkn_form {f_name version} {
-  labelframe .staging_tkn -text "Tkn (Attributes)"
-  grid .staging_tkn -sticky news -row 0 -column 2 -row 0 -pady 2 -padx 1 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_tkn -text "Tkn (Attributes)"]
+  grid $lbl_frm -sticky news -row 0 -column 2 -row 0 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    staging_tkn_attr_v16
+    staging_tkn_attr_v16 $lbl_frm
   }
 
 };#/*staging_tkn_form*/
 
 proc staging_meta_form {f_name version} {
-  labelframe .staging_meta -text "Meta* (Attributes)"
-  grid .staging_meta -sticky news -column 0 -row 1 -pady 2 -padx 1 -in .$f_name
+  set lbl_frm [labelframe $f_name.staging_meta -text "Meta* (Attributes)"]
+  grid $lbl_frm -sticky news -column 0 -row 1 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    staging_meta_attr_v16
+    staging_meta_attr_v16 $lbl_frm
   }
 
 };#/*staging_meta_form*/
@@ -251,33 +251,33 @@ proc submit_contents {type version} {
 
 proc btn_widget {f_name type version} {
 
-  frame .btn_frame
-  labelframe .lbl_frame -text "Command"
+  set frm [frame $f_name.btn_frame]
+  set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
 
-  button .clear -text "Clear" -command "clear_contents $type $version"
-  button .default -text "Set Default Value" -command "default_contents $type $version"
-  button .submit -text "Submit" -command "submit_contents $type $version"
-  grid .clear .default .submit -row 4 -pady 5 -padx 5 -in .lbl_frame
-  grid .lbl_frame -in .btn_frame
-  grid .btn_frame -sticky w -pady 8 -padx 9 -in .$f_name 
+  button $lbl_frm.clear -text "Clear" -command "clear_contents $type $version"
+  button $lbl_frm.default -text "Set Default Value" -command "default_contents $type $version"
+  button $lbl_frm.submit -text "Submit" -command "submit_contents $type $version"
+  grid $lbl_frm.clear $lbl_frm.default $lbl_frm.submit -row 4 -pady 5 -padx 5
+  grid $lbl_frm 
+  grid $frm -sticky w -pady 8 -padx 9
     
 };#/*btn_widget*/
 
 proc crypto_widget {f_name version} {
 
-  frame .crypto_frame
-  labelframe .crypto_lbl_frame -text "Public/Privte Keys File"
-  entry .public -width 30 -textvariable crypto_public_key_file
-  entry .private -width 30 -textvariable crypto_private_key_file
-  entry .password -width 30 -textvariable crypto_password
-  label .lbl_password -text "Password"
-  button .btn_public -text "Select Public File" -command "browse_file public"
-  button .btn_private -text "Set Private Key File" -command "browse_file private"
-  grid .public .btn_public -pady 2 -padx 4 -sticky news -in .crypto_lbl_frame
-  grid .private .btn_private -pady 2 -padx 4 -sticky news -in .crypto_lbl_frame
-  grid .password .lbl_password -pady 2 -padx 4 -sticky ew -in .crypto_lbl_frame
-  grid .crypto_lbl_frame -in .crypto_frame
-  grid .crypto_frame -sticky news -pady 2 -padx 1 -row 3 -column 2 -in .$f_name
+  set frm [frame $f_name.crypto_frame]
+  set lbl_frm [labelframe $frm.crypto_lbl_frame -text "Public/Privte Keys File"]
+  entry $lbl_frm.public -width 30 -textvariable crypto_public_key_file
+  entry $lbl_frm.private -width 30 -textvariable crypto_private_key_file
+  entry $lbl_frm.password -width 30 -textvariable crypto_password
+  label $lbl_frm.lbl_password -text "Password"
+  button $lbl_frm.btn_public -text "Select Public File" -command "browse_file public"
+  button $lbl_frm.btn_private -text "Set Private Key File" -command "browse_file private"
+  grid $lbl_frm.public $lbl_frm.btn_public -pady 2 -padx 4 -sticky news
+  grid $lbl_frm.private $lbl_frm.btn_private -pady 2 -padx 4 -sticky news
+  grid $lbl_frm.password $lbl_frm.lbl_password -pady 2 -padx 4 -sticky ew
+  grid $lbl_frm
+  grid $frm -sticky news -pady 2 -padx 1 -row 3 -column 2
     
 };#/*crypto_widget*/
 
@@ -311,22 +311,24 @@ proc browse_file {type} {
 # @author NAUSHAD.DLN@GMAIL.COM
 # */
 proc init_frame {f_name} {
-  frame .$f_name
   canvas .canvas -xscrollcommand ".xscroll set" -yscrollcommand ".yscroll set" -width 1140 -height 750  
   scrollbar .xscroll -orient horizontal -command ".canvas xview"
   scrollbar .yscroll -orient vertical -command ".canvas yview"
 
-  .canvas create window 0 0 -anchor nw -window .$f_name
+  set container [frame .canvas.$f_name]
+
+  .canvas create window 0 0 -anchor nw -window $container
 
   grid .canvas - .yscroll -sticky news -pady 4 -padx 2
   grid .xscroll - x -sticky news
   grid rowconfigure . 0 -weight 1
   grid columnconfigure . 0 -weight 1
 
-  bind .$f_name <Configure> {
+  bind $container <Configure> {
     .canvas configure -scrollregion [.canvas bbox all]
   }
 
+  return $container
 };#/*init_frame*/
 
 # /**
@@ -453,7 +455,7 @@ proc build_menu {menu_b menu_bar} {
       eval $menu_bar$path add command -command $cmd -label $lbl
     }
   }
-};#/*build_menu_*/
+};#/*build_menu*/
 
 wm title . "Balaagh"
 menu .m

@@ -12,277 +12,301 @@ package require BWidget
 #*/
 
 set staging_wi_pname_v16 {
-  {auth.uide auth.tide auth.txne auth.ace auth.sae auth.vere auth.lke}
-  {uses.pic uses.pac uses.pfac uses.bioc uses.pvc uses.democ}
-  {tkn.typee tkn.valuee}
-  {meta.udce meta.fdce meta.idce meta.pipe meta.lote meta.love}
-  {pi.mse pi.mve pi.namee pi.lnamee pi.lmve pi.gendere pi.dobe pi.dobte pi.agee pi.phonee pi.emaile}
-  {pa.mse pa.coe pa.housee pa.streete pa.lme pa.loce pa.vtce pa.subdiste pa.diste pa.statee pa.pce pa.poe}
-  {pfa.mse pfa.mve pfa.ave pfa.lave pfa.lmve}
-  {bio.typee bio.poshe}
-  {pv.pine pv.otpe}
-  {demo.lange}
-  {uidai.urie uidai.hoste}
-  {public private password}
+  {canvas.container.staging_auth.auth.uide canvas.container.staging_auth.auth.tide \
+   canvas.container.staging_auth.auth.txne canvas.container.staging_auth.auth.ace \
+   canvas.container.staging_auth.auth.sae  canvas.container.staging_auth.auth.vere \
+   canvas.container.staging_auth.auth.lke}
+
+  {canvas.container.staging_uses.uses.pic  canvas.container.staging_uses.uses.pac \
+   canvas.container.staging_uses.uses.pfac canvas.container.staging_uses.uses.bioc \
+   canvas.container.staging_uses.uses.pvc  canvas.container.staging_uses.uses.democ}
+
+  {canvas.container.staging_tkn.tkn.typee  canvas.container.staging_tkn.tkn.valuee}
+
+  {canvas.container.staging_meta.meta.udce canvas.container.staging_meta.meta.fdce \
+   canvas.container.staging_meta.meta.idce canvas.container.staging_meta.meta.pipe \
+   canvas.container.staging_meta.meta.lote canvas.container.staging_meta.meta.love}
+
+  {canvas.container.staging_pi.pi.mse    canvas.container.staging_pi.pi.mve \
+   canvas.container.staging_pi.pi.namee canvas.container.staging_pi.pi.lnamee \
+   canvas.container.staging_pi.pi.lmve  canvas.container.staging_pi.pi.gendere \
+   canvas.container.staging_pi.pi.dobe  canvas.container.staging_pi.pi.dobte \
+   canvas.container.staging_pi.pi.agee  canvas.container.staging_pi.pi.phonee \
+   canvas.container.staging_pi.pi.emaile}
+
+  {canvas.container.staging_pa.pa.mse    canvas.container.staging_pa.pa.coe \
+   canvas.container.staging_pa.pa.housee canvas.container.staging_pa.pa.streete \
+   canvas.container.staging_pa.pa.lme    canvas.container.staging_pa.pa.loce \
+   canvas.container.staging_pa.pa.vtce   canvas.container.staging_pa.pa.subdiste \
+   canvas.container.staging_pa.pa.diste  canvas.container.staging_pa.pa.statee \
+   canvas.container.staging_pa.pa.pce    canvas.container.staging_pa.pa.poe}
+
+  {canvas.container.staging_pfa.pfa.mse canvas.container.staging_pfa.pfa.mve \
+   canvas.container.staging_pfa.pfa.ave canvas.container.staging_pfa.pfa.lave \
+   canvas.container.staging_pfa.pfa.lmve}
+
+  {canvas.container.staging_bio.bio.typee canvas.container.staging_bio.bio.poshe}
+  {canvas.container.staging_pv.pv.pine canvas.container.staging_pv.pv.otpe}
+  {canvas.container.staging_demo.demo.lange}
+  {canvas.container.staging_uidai.uidai.urie canvas.container.staging_uidai.uidai.hoste}
+  {canvas.container.crypto_frame.crypto_lbl_frame.public canvas.container.crypto_frame.crypto_lbl_frame.private \
+   canvas.container.crypto_frame.crypto_lbl_frame.password}
 }
 
 
-proc staging_auth_attr_v16 {} {
+proc staging_auth_attr_v16 {frm} {
 
-  frame .auth
-  label .auth.uid  -text "uid............"
-  label .auth.tid  -text "tid............"
-  label .auth.txn  -text "txn............"
-  label .auth.ac   -text "ac............."
-  label .auth.sa   -text "sa............."
-  label .auth.ver  -text "ver............"
-  label .auth.lk   -text "lk............."
+  frame $frm.auth
+  label $frm.auth.uid  -text "uid............"
+  label $frm.auth.tid  -text "tid............"
+  label $frm.auth.txn  -text "txn............"
+  label $frm.auth.ac   -text "ac............."
+  label $frm.auth.sa   -text "sa............."
+  label $frm.auth.ver  -text "ver............"
+  label $frm.auth.lk   -text "lk............."
  
-  entry .auth.uide  -width 30 -textvariable staging_auth_v16_uide
-  entry .auth.tide  -width 30 -textvariable staging_auth_v16_tide
-  entry .auth.txne  -width 30 -textvariable staging_auth_v16_txne
-  entry .auth.ace   -width 30 -textvariable staging_auth_v16_ace
-  entry .auth.sae   -width 30 -textvariable staging_auth_v16_sae
-  entry .auth.vere  -width 30 -textvariable staging_auth_v16_vere
-  entry .auth.lke   -width 30 -textvariable staging_auth_v16_lke
+  entry $frm.auth.uide  -width 30 -textvariable staging_auth_v16_uide
+  entry $frm.auth.tide  -width 30 -textvariable staging_auth_v16_tide
+  entry $frm.auth.txne  -width 30 -textvariable staging_auth_v16_txne
+  entry $frm.auth.ace   -width 30 -textvariable staging_auth_v16_ace
+  entry $frm.auth.sae   -width 30 -textvariable staging_auth_v16_sae
+  entry $frm.auth.vere  -width 30 -textvariable staging_auth_v16_vere
+  entry $frm.auth.lke   -width 30 -textvariable staging_auth_v16_lke
  
-  grid .auth.uid  .auth.uide  -pady 2 -padx 4 -sticky news
-  grid .auth.tid  .auth.tide  -pady 2 -padx 4 -sticky news
-  grid .auth.txn  .auth.txne  -pady 2 -padx 4 -sticky news
-  grid .auth.ac   .auth.ace   -pady 2 -padx 4 -sticky news
-  grid .auth.sa   .auth.sae   -pady 2 -padx 4 -sticky news
-  grid .auth.ver  .auth.vere  -pady 2 -padx 4 -sticky news
-  grid .auth.lk   .auth.lke   -pady 2 -padx 4 -sticky news
+  grid $frm.auth.uid  $frm.auth.uide  -pady 2 -padx 4 -sticky news
+  grid $frm.auth.tid  $frm.auth.tide  -pady 2 -padx 4 -sticky news
+  grid $frm.auth.txn  $frm.auth.txne  -pady 2 -padx 4 -sticky news
+  grid $frm.auth.ac   $frm.auth.ace   -pady 2 -padx 4 -sticky news
+  grid $frm.auth.sa   $frm.auth.sae   -pady 2 -padx 4 -sticky news
+  grid $frm.auth.ver  $frm.auth.vere  -pady 2 -padx 4 -sticky news
+  grid $frm.auth.lk   $frm.auth.lke   -pady 2 -padx 4 -sticky news
  
-  grid .auth -in .staging_auth
+  grid $frm.auth
 };#/*staging_auth_attr_v16*/
 
-proc staging_uses_attr_v16 {} {
-
-  frame .uses
-  label .uses.pi   -text "Pi............."
-  label .uses.pa   -text "Pa............."
-  label .uses.pfa  -text "Pfa............"
-  label .uses.bio  -text "Bio............"
-  label .uses.pv   -text "Pv............."
-  label .uses.demo -text "Demo..........."
+proc staging_uses_attr_v16 {frm} {
+  frame $frm.uses
+  label $frm.uses.pi   -text "Pi............."
+  label $frm.uses.pa   -text "Pa............."
+  label $frm.uses.pfa  -text "Pfa............"
+  label $frm.uses.bio  -text "Bio............"
+  label $frm.uses.pv   -text "Pv............."
+  label $frm.uses.demo -text "Demo..........."
  
-  checkbutton .uses.pic   -variable staging_uses_pic   -command {staging_uses_opt pic   $staging_uses_pic} 
-  checkbutton .uses.pac   -variable staging_uses_pac   -command {staging_uses_opt pac   $staging_uses_pac}
-  checkbutton .uses.pfac  -variable staging_uses_pfac  -command {staging_uses_opt pfac  $staging_uses_pfac}
-  checkbutton .uses.bioc  -variable staging_uses_bioc  -command {staging_uses_opt bioc  $staging_uses_bioc}
-  checkbutton .uses.pvc   -variable staging_uses_pvc   -command {staging_uses_opt pvc   $staging_uses_pvc}
-  checkbutton .uses.democ -variable staging_uses_democ -command {staging_uses_opt democ $staging_uses_democ}
- 
-  grid .uses.pi    .uses.pic   -pady 2 -padx 4 -sticky news 
-  grid .uses.pa    .uses.pac   -pady 2 -padx 4 -sticky news
-  grid .uses.pfa   .uses.pfac  -pady 2 -padx 4 -sticky news
-  grid .uses.bio   .uses.bioc  -pady 2 -padx 4 -sticky news
-  grid .uses.pv    .uses.pvc   -pady 2 -padx 4 -sticky news
-  grid .uses.demo  .uses.democ -pady 2 -padx 4 -sticky news
+  checkbutton $frm.uses.pic   -variable staging_uses_pic   -command {staging_uses_opt pic   $staging_uses_pic} 
+  checkbutton $frm.uses.pac   -variable staging_uses_pac   -command {staging_uses_opt pac   $staging_uses_pac}
+  checkbutton $frm.uses.pfac  -variable staging_uses_pfac  -command {staging_uses_opt pfac  $staging_uses_pfac}
+  checkbutton $frm.uses.bioc  -variable staging_uses_bioc  -command {staging_uses_opt bioc  $staging_uses_bioc}
+  checkbutton $frm.uses.pvc   -variable staging_uses_pvc   -command {staging_uses_opt pvc   $staging_uses_pvc}
+  checkbutton $frm.uses.democ -variable staging_uses_democ -command {staging_uses_opt democ $staging_uses_democ}
 
-  grid .uses -in .staging_uses
+  grid $frm.uses.pi    $frm.uses.pic   -pady 2 -padx 4 -sticky news 
+  grid $frm.uses.pa    $frm.uses.pac   -pady 2 -padx 4 -sticky news
+  grid $frm.uses.pfa   $frm.uses.pfac  -pady 2 -padx 4 -sticky news
+  grid $frm.uses.bio   $frm.uses.bioc  -pady 2 -padx 4 -sticky news
+  grid $frm.uses.pv    $frm.uses.pvc   -pady 2 -padx 4 -sticky news
+  grid $frm.uses.demo  $frm.uses.democ -pady 2 -padx 4 -sticky news
+
+  grid $frm.uses
 };#/*staging_uses_attr_v16*/
 
-proc staging_tkn_attr_v16 {} {
+proc staging_tkn_attr_v16 {frm} {
 
-  frame .tkn
-  label .tkn.type  -text "Type*.........."
-  label .tkn.value -text "Value*........."
+  frame $frm.tkn
+  label $frm.tkn.type  -text "Type*.........."
+  label $frm.tkn.value -text "Value*........."
  
-  #entry .tkn.typee -width 30
-  ComboBox .tkn.typee -width 30 -values {"Mobile Number" "NA"} -text "NA"
-  entry .tkn.valuee -width 30
+  ComboBox $frm.tkn.typee -width 30 -values {"Mobile Number" "NA"} -text "NA"
+  entry $frm.tkn.valuee -width 30
  
-  grid .tkn.type  .tkn.typee  -pady 2 -padx 4 -sticky news
-  grid .tkn.value .tkn.valuee -pady 2 -padx 4 -sticky news
+  grid $frm.tkn.type  $frm.tkn.typee  -pady 2 -padx 4 -sticky news
+  grid $frm.tkn.value $frm.tkn.valuee -pady 2 -padx 4 -sticky news
 
-  grid .tkn -in .staging_tkn
+  grid $frm.tkn
 };#/*staging_tkn_attr_v16*/
 
-proc staging_meta_attr_v16 {} {
+proc staging_meta_attr_v16 {frm} {
 
-  frame .meta
-  label .meta.udc  -text "Udc*..........."
-  label .meta.fdc  -text "Fdc*..........."
-  label .meta.idc  -text "Idc*..........."
-  label .meta.pip  -text "Pip*..........."
-  label .meta.lot  -text "Lot*..........."
-  label .meta.lov  -text "Lov*..........."
+  frame $frm.meta
+  label $frm.meta.udc  -text "Udc*..........."
+  label $frm.meta.fdc  -text "Fdc*..........."
+  label $frm.meta.idc  -text "Idc*..........."
+  label $frm.meta.pip  -text "Pip*..........."
+  label $frm.meta.lot  -text "Lot*..........."
+  label $frm.meta.lov  -text "Lov*..........."
  
-  entry .meta.udce -width 30 -textvariable staging_meta_v16_udce
-  ComboBox .meta.fdce -width 30 -values {NC NA} -text "NA"
-  entry .meta.idce -width 30 -textvariable staging_meta_v16_idce
-  entry .meta.pipe -width 30 -textvariable staging_meta_v16_pipe
-  ComboBox .meta.lote -width 30 -values {G P} -text "P"
-  entry .meta.love -width 30 -textvariable staging_meta_v16_love
+  entry $frm.meta.udce -width 30 -textvariable staging_meta_v16_udce
+  ComboBox $frm.meta.fdce -width 30 -values {NC NA} -text "NA"
+  entry $frm.meta.idce -width 30 -textvariable staging_meta_v16_idce
+  entry $frm.meta.pipe -width 30 -textvariable staging_meta_v16_pipe
+  ComboBox $frm.meta.lote -width 30 -values {G P} -text "P"
+  entry $frm.meta.love -width 30 -textvariable staging_meta_v16_love
  
-  grid .meta.udc  .meta.udce  -pady 2 -padx 4 -sticky news
-  grid .meta.fdc  .meta.fdce  -pady 2 -padx 4 -sticky news
-  grid .meta.idc  .meta.idce  -pady 2 -padx 4 -sticky news
-  grid .meta.pip  .meta.pipe  -pady 2 -padx 4 -sticky news
-  grid .meta.lot  .meta.lote  -pady 2 -padx 4 -sticky news
-  grid .meta.lov  .meta.love  -pady 2 -padx 4 -sticky news
+  grid $frm.meta.udc  $frm.meta.udce  -pady 2 -padx 4 -sticky news
+  grid $frm.meta.fdc  $frm.meta.fdce  -pady 2 -padx 4 -sticky news
+  grid $frm.meta.idc  $frm.meta.idce  -pady 2 -padx 4 -sticky news
+  grid $frm.meta.pip  $frm.meta.pipe  -pady 2 -padx 4 -sticky news
+  grid $frm.meta.lot  $frm.meta.lote  -pady 2 -padx 4 -sticky news
+  grid $frm.meta.lov  $frm.meta.love  -pady 2 -padx 4 -sticky news
 
-  grid .meta -in .staging_meta
+  grid $frm.meta
 };#/*staging_meta_attr_v16*/
 
-proc staging_pi_attr_v16 {} {
+proc staging_pi_attr_v16 {frm} {
   global staging_pi_mve_v16
 
   set staging_pi_mve_v16 "100"
-  frame .pi
-  label .pi.ms     -text "Ms............."
-  label .pi.mv     -text "Mv............."
-  label .pi.name   -text "Name..........."
-  label .pi.lname  -text "Lname.........."
-  label .pi.lmv    -text "Lmv............"
-  label .pi.gender -text "Gender........."
-  label .pi.dob    -text "Dob............"
-  label .pi.dobt   -text "Dobt..........."
-  label .pi.age    -text "Age............"
-  label .pi.phone  -text "Phone.........."
-  label .pi.email  -text "E-mail........."
+  frame $frm.pi
+  label $frm.pi.ms     -text "Ms............."
+  label $frm.pi.mv     -text "Mv............."
+  label $frm.pi.name   -text "Name..........."
+  label $frm.pi.lname  -text "Lname.........."
+  label $frm.pi.lmv    -text "Lmv............"
+  label $frm.pi.gender -text "Gender........."
+  label $frm.pi.dob    -text "Dob............"
+  label $frm.pi.dobt   -text "Dobt..........."
+  label $frm.pi.age    -text "Age............"
+  label $frm.pi.phone  -text "Phone.........."
+  label $frm.pi.email  -text "E-mail........."
  
-  ComboBox .pi.mse  -width 30 -values {P E} -text "E"
-  entry .pi.mve     -width 30 -textvariable  staging_pi_mve_v16
-  entry .pi.namee   -width 30 -textvariable staging_pi_namee_v16
-  entry .pi.lnamee  -width 30 -textvariable staging_pi_lnamee_v16
-  entry .pi.lmve    -width 30 -textvariable staging_pi_lmve_v16
-  ComboBox .pi.gendere -width 30 -values {M F T} -text "M"
-  entry .pi.dobe    -width 30
-  ComboBox .pi.dobte -width 30 -values {D V A} -text "V"
-  entry .pi.agee    -width 30 -textvariable staging_pi_age_v16
-  entry .pi.phonee  -width 30 -textvariable staging_pi_phonee_v16
-  entry .pi.emaile  -width 30 -textvariable staging_pi_emaile_v16
+  ComboBox $frm.pi.mse  -width 30 -values {P E} -text "E"
+  entry $frm.pi.mve     -width 30 -textvariable  staging_pi_mve_v16
+  entry $frm.pi.namee   -width 30 -textvariable staging_pi_namee_v16
+  entry $frm.pi.lnamee  -width 30 -textvariable staging_pi_lnamee_v16
+  entry $frm.pi.lmve    -width 30 -textvariable staging_pi_lmve_v16
+  ComboBox $frm.pi.gendere -width 30 -values {M F T} -text "M"
+  entry $frm.pi.dobe    -width 30
+  ComboBox $frm.pi.dobte -width 30 -values {D V A} -text "V"
+  entry $frm.pi.agee    -width 30 -textvariable staging_pi_age_v16
+  entry $frm.pi.phonee  -width 30 -textvariable staging_pi_phonee_v16
+  entry $frm.pi.emaile  -width 30 -textvariable staging_pi_emaile_v16
  
-  grid .pi.ms     .pi.mse     -pady 2 -padx 4 -sticky news
-  grid .pi.mv     .pi.mve     -pady 2 -padx 4 -sticky news
-  grid .pi.name   .pi.namee   -pady 2 -padx 4 -sticky news
-  grid .pi.lname  .pi.lnamee  -pady 2 -padx 4 -sticky news
-  grid .pi.lmv    .pi.lmve    -pady 2 -padx 4 -sticky news
-  grid .pi.gender .pi.gendere -pady 2 -padx 4 -sticky news
-  grid .pi.dob    .pi.dobe    -pady 2 -padx 4 -sticky news
-  grid .pi.dobt   .pi.dobte   -pady 2 -padx 4 -sticky news
-  grid .pi.age    .pi.agee    -pady 2 -padx 4 -sticky news
-  grid .pi.phone  .pi.phonee  -pady 2 -padx 4 -sticky news
-  grid .pi.email  .pi.emaile  -pady 2 -padx 4 -sticky news
+  grid $frm.pi.ms     $frm.pi.mse     -pady 2 -padx 4 -sticky news
+  grid $frm.pi.mv     $frm.pi.mve     -pady 2 -padx 4 -sticky news
+  grid $frm.pi.name   $frm.pi.namee   -pady 2 -padx 4 -sticky news
+  grid $frm.pi.lname  $frm.pi.lnamee  -pady 2 -padx 4 -sticky news
+  grid $frm.pi.lmv    $frm.pi.lmve    -pady 2 -padx 4 -sticky news
+  grid $frm.pi.gender $frm.pi.gendere -pady 2 -padx 4 -sticky news
+  grid $frm.pi.dob    $frm.pi.dobe    -pady 2 -padx 4 -sticky news
+  grid $frm.pi.dobt   $frm.pi.dobte   -pady 2 -padx 4 -sticky news
+  grid $frm.pi.age    $frm.pi.agee    -pady 2 -padx 4 -sticky news
+  grid $frm.pi.phone  $frm.pi.phonee  -pady 2 -padx 4 -sticky news
+  grid $frm.pi.email  $frm.pi.emaile  -pady 2 -padx 4 -sticky news
 
-  grid .pi -in .staging_pi
+  grid $frm.pi
   #;/*Disable the entry for Pi Dempgraphic data*/
   staging_uses_opt pic  0
 };#/*staging_pi_attr_v16*/
 
-proc staging_pa_attr_v16 {} {
-  frame .pa
-  label .pa.ms        -text "Ms............."
-  label .pa.co        -text "Co............."
-  label .pa.house     -text "House.........."
-  label .pa.street    -text "Street........."
-  label .pa.lm        -text "Lm............."
-  label .pa.loc       -text "Loc............"
-  label .pa.vtc       -text "Vtc............"
-  label .pa.subdist   -text "Subdist........"
-  label .pa.dist      -text "Dist..........."
-  label .pa.state     -text "State.........."
-  label .pa.pc        -text "Pc............."
-  label .pa.po        -text "Po............."
+proc staging_pa_attr_v16 {frm} {
+  frame $frm.pa
+  label $frm.pa.ms        -text "Ms............."
+  label $frm.pa.co        -text "Co............."
+  label $frm.pa.house     -text "House.........."
+  label $frm.pa.street    -text "Street........."
+  label $frm.pa.lm        -text "Lm............."
+  label $frm.pa.loc       -text "Loc............"
+  label $frm.pa.vtc       -text "Vtc............"
+  label $frm.pa.subdist   -text "Subdist........"
+  label $frm.pa.dist      -text "Dist..........."
+  label $frm.pa.state     -text "State.........."
+  label $frm.pa.pc        -text "Pc............."
+  label $frm.pa.po        -text "Po............."
  
-  entry .pa.mse      -width 30
-  entry .pa.coe      -width 30 
-  entry .pa.housee   -width 30
-  entry .pa.streete  -width 30
-  entry .pa.lme      -width 30
-  entry .pa.loce     -width 30
-  entry .pa.vtce     -width 30
-  entry .pa.subdiste -width 30
-  entry .pa.diste    -width 30
-  entry .pa.statee   -width 30
-  entry .pa.pce      -width 30
-  entry .pa.poe      -width 30
+  entry $frm.pa.mse      -width 30
+  entry $frm.pa.coe      -width 30 
+  entry $frm.pa.housee   -width 30
+  entry $frm.pa.streete  -width 30
+  entry $frm.pa.lme      -width 30
+  entry $frm.pa.loce     -width 30
+  entry $frm.pa.vtce     -width 30
+  entry $frm.pa.subdiste -width 30
+  entry $frm.pa.diste    -width 30
+  entry $frm.pa.statee   -width 30
+  entry $frm.pa.pce      -width 30
+  entry $frm.pa.poe      -width 30
  
-  grid .pa.ms       .pa.mse       -pady 2 -padx 4 -sticky news
-  grid .pa.co       .pa.coe       -pady 2 -padx 4 -sticky news
-  grid .pa.house    .pa.housee    -pady 2 -padx 4 -sticky news
-  grid .pa.street   .pa.streete   -pady 2 -padx 4 -sticky news
-  grid .pa.lm       .pa.lme       -pady 2 -padx 4 -sticky news
-  grid .pa.loc      .pa.loce      -pady 2 -padx 4 -sticky news
-  grid .pa.vtc      .pa.vtce      -pady 2 -padx 4 -sticky news
-  grid .pa.subdist  .pa.subdiste  -pady 2 -padx 4 -sticky news
-  grid .pa.dist     .pa.diste     -pady 2 -padx 4 -sticky news
-  grid .pa.state    .pa.statee    -pady 2 -padx 4 -sticky news
-  grid .pa.pc       .pa.pce       -pady 2 -padx 4 -sticky news
-  grid .pa.po       .pa.poe       -pady 2 -padx 4 -sticky news
+  grid $frm.pa.ms       $frm.pa.mse       -pady 2 -padx 4 -sticky news
+  grid $frm.pa.co       $frm.pa.coe       -pady 2 -padx 4 -sticky news
+  grid $frm.pa.house    $frm.pa.housee    -pady 2 -padx 4 -sticky news
+  grid $frm.pa.street   $frm.pa.streete   -pady 2 -padx 4 -sticky news
+  grid $frm.pa.lm       $frm.pa.lme       -pady 2 -padx 4 -sticky news
+  grid $frm.pa.loc      $frm.pa.loce      -pady 2 -padx 4 -sticky news
+  grid $frm.pa.vtc      $frm.pa.vtce      -pady 2 -padx 4 -sticky news
+  grid $frm.pa.subdist  $frm.pa.subdiste  -pady 2 -padx 4 -sticky news
+  grid $frm.pa.dist     $frm.pa.diste     -pady 2 -padx 4 -sticky news
+  grid $frm.pa.state    $frm.pa.statee    -pady 2 -padx 4 -sticky news
+  grid $frm.pa.pc       $frm.pa.pce       -pady 2 -padx 4 -sticky news
+  grid $frm.pa.po       $frm.pa.poe       -pady 2 -padx 4 -sticky news
 
-  grid .pa -in .staging_pa
+  grid $frm.pa
 
   #;/*Disable the entry for Pa Dempgraphic data*/
   staging_uses_opt pac  0
 };#/*staging_pa_attr_v16*/
 
-proc staging_pfa_attr_v16 {} {
-  frame .pfa
-  label .pfa.ms        -text "Ms............."
-  label .pfa.mv        -text "Mv............."
-  label .pfa.av        -text "Av............."
-  label .pfa.lav       -text "Lav............"
-  label .pfa.lmv       -text "Lmv............"
+proc staging_pfa_attr_v16 {frm} {
+  frame $frm.pfa
+  label $frm.pfa.ms        -text "Ms............."
+  label $frm.pfa.mv        -text "Mv............."
+  label $frm.pfa.av        -text "Av............."
+  label $frm.pfa.lav       -text "Lav............"
+  label $frm.pfa.lmv       -text "Lmv............"
  
-  ComboBox .pfa.mse   -width 30 -values {E P} -text "E"
-  entry .pfa.mve   -width 30 
-  entry .pfa.ave   -width 30
-  entry .pfa.lave  -width 30
-  entry .pfa.lmve  -width 30
+  ComboBox $frm.pfa.mse   -width 30 -values {E P} -text "E"
+  entry $frm.pfa.mve   -width 30 
+  entry $frm.pfa.ave   -width 30
+  entry $frm.pfa.lave  -width 30
+  entry $frm.pfa.lmve  -width 30
  
-  grid .pfa.ms    .pfa.mse    -pady 2 -padx 4 -sticky news
-  grid .pfa.mv    .pfa.mve    -pady 2 -padx 4 -sticky news
-  grid .pfa.av    .pfa.ave    -pady 2 -padx 4 -sticky news
-  grid .pfa.lav   .pfa.lave   -pady 2 -padx 4 -sticky news
-  grid .pfa.lmv   .pfa.lmve   -pady 2 -padx 4 -sticky news
+  grid $frm.pfa.ms    $frm.pfa.mse    -pady 2 -padx 4 -sticky news
+  grid $frm.pfa.mv    $frm.pfa.mve    -pady 2 -padx 4 -sticky news
+  grid $frm.pfa.av    $frm.pfa.ave    -pady 2 -padx 4 -sticky news
+  grid $frm.pfa.lav   $frm.pfa.lave   -pady 2 -padx 4 -sticky news
+  grid $frm.pfa.lmv   $frm.pfa.lmve   -pady 2 -padx 4 -sticky news
 
-  grid .pfa -in .staging_pfa
+  grid $frm.pfa
   #;/*Disable the entry for Pfa Dempgraphic data*/
   staging_uses_opt pfac  0
 };#/*staging_pfa_attr_v16*/
 
-proc staging_bio_attr_v16 {} {
+proc staging_bio_attr_v16 {frm} {
 
-  frame .bio
-  label .bio.type  -text "Type..........."
-  label .bio.posh  -text "Posh..........."
+  frame $frm.bio
+  label $frm.bio.type  -text "Type..........."
+  label $frm.bio.posh  -text "Posh..........."
  
-  ComboBox .bio.typee -width 30 -values {FMR FIR IIR}
-  #entry .bio.poshe -width 30 
-  ComboBox .bio.poshe -width 30 -values {LEFT_IRIS \
+  ComboBox $frm.bio.typee -width 30 -values {FMR FIR IIR}
+  ComboBox $frm.bio.poshe -width 30 -values {LEFT_IRIS \
                                          RIGHT_IRIS LEFT_INDEX LEFT_LITTLE LEFT_MIDDLE LEFT_RING \
                                          LEFT_THUMB RIGHT_INDEX RIGHT_LITTLE RIGHT_MIDDLE \
                                          RIGHT_RING RIGHT_THUMB UNKNOWN} -text "UNKNOWN"
  
-  grid .bio.type  .bio.typee -pady 2 -padx 4 -sticky news
-  grid .bio.posh  .bio.poshe -pady 2 -padx 4 -sticky news
-  grid .bio -in .staging_bio
+  grid $frm.bio.type  $frm.bio.typee -pady 2 -padx 4 -sticky news
+  grid $frm.bio.posh  $frm.bio.poshe -pady 2 -padx 4 -sticky news
+  grid $frm.bio
  
   #;/*Disable the entry for bio Dempgraphic data*/
   staging_uses_opt bioc  0
 };#/*staging_bio_attr_v16*/
 
-proc staging_pv_attr_v16 {} {
-  frame .pv
-  label .pv.pin  -text "Pin............"
-  label .pv.otp  -text "Otp............"
+proc staging_pv_attr_v16 {frm} {
+  frame $frm.pv
+  label $frm.pv.pin  -text "Pin............"
+  label $frm.pv.otp  -text "Otp............"
  
-  entry .pv.pine -width 30
-  entry .pv.otpe -width 30 
+  entry $frm.pv.pine -width 30
+  entry $frm.pv.otpe -width 30 
  
-  grid .pv.pin  .pv.pine    -pady 2 -padx 4 -sticky news
-  grid .pv.otp  .pv.otpe    -pady 2 -padx 4 -sticky news
-  grid .pv -in .staging_pv
+  grid $frm.pv.pin  $frm.pv.pine    -pady 2 -padx 4 -sticky news
+  grid $frm.pv.otp  $frm.pv.otpe    -pady 2 -padx 4 -sticky news
+  grid $frm.pv
 
   #;/*Disable the entry for Pv Dempgraphic data*/
   staging_uses_opt pvc  0
 };#/*staging_pv_attr_v16*/
 
-proc staging_demo_attr_v16 {} {
+proc staging_demo_attr_v16 {frm} {
 
   set lang_opt {Assamese
                 Bengali
@@ -298,34 +322,34 @@ proc staging_demo_attr_v16 {} {
                 Telugu
                 Urdu }
 
-  frame .demo
-  label .demo.lang  -text "Language......."
+  frame $frm.demo
+  label $frm.demo.lang  -text "Language......."
  
-  ComboBox .demo.lange -values $lang_opt -modifycmd {staging_demo_lang_get .demo.lange} -width 30 
+  ComboBox $frm.demo.lange -values $lang_opt -modifycmd {staging_demo_lang_get .demo.lange} -width 30 
  
-  grid .demo.lang  .demo.lange    -pady 2 -padx 4 -sticky news
-  grid .demo -in .staging_demo
+  grid $frm.demo.lang  $frm.demo.lange    -pady 2 -padx 4 -sticky news
+  grid $frm.demo
 
   #;/*Disable the entry for Democ Dempgraphic data*/
   staging_uses_opt democ  0
 };#/*staging_demo_attr_v16*/
 
-proc staging_uidai_server {} {
+proc staging_uidai_server {frm} {
 
   global uidai_host_name
   set uri_val {/uidauth/1.6 /auth /auth2.5}
   set uidai_host_name "developer.uidai.gov.in"
-  frame .uidai
-  label .uidai.uri   -text "Uri............"
-  label .uidai.host  -text "Host............"
+  frame $frm.uidai
+  label $frm.uidai.uri   -text "Uri............"
+  label $frm.uidai.host  -text "Host............"
  
-  ComboBox .uidai.urie -values $uri_val -width 30 -text [lindex $uri_val 0] 
-  entry .uidai.hoste -width 30 -textvariable uidai_host_name
+  ComboBox $frm.uidai.urie -values $uri_val -width 30 -text [lindex $uri_val 0] 
+  entry $frm.uidai.hoste -width 30 -textvariable uidai_host_name
   
  
-  grid .uidai.uri  .uidai.urie    -pady 2 -padx 4 -sticky news
-  grid .uidai.host .uidai.hoste  -pady 2 -padx 4 -sticky news
-  grid .uidai -in .staging_uidai
+  grid $frm.uidai.uri  $frm.uidai.urie    -pady 2 -padx 4 -sticky news
+  grid $frm.uidai.host $frm.uidai.hoste  -pady 2 -padx 4 -sticky news
+  grid $frm.uidai
 
 };#/*staging_uidai_server*/
 
@@ -438,7 +462,9 @@ proc staging_set_default_auth_v16 {} {
 };#/*staging_set_default_auth_v16*/
 
 proc staging_set_default_uses_v16 {} {
-  .uses.pic select
+  .canvas.container.staging_uses.uses.pic select
+  .canvas.container.staging_uses.uses.democ select
+  
 
 };#/*staging_set_default_uses_v16*/
 
@@ -589,7 +615,7 @@ proc staging_get_pi_attr_value {offset} {
 
   foreach val $attr {
 
-    if {$val == "pi.namee"} {
+    if {$val == "canvas.container.staging_pi.pi.namee"} {
       set name [.$val get]
       set name [regsub -all {\s+} $name +]
       set str [concat $str [lindex $arg $idx]=$name]
