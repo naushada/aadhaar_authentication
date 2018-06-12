@@ -311,21 +311,25 @@ proc browse_file {type} {
 # @author NAUSHAD.DLN@GMAIL.COM
 # */
 proc init_frame {f_name} {
-  canvas .canvas -xscrollcommand ".xscroll set" -yscrollcommand ".yscroll set" -width 1140 -height 750  
-  scrollbar .xscroll -orient horizontal -command ".canvas xview"
-  scrollbar .yscroll -orient vertical -command ".canvas yview"
 
-  set container [frame .canvas.$f_name]
+  toplevel .child_win
+  wm title .child_win "Authentication"
 
-  .canvas create window 0 0 -anchor nw -window $container
+  canvas .child_win.canvas -xscrollcommand ".child_win.xscroll set" -yscrollcommand ".child_win.yscroll set" -width 500 -height 600
+  scrollbar .child_win.xscroll -orient horizontal -command ".child_win.canvas xview"
+  scrollbar .child_win.yscroll -orient vertical -command ".child_win.canvas yview"
 
-  grid .canvas - .yscroll -sticky news -pady 4 -padx 2
-  grid .xscroll - x -sticky news
-  grid rowconfigure . 0 -weight 1
-  grid columnconfigure . 0 -weight 1
+  set container [frame .child_win.canvas.$f_name]
+
+  .child_win.canvas create window 0 0 -anchor nw -window $container
+
+  grid .child_win.canvas - .child_win.yscroll -sticky news -pady 4 -padx 2
+  grid .child_win.xscroll - x -sticky news
+  grid rowconfigure .child_win 0 -weight 1
+  grid columnconfigure .child_win 0 -weight 1
 
   bind $container <Configure> {
-    .canvas configure -scrollregion [.canvas bbox all]
+    .child_win.canvas configure -scrollregion [.child_win.canvas bbox all]
   }
 
   return $container

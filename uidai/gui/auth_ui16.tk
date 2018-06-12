@@ -12,45 +12,45 @@ package require BWidget
 #*/
 
 set staging_wi_pname_v16 {
-  {canvas.container.staging_auth.auth.uide canvas.container.staging_auth.auth.tide \
-   canvas.container.staging_auth.auth.txne canvas.container.staging_auth.auth.ace \
-   canvas.container.staging_auth.auth.sae  canvas.container.staging_auth.auth.vere \
-   canvas.container.staging_auth.auth.lke}
+  {child_win.canvas.container.staging_auth.auth.uide child_win.canvas.container.staging_auth.auth.tide \
+   child_win.canvas.container.staging_auth.auth.txne child_win.canvas.container.staging_auth.auth.ace \
+   child_win.canvas.container.staging_auth.auth.sae  child_win.canvas.container.staging_auth.auth.vere \
+   child_win.canvas.container.staging_auth.auth.lke}
 
-  {canvas.container.staging_uses.uses.pic  canvas.container.staging_uses.uses.pac \
-   canvas.container.staging_uses.uses.pfac canvas.container.staging_uses.uses.bioc \
-   canvas.container.staging_uses.uses.pvc  canvas.container.staging_uses.uses.democ}
+  {child_win.canvas.container.staging_uses.uses.pic  child_win.canvas.container.staging_uses.uses.pac \
+   child_win.canvas.container.staging_uses.uses.pfac child_win.canvas.container.staging_uses.uses.bioc \
+   child_win.canvas.container.staging_uses.uses.pvc  child_win.canvas.container.staging_uses.uses.democ}
 
-  {canvas.container.staging_tkn.tkn.typee  canvas.container.staging_tkn.tkn.valuee}
+  {child_win.canvas.container.staging_tkn.tkn.typee  child_win.canvas.container.staging_tkn.tkn.valuee}
 
-  {canvas.container.staging_meta.meta.udce canvas.container.staging_meta.meta.fdce \
-   canvas.container.staging_meta.meta.idce canvas.container.staging_meta.meta.pipe \
-   canvas.container.staging_meta.meta.lote canvas.container.staging_meta.meta.love}
+  {child_win.canvas.container.staging_meta.meta.udce child_win.canvas.container.staging_meta.meta.fdce \
+   child_win.canvas.container.staging_meta.meta.idce child_win.canvas.container.staging_meta.meta.pipe \
+   child_win.canvas.container.staging_meta.meta.lote child_win.canvas.container.staging_meta.meta.love}
 
-  {canvas.container.staging_pi.pi.mse    canvas.container.staging_pi.pi.mve \
-   canvas.container.staging_pi.pi.namee canvas.container.staging_pi.pi.lnamee \
-   canvas.container.staging_pi.pi.lmve  canvas.container.staging_pi.pi.gendere \
-   canvas.container.staging_pi.pi.dobe  canvas.container.staging_pi.pi.dobte \
-   canvas.container.staging_pi.pi.agee  canvas.container.staging_pi.pi.phonee \
-   canvas.container.staging_pi.pi.emaile}
+  {child_win.canvas.container.staging_pi.pi.mse    child_win.canvas.container.staging_pi.pi.mve \
+   child_win.canvas.container.staging_pi.pi.namee  child_win.canvas.container.staging_pi.pi.lnamee \
+   child_win.canvas.container.staging_pi.pi.lmve   child_win.canvas.container.staging_pi.pi.gendere \
+   child_win.canvas.container.staging_pi.pi.dobe   child_win.canvas.container.staging_pi.pi.dobte \
+   child_win.canvas.container.staging_pi.pi.agee   child_win.canvas.container.staging_pi.pi.phonee \
+   child_win.canvas.container.staging_pi.pi.emaile}
 
-  {canvas.container.staging_pa.pa.mse    canvas.container.staging_pa.pa.coe \
-   canvas.container.staging_pa.pa.housee canvas.container.staging_pa.pa.streete \
-   canvas.container.staging_pa.pa.lme    canvas.container.staging_pa.pa.loce \
-   canvas.container.staging_pa.pa.vtce   canvas.container.staging_pa.pa.subdiste \
-   canvas.container.staging_pa.pa.diste  canvas.container.staging_pa.pa.statee \
-   canvas.container.staging_pa.pa.pce    canvas.container.staging_pa.pa.poe}
+  {child_win.canvas.container.staging_pa.pa.mse    child_win.canvas.container.staging_pa.pa.coe \
+   child_win.canvas.container.staging_pa.pa.housee child_win.canvas.container.staging_pa.pa.streete \
+   child_win.canvas.container.staging_pa.pa.lme    child_win.canvas.container.staging_pa.pa.loce \
+   child_win.canvas.container.staging_pa.pa.vtce   child_win.canvas.container.staging_pa.pa.subdiste \
+   child_win.canvas.container.staging_pa.pa.diste  child_win.canvas.container.staging_pa.pa.statee \
+   child_win.canvas.container.staging_pa.pa.pce    child_win.canvas.container.staging_pa.pa.poe}
 
-  {canvas.container.staging_pfa.pfa.mse canvas.container.staging_pfa.pfa.mve \
-   canvas.container.staging_pfa.pfa.ave canvas.container.staging_pfa.pfa.lave \
-   canvas.container.staging_pfa.pfa.lmve}
+  {child_win.canvas.container.staging_pfa.pfa.mse child_win.canvas.container.staging_pfa.pfa.mve \
+   child_win.canvas.container.staging_pfa.pfa.ave child_win.canvas.container.staging_pfa.pfa.lave \
+   child_win.canvas.container.staging_pfa.pfa.lmve}
 
-  {canvas.container.staging_bio.bio.typee canvas.container.staging_bio.bio.poshe}
-  {canvas.container.staging_pv.pv.pine canvas.container.staging_pv.pv.otpe}
-  {canvas.container.staging_demo.demo.lange}
-  {canvas.container.staging_uidai.uidai.urie canvas.container.staging_uidai.uidai.hoste}
-  {canvas.container.crypto_frame.crypto_lbl_frame.public canvas.container.crypto_frame.crypto_lbl_frame.private \
-   canvas.container.crypto_frame.crypto_lbl_frame.password}
+  {child_win.canvas.container.staging_bio.bio.typee child_win.canvas.container.staging_bio.bio.poshe}
+  {child_win.canvas.container.staging_pv.pv.pine child_win.canvas.container.staging_pv.pv.otpe}
+  {child_win.canvas.container.staging_demo.demo.lange}
+  {child_win.canvas.container.staging_uidai.uidai.urie child_win.canvas.container.staging_uidai.uidai.hoste}
+  {child_win.canvas.container.crypto_frame.crypto_lbl_frame.public child_win.canvas.container.crypto_frame.crypto_lbl_frame.private \
+   child_win.canvas.container.crypto_frame.crypto_lbl_frame.password}
 }
 
 
@@ -462,8 +462,8 @@ proc staging_set_default_auth_v16 {} {
 };#/*staging_set_default_auth_v16*/
 
 proc staging_set_default_uses_v16 {} {
-  .canvas.container.staging_uses.uses.pic select
-  .canvas.container.staging_uses.uses.democ select
+  .child_win.canvas.container.staging_uses.uses.pic select
+  .child_win.canvas.container.staging_uses.uses.democ select
   
 
 };#/*staging_set_default_uses_v16*/
@@ -615,7 +615,7 @@ proc staging_get_pi_attr_value {offset} {
 
   foreach val $attr {
 
-    if {$val == "canvas.container.staging_pi.pi.namee"} {
+    if {$val == "child_win.canvas.container.staging_pi.pi.namee"} {
       set name [.$val get]
       set name [regsub -all {\s+} $name +]
       set str [concat $str [lindex $arg $idx]=$name]
