@@ -11,349 +11,121 @@ package require BWidget
 # @dated  15-May-2018
 #*/
 
-set staging_wi_pname_v16 {
-  {child_win.canvas.container.staging_auth.auth.uide child_win.canvas.container.staging_auth.auth.tide \
-   child_win.canvas.container.staging_auth.auth.txne child_win.canvas.container.staging_auth.auth.ace \
-   child_win.canvas.container.staging_auth.auth.sae  child_win.canvas.container.staging_auth.auth.vere \
-   child_win.canvas.container.staging_auth.auth.lke}
 
-  {child_win.canvas.container.staging_uses.uses.pic  child_win.canvas.container.staging_uses.uses.pac \
-   child_win.canvas.container.staging_uses.uses.pfac child_win.canvas.container.staging_uses.uses.bioc \
-   child_win.canvas.container.staging_uses.uses.pvc  child_win.canvas.container.staging_uses.uses.democ}
+set widgets_name_v16(auth) "" 
+set widgets_name_v16(uses) "" 
+set widgets_name_v16(tkn) "" 
+set widgets_name_v16(meta) "" 
+set widgets_name_v16(pi) "" 
+set widgets_name_v16(pa) "" 
+set widgets_name_v16(pfa) "" 
+set widgets_name_v16(bio) "" 
+set widgets_name_v16(pv) "" 
+set widgets_name_v16(demo) "" 
 
-  {child_win.canvas.container.staging_tkn.tkn.typee  child_win.canvas.container.staging_tkn.tkn.valuee}
+proc auth_attr_v16 {frm} {
 
-  {child_win.canvas.container.staging_meta.meta.udce child_win.canvas.container.staging_meta.meta.fdce \
-   child_win.canvas.container.staging_meta.meta.idce child_win.canvas.container.staging_meta.meta.pipe \
-   child_win.canvas.container.staging_meta.meta.lote child_win.canvas.container.staging_meta.meta.love}
+  set arg { {uid uide entry {}} {tid tide entry {}} {txn txne entry {}} 
+            {ac ace entry {}} {sa sae entry {}} {ver vere entry {}} 
+            {lk lke entry {}} }
 
-  {child_win.canvas.container.staging_pi.pi.mse    child_win.canvas.container.staging_pi.pi.mve \
-   child_win.canvas.container.staging_pi.pi.namee  child_win.canvas.container.staging_pi.pi.lnamee \
-   child_win.canvas.container.staging_pi.pi.lmve   child_win.canvas.container.staging_pi.pi.gendere \
-   child_win.canvas.container.staging_pi.pi.dobe   child_win.canvas.container.staging_pi.pi.dobte \
-   child_win.canvas.container.staging_pi.pi.agee   child_win.canvas.container.staging_pi.pi.phonee \
-   child_win.canvas.container.staging_pi.pi.emaile}
+  build_form $frm auth $arg
+};#/*auth_attr_v16*/
 
-  {child_win.canvas.container.staging_pa.pa.mse    child_win.canvas.container.staging_pa.pa.coe \
-   child_win.canvas.container.staging_pa.pa.housee child_win.canvas.container.staging_pa.pa.streete \
-   child_win.canvas.container.staging_pa.pa.lme    child_win.canvas.container.staging_pa.pa.loce \
-   child_win.canvas.container.staging_pa.pa.vtce   child_win.canvas.container.staging_pa.pa.subdiste \
-   child_win.canvas.container.staging_pa.pa.diste  child_win.canvas.container.staging_pa.pa.statee \
-   child_win.canvas.container.staging_pa.pa.pce    child_win.canvas.container.staging_pa.pa.poe}
+proc uses_attr_v16 {frm} {
 
-  {child_win.canvas.container.staging_pfa.pfa.mse child_win.canvas.container.staging_pfa.pfa.mve \
-   child_win.canvas.container.staging_pfa.pfa.ave child_win.canvas.container.staging_pfa.pfa.lave \
-   child_win.canvas.container.staging_pfa.pfa.lmve}
+  set arg { {pi pic checkbutton {pic}} {pa pac checkbutton {pac}} {pfa pfac checkbutton {pfac}}
+            {bio bioc checkbutton {bioc}} {pv pvc checkbutton {pvc}} {demo democ checkbutton {democ}} }
 
-  {child_win.canvas.container.staging_bio.bio.typee child_win.canvas.container.staging_bio.bio.poshe}
-  {child_win.canvas.container.staging_pv.pv.pine child_win.canvas.container.staging_pv.pv.otpe}
-  {child_win.canvas.container.staging_demo.demo.lange}
-  {child_win.canvas.container.staging_uidai.uidai.urie child_win.canvas.container.staging_uidai.uidai.hoste}
-  {child_win.canvas.container.crypto_frame.crypto_lbl_frame.public child_win.canvas.container.crypto_frame.crypto_lbl_frame.private \
-   child_win.canvas.container.crypto_frame.crypto_lbl_frame.password}
-}
+  build_form $frm uses $arg
+};#/*uses_attr_v16*/
 
+proc tkn_attr_v16 {frm} {
 
-proc staging_auth_attr_v16 {frm} {
+  set arg { {type typee combobox {NA "Mobile Number"}} {value valuee entry {}} }
 
-  frame $frm.auth
-  label $frm.auth.uid  -text "uid............"
-  label $frm.auth.tid  -text "tid............"
-  label $frm.auth.txn  -text "txn............"
-  label $frm.auth.ac   -text "ac............."
-  label $frm.auth.sa   -text "sa............."
-  label $frm.auth.ver  -text "ver............"
-  label $frm.auth.lk   -text "lk............."
- 
-  entry $frm.auth.uide  -width 30 -textvariable staging_auth_v16_uide
-  entry $frm.auth.tide  -width 30 -textvariable staging_auth_v16_tide
-  entry $frm.auth.txne  -width 30 -textvariable staging_auth_v16_txne
-  entry $frm.auth.ace   -width 30 -textvariable staging_auth_v16_ace
-  entry $frm.auth.sae   -width 30 -textvariable staging_auth_v16_sae
-  entry $frm.auth.vere  -width 30 -textvariable staging_auth_v16_vere
-  entry $frm.auth.lke   -width 30 -textvariable staging_auth_v16_lke
- 
-  grid $frm.auth.uid  $frm.auth.uide  -pady 2 -padx 4 -sticky news
-  grid $frm.auth.tid  $frm.auth.tide  -pady 2 -padx 4 -sticky news
-  grid $frm.auth.txn  $frm.auth.txne  -pady 2 -padx 4 -sticky news
-  grid $frm.auth.ac   $frm.auth.ace   -pady 2 -padx 4 -sticky news
-  grid $frm.auth.sa   $frm.auth.sae   -pady 2 -padx 4 -sticky news
-  grid $frm.auth.ver  $frm.auth.vere  -pady 2 -padx 4 -sticky news
-  grid $frm.auth.lk   $frm.auth.lke   -pady 2 -padx 4 -sticky news
- 
-  grid $frm.auth
-};#/*staging_auth_attr_v16*/
+  build_form $frm tkn $arg
+};#/*tkn_attr_v16*/
 
-proc staging_uses_attr_v16 {frm} {
-  frame $frm.uses
-  label $frm.uses.pi   -text "Pi............."
-  label $frm.uses.pa   -text "Pa............."
-  label $frm.uses.pfa  -text "Pfa............"
-  label $frm.uses.bio  -text "Bio............"
-  label $frm.uses.pv   -text "Pv............."
-  label $frm.uses.demo -text "Demo..........."
- 
-  checkbutton $frm.uses.pic   -variable staging_uses_pic   -command {staging_uses_opt pic   $staging_uses_pic} 
-  checkbutton $frm.uses.pac   -variable staging_uses_pac   -command {staging_uses_opt pac   $staging_uses_pac}
-  checkbutton $frm.uses.pfac  -variable staging_uses_pfac  -command {staging_uses_opt pfac  $staging_uses_pfac}
-  checkbutton $frm.uses.bioc  -variable staging_uses_bioc  -command {staging_uses_opt bioc  $staging_uses_bioc}
-  checkbutton $frm.uses.pvc   -variable staging_uses_pvc   -command {staging_uses_opt pvc   $staging_uses_pvc}
-  checkbutton $frm.uses.democ -variable staging_uses_democ -command {staging_uses_opt democ $staging_uses_democ}
+proc meta_attr_v16 {frm} {
 
-  grid $frm.uses.pi    $frm.uses.pic   -pady 2 -padx 4 -sticky news 
-  grid $frm.uses.pa    $frm.uses.pac   -pady 2 -padx 4 -sticky news
-  grid $frm.uses.pfa   $frm.uses.pfac  -pady 2 -padx 4 -sticky news
-  grid $frm.uses.bio   $frm.uses.bioc  -pady 2 -padx 4 -sticky news
-  grid $frm.uses.pv    $frm.uses.pvc   -pady 2 -padx 4 -sticky news
-  grid $frm.uses.demo  $frm.uses.democ -pady 2 -padx 4 -sticky news
+  set arg { {udc udce entry {}} {fdc fdce combobox {NA NC}} {idc idce entry {}} 
+            {pip pipe entry {}} {lot lote combobox {P G}} {lov love entry {}} }
 
-  grid $frm.uses
-};#/*staging_uses_attr_v16*/
+  build_form $frm meta $arg
+};#/*meta_attr_v16*/
 
-proc staging_tkn_attr_v16 {frm} {
+proc pi_attr_v16 {frm} {
 
-  frame $frm.tkn
-  label $frm.tkn.type  -text "Type*.........."
-  label $frm.tkn.value -text "Value*........."
- 
-  ComboBox $frm.tkn.typee -width 30 -values {"Mobile Number" "NA"} -text "NA"
-  entry $frm.tkn.valuee -width 30
- 
-  grid $frm.tkn.type  $frm.tkn.typee  -pady 2 -padx 4 -sticky news
-  grid $frm.tkn.value $frm.tkn.valuee -pady 2 -padx 4 -sticky news
+  set arg { {ms mse combobox {E P}} {mv mve combobox {100 80 60 40 20 10}} {name namee entry {}} 
+            {lname lnamee entry {}} {lmv lmve combobox {P G}} {gender gendere combobox {M F T}} 
+            {dob dobe entry {}} {dobt dobte combobox {V D A}} {age agee entry {}} {phone phonee entry {}} 
+            {email emaile entry {}}}
 
-  grid $frm.tkn
-};#/*staging_tkn_attr_v16*/
+  build_form $frm pi $arg
+};#/*pi_attr_v16*/
 
-proc staging_meta_attr_v16 {frm} {
+proc pa_attr_v16 {frm} {
 
-  frame $frm.meta
-  label $frm.meta.udc  -text "Udc*..........."
-  label $frm.meta.fdc  -text "Fdc*..........."
-  label $frm.meta.idc  -text "Idc*..........."
-  label $frm.meta.pip  -text "Pip*..........."
-  label $frm.meta.lot  -text "Lot*..........."
-  label $frm.meta.lov  -text "Lov*..........."
- 
-  entry $frm.meta.udce -width 30 -textvariable staging_meta_v16_udce
-  ComboBox $frm.meta.fdce -width 30 -values {NC NA} -text "NA"
-  entry $frm.meta.idce -width 30 -textvariable staging_meta_v16_idce
-  entry $frm.meta.pipe -width 30 -textvariable staging_meta_v16_pipe
-  ComboBox $frm.meta.lote -width 30 -values {G P} -text "P"
-  entry $frm.meta.love -width 30 -textvariable staging_meta_v16_love
- 
-  grid $frm.meta.udc  $frm.meta.udce  -pady 2 -padx 4 -sticky news
-  grid $frm.meta.fdc  $frm.meta.fdce  -pady 2 -padx 4 -sticky news
-  grid $frm.meta.idc  $frm.meta.idce  -pady 2 -padx 4 -sticky news
-  grid $frm.meta.pip  $frm.meta.pipe  -pady 2 -padx 4 -sticky news
-  grid $frm.meta.lot  $frm.meta.lote  -pady 2 -padx 4 -sticky news
-  grid $frm.meta.lov  $frm.meta.love  -pady 2 -padx 4 -sticky news
+  set arg { {ms mse combobox {E P}} {co coe entry {}} {house housee entry {}} 
+            {street streete entry {}} {lm lme entry {}} {loc loce entry {}} 
+            {vtc vtce entry {}} {subdist subdiste entry {}} {dist diste entry {}} {state statee entry {}} 
+            {pc pce entry {}} {po poe entry {}} }
 
-  grid $frm.meta
-};#/*staging_meta_attr_v16*/
+  build_form $frm pa $arg
+};#/*pa_attr_v16*/
 
-proc staging_pi_attr_v16 {frm} {
-  global staging_pi_mve_v16
+proc pfa_attr_v16 {frm} {
 
-  set staging_pi_mve_v16 "100"
-  frame $frm.pi
-  label $frm.pi.ms     -text "Ms............."
-  label $frm.pi.mv     -text "Mv............."
-  label $frm.pi.name   -text "Name..........."
-  label $frm.pi.lname  -text "Lname.........."
-  label $frm.pi.lmv    -text "Lmv............"
-  label $frm.pi.gender -text "Gender........."
-  label $frm.pi.dob    -text "Dob............"
-  label $frm.pi.dobt   -text "Dobt..........."
-  label $frm.pi.age    -text "Age............"
-  label $frm.pi.phone  -text "Phone.........."
-  label $frm.pi.email  -text "E-mail........."
- 
-  ComboBox $frm.pi.mse  -width 30 -values {P E} -text "E"
-  entry $frm.pi.mve     -width 30 -textvariable  staging_pi_mve_v16
-  entry $frm.pi.namee   -width 30 -textvariable staging_pi_namee_v16
-  entry $frm.pi.lnamee  -width 30 -textvariable staging_pi_lnamee_v16
-  entry $frm.pi.lmve    -width 30 -textvariable staging_pi_lmve_v16
-  ComboBox $frm.pi.gendere -width 30 -values {M F T} -text "M"
-  entry $frm.pi.dobe    -width 30
-  ComboBox $frm.pi.dobte -width 30 -values {D V A} -text "V"
-  entry $frm.pi.agee    -width 30 -textvariable staging_pi_age_v16
-  entry $frm.pi.phonee  -width 30 -textvariable staging_pi_phonee_v16
-  entry $frm.pi.emaile  -width 30 -textvariable staging_pi_emaile_v16
- 
-  grid $frm.pi.ms     $frm.pi.mse     -pady 2 -padx 4 -sticky news
-  grid $frm.pi.mv     $frm.pi.mve     -pady 2 -padx 4 -sticky news
-  grid $frm.pi.name   $frm.pi.namee   -pady 2 -padx 4 -sticky news
-  grid $frm.pi.lname  $frm.pi.lnamee  -pady 2 -padx 4 -sticky news
-  grid $frm.pi.lmv    $frm.pi.lmve    -pady 2 -padx 4 -sticky news
-  grid $frm.pi.gender $frm.pi.gendere -pady 2 -padx 4 -sticky news
-  grid $frm.pi.dob    $frm.pi.dobe    -pady 2 -padx 4 -sticky news
-  grid $frm.pi.dobt   $frm.pi.dobte   -pady 2 -padx 4 -sticky news
-  grid $frm.pi.age    $frm.pi.agee    -pady 2 -padx 4 -sticky news
-  grid $frm.pi.phone  $frm.pi.phonee  -pady 2 -padx 4 -sticky news
-  grid $frm.pi.email  $frm.pi.emaile  -pady 2 -padx 4 -sticky news
+  set arg { {ms mse combobox {E P}} {mv mve entry {}} {av ave entry {}} 
+            {lav lave entry {}} {lmv lmve entry {}} }
 
-  grid $frm.pi
-  #;/*Disable the entry for Pi Dempgraphic data*/
-  staging_uses_opt pic  0
-};#/*staging_pi_attr_v16*/
+  build_form $frm pfa $arg
+};#/*pfa_attr_v16*/
 
-proc staging_pa_attr_v16 {frm} {
-  frame $frm.pa
-  label $frm.pa.ms        -text "Ms............."
-  label $frm.pa.co        -text "Co............."
-  label $frm.pa.house     -text "House.........."
-  label $frm.pa.street    -text "Street........."
-  label $frm.pa.lm        -text "Lm............."
-  label $frm.pa.loc       -text "Loc............"
-  label $frm.pa.vtc       -text "Vtc............"
-  label $frm.pa.subdist   -text "Subdist........"
-  label $frm.pa.dist      -text "Dist..........."
-  label $frm.pa.state     -text "State.........."
-  label $frm.pa.pc        -text "Pc............."
-  label $frm.pa.po        -text "Po............."
- 
-  entry $frm.pa.mse      -width 30
-  entry $frm.pa.coe      -width 30 
-  entry $frm.pa.housee   -width 30
-  entry $frm.pa.streete  -width 30
-  entry $frm.pa.lme      -width 30
-  entry $frm.pa.loce     -width 30
-  entry $frm.pa.vtce     -width 30
-  entry $frm.pa.subdiste -width 30
-  entry $frm.pa.diste    -width 30
-  entry $frm.pa.statee   -width 30
-  entry $frm.pa.pce      -width 30
-  entry $frm.pa.poe      -width 30
- 
-  grid $frm.pa.ms       $frm.pa.mse       -pady 2 -padx 4 -sticky news
-  grid $frm.pa.co       $frm.pa.coe       -pady 2 -padx 4 -sticky news
-  grid $frm.pa.house    $frm.pa.housee    -pady 2 -padx 4 -sticky news
-  grid $frm.pa.street   $frm.pa.streete   -pady 2 -padx 4 -sticky news
-  grid $frm.pa.lm       $frm.pa.lme       -pady 2 -padx 4 -sticky news
-  grid $frm.pa.loc      $frm.pa.loce      -pady 2 -padx 4 -sticky news
-  grid $frm.pa.vtc      $frm.pa.vtce      -pady 2 -padx 4 -sticky news
-  grid $frm.pa.subdist  $frm.pa.subdiste  -pady 2 -padx 4 -sticky news
-  grid $frm.pa.dist     $frm.pa.diste     -pady 2 -padx 4 -sticky news
-  grid $frm.pa.state    $frm.pa.statee    -pady 2 -padx 4 -sticky news
-  grid $frm.pa.pc       $frm.pa.pce       -pady 2 -padx 4 -sticky news
-  grid $frm.pa.po       $frm.pa.poe       -pady 2 -padx 4 -sticky news
+proc bio_attr_v16 {frm} {
 
-  grid $frm.pa
+  set arg { {type typee combobox {FMR FIR IIR}} {posh poshe combobox {UNKNOWN LEFT_IRIS 
+            RIGHT_IRIS LEFT_INDEX LEFT_LITTLE LEFT_MIDDLE LEFT_RING 
+            LEFT_THUMB RIGHT_INDEX RIGHT_LITTLE RIGHT_MIDDLE RIGHT_RING RIGHT_THUMB}}}
 
-  #;/*Disable the entry for Pa Dempgraphic data*/
-  staging_uses_opt pac  0
-};#/*staging_pa_attr_v16*/
+  build_form $frm bio $arg
+};#/*bio_attr_v16*/
 
-proc staging_pfa_attr_v16 {frm} {
-  frame $frm.pfa
-  label $frm.pfa.ms        -text "Ms............."
-  label $frm.pfa.mv        -text "Mv............."
-  label $frm.pfa.av        -text "Av............."
-  label $frm.pfa.lav       -text "Lav............"
-  label $frm.pfa.lmv       -text "Lmv............"
- 
-  ComboBox $frm.pfa.mse   -width 30 -values {E P} -text "E"
-  entry $frm.pfa.mve   -width 30 
-  entry $frm.pfa.ave   -width 30
-  entry $frm.pfa.lave  -width 30
-  entry $frm.pfa.lmve  -width 30
- 
-  grid $frm.pfa.ms    $frm.pfa.mse    -pady 2 -padx 4 -sticky news
-  grid $frm.pfa.mv    $frm.pfa.mve    -pady 2 -padx 4 -sticky news
-  grid $frm.pfa.av    $frm.pfa.ave    -pady 2 -padx 4 -sticky news
-  grid $frm.pfa.lav   $frm.pfa.lave   -pady 2 -padx 4 -sticky news
-  grid $frm.pfa.lmv   $frm.pfa.lmve   -pady 2 -padx 4 -sticky news
+proc pv_attr_v16 {frm} {
 
-  grid $frm.pfa
-  #;/*Disable the entry for Pfa Dempgraphic data*/
-  staging_uses_opt pfac  0
-};#/*staging_pfa_attr_v16*/
+  set arg { {pin pine entry {}} {otp otpe entry {}} }
 
-proc staging_bio_attr_v16 {frm} {
+  build_form $frm pv $arg
+};#/*pv_attr_v16*/
 
-  frame $frm.bio
-  label $frm.bio.type  -text "Type..........."
-  label $frm.bio.posh  -text "Posh..........."
- 
-  ComboBox $frm.bio.typee -width 30 -values {FMR FIR IIR}
-  ComboBox $frm.bio.poshe -width 30 -values {LEFT_IRIS \
-                                         RIGHT_IRIS LEFT_INDEX LEFT_LITTLE LEFT_MIDDLE LEFT_RING \
-                                         LEFT_THUMB RIGHT_INDEX RIGHT_LITTLE RIGHT_MIDDLE \
-                                         RIGHT_RING RIGHT_THUMB UNKNOWN} -text "UNKNOWN"
- 
-  grid $frm.bio.type  $frm.bio.typee -pady 2 -padx 4 -sticky news
-  grid $frm.bio.posh  $frm.bio.poshe -pady 2 -padx 4 -sticky news
-  grid $frm.bio
- 
-  #;/*Disable the entry for bio Dempgraphic data*/
-  staging_uses_opt bioc  0
-};#/*staging_bio_attr_v16*/
+proc demo_attr_v16 {frm} {
 
-proc staging_pv_attr_v16 {frm} {
-  frame $frm.pv
-  label $frm.pv.pin  -text "Pin............"
-  label $frm.pv.otp  -text "Otp............"
- 
-  entry $frm.pv.pine -width 30
-  entry $frm.pv.otpe -width 30 
- 
-  grid $frm.pv.pin  $frm.pv.pine    -pady 2 -padx 4 -sticky news
-  grid $frm.pv.otp  $frm.pv.otpe    -pady 2 -padx 4 -sticky news
-  grid $frm.pv
+  set arg { {lang lange combobox {NA
+                                  Assamese
+                                  Bengali
+                                  Gujarati
+                                  Hindi
+                                  Kannada
+                                  Malayalam
+                                  Manipuri
+                                  Marathi
+                                  Oriya
+                                  Punjabi
+                                  Tamil
+                                  Telugu
+                                  Urdu}} }
+  build_form $frm demo $arg
+};#/*demo_attr_v16*/
 
-  #;/*Disable the entry for Pv Dempgraphic data*/
-  staging_uses_opt pvc  0
-};#/*staging_pv_attr_v16*/
+proc uidai_auth_server {frm} {
 
-proc staging_demo_attr_v16 {frm} {
+  set arg { {uri urie combobox {/uidauth /auth /auth2.5}} {host hoste entry {developer.uidai.gov.in}} }
 
-  set lang_opt {Assamese
-                Bengali
-                Gujarati
-                Hindi
-                Kannada
-                Malayalam
-                Manipuri
-                Marathi
-                Oriya
-                Punjabi
-                Tamil
-                Telugu
-                Urdu }
+  build_form $frm uidai $arg
+};#/*uidai_auth_server*/
 
-  frame $frm.demo
-  label $frm.demo.lang  -text "Language......."
- 
-  ComboBox $frm.demo.lange -values $lang_opt -modifycmd {staging_demo_lang_get .demo.lange} -width 30 
- 
-  grid $frm.demo.lang  $frm.demo.lange    -pady 2 -padx 4 -sticky news
-  grid $frm.demo
-
-  #;/*Disable the entry for Democ Dempgraphic data*/
-  staging_uses_opt democ  0
-};#/*staging_demo_attr_v16*/
-
-proc staging_uidai_server {frm} {
-
-  global uidai_host_name
-  set uri_val {/uidauth/1.6 /auth /auth2.5}
-  set uidai_host_name "developer.uidai.gov.in"
-  frame $frm.uidai
-  label $frm.uidai.uri   -text "Uri............"
-  label $frm.uidai.host  -text "Host............"
- 
-  ComboBox $frm.uidai.urie -values $uri_val -width 30 -text [lindex $uri_val 0] 
-  entry $frm.uidai.hoste -width 30 -textvariable uidai_host_name
-  
- 
-  grid $frm.uidai.uri  $frm.uidai.urie    -pady 2 -padx 4 -sticky news
-  grid $frm.uidai.host $frm.uidai.hoste  -pady 2 -padx 4 -sticky news
-  grid $frm.uidai
-
-};#/*staging_uidai_server*/
-
-proc staging_demo_lang_get {p_name} {
+proc demo_lang_get {p_name} {
 
   set lang_opt { {Assamese   01}
                  {Bengali    02}
@@ -372,448 +144,196 @@ proc staging_demo_lang_get {p_name} {
 
   set val [$p_name get] 
   puts "Value is $val"
-};#/*staging_demo_lang_get*/
+};#/*demo_lang_get*/
 
-proc staging_uses_opt_disable {uses_opt} {
-  global staging_wi_pname_v16
+proc uses_opt_disable {uses_opt} {
+  global widgets_name_v16 
 
   if {$uses_opt == "pic"} {
-    set demo_list [lindex $staging_wi_pname_v16 4]
+    set demo_list [lindex $widgets_name_v16(uses) 0]
   } elseif {$uses_opt == "pac"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 5]
+    set demo_list [lindex $widgets_name_v16(uses) 1]
   } elseif {$uses_opt == "pfac"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 6]
+    set demo_list [lindex $widgets_name_v16(uses) 2]
   } elseif {$uses_opt == "bioc"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 7]
+    set demo_list [lindex $widgets_name_v16(uses) 3]
   } elseif {$uses_opt == "pvc"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 8]
+    set demo_list [lindex $widgets_name_v16(uses) 4]
   } elseif {$uses_opt == "democ"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 9]
+    set demo_list [lindex $widgets_name_v16(uses) 5]
   } else {
     #;/*Invalid Option*/
   }
 
-  foreach pi $demo_list {
-    .$pi configure -state disabled
-  }
-};#/*staging_uses_opt_disable*/
+  $demo_list configure -state normal 
+};#/*uses_opt_disable*/
 
-proc staging_uses_opt_enable {uses_opt} {
-  global staging_wi_pname_v16
+proc uses_opt_enable {uses_opt} {
+  global widgets_name_v16
 
   if {$uses_opt == "pic"} {
-    set demo_list [lindex $staging_wi_pname_v16 4]
+    set demo_list [lindex $widgets_name_v16(uses) 0]
   } elseif {$uses_opt == "pac"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 5]
+    set demo_list [lindex $widgets_name_v16(uses) 1]
   } elseif {$uses_opt == "pfac"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 6]
+    set demo_list [lindex $widgets_name_v16(uses) 2]
   } elseif {$uses_opt == "bioc"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 7]
+    set demo_list [lindex $widgets_name_v16(uses) 3]
   } elseif {$uses_opt == "pvc"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 8]
+    set demo_list [lindex $widgets_name_v16(uses) 4]
   } elseif {$uses_opt == "democ"} {
 
-    set demo_list [lindex $staging_wi_pname_v16 9]
+    set demo_list [lindex $widgets_name_v16(uses) 5]
   } else {
     #;/*Invalid Option*/
   }
 
-  foreach pi $demo_list {
-    .$pi configure -state normal
-  }
+  $demo_list configure -state normal
+};#/*uses_opt_enable*/
 
-};#/*staging_uses_opt_enable*/
-
-proc staging_uses_opt {chk_btn chk_selected} {
+proc uses_opt {chk_btn chk_selected} {
 
   if {$chk_selected == 1} {
     #/*Enable the Pi entry*/
-    staging_uses_opt_enable $chk_btn 
+    uses_opt_enable $chk_btn 
 
   } else {
     #/*Disable the Pi Entry*/
-    staging_uses_opt_disable $chk_btn
+    uses_opt_disable $chk_btn
   }
+};#uses_opt*/
 
-};#i/8staging_uses_opt*/
-
-proc staging_set_default_auth_v16 {} {
-  global staging_auth_v16_sae
-  global staging_auth_v16_ace
-  global staging_auth_v16_tide
-  global staging_auth_v16_vere
-  global staging_auth_v16_txne
-  
-  set staging_auth_v16_sae "public"
-  set staging_auth_v16_ace "public"
-  set staging_auth_v16_tide "public"
-  set staging_auth_v16_vere "1.6"
-  set staging_auth_v16_txne "TXN:DemoStaging"
-  
-};#/*staging_set_default_auth_v16*/
-
-proc staging_set_default_uses_v16 {} {
-  .child_win.canvas.container.staging_uses.uses.pic select
-  .child_win.canvas.container.staging_uses.uses.democ select
-  
-
-};#/*staging_set_default_uses_v16*/
-
-proc staging_set_default_meta_v16 {} {
-  global staging_meta_v16_udce
-  global staging_meta_v16_fdce
-  global staging_meta_v16_idce
-  global staging_meta_v16_pipe
-  global staging_meta_v16_love
-
-  set staging_meta_v16_udce "Balaagh"
-  set staging_meta_v16_fdce "NA"
-  set staging_meta_v16_idce "NA"
-  set staging_meta_v16_pipe "NA"
-  set staging_meta_v16_love "500052"
-};#/*staging_set_default_meta_v16*/
-
-proc staging_clear_auth_v16 {} {
-  global staging_auth_v16_sae
-  global staging_auth_v16_ace
-  global staging_auth_v16_tide
-  global staging_auth_v16_vere
-  global staging_auth_v16_txne
-  
-  set staging_auth_v16_sae ""
-  set staging_auth_v16_ace ""
-  set staging_auth_v16_tide ""
-  set staging_auth_v16_vere ""
-  set staging_auth_v16_txne ""
-  
-};#/*staging_clear_auth_v16*/
-
-proc staging_clear_uses_v16 {} {
-  global staging_wi_pname_v16 
-  set pname [lindex $staging_wi_pname_v16 1]
-
-  foreach val $pname {
-    .$val deselect
+proc set_default_auth_v16 {} {
+  global widgets_name_v16 
+  set default {"" "public" "TXN:BalaaghTesting" "public" "public" "1.6" ""}
+  set idx 0
+  foreach val $widgets_name_v16(auth) {
+    $val delete 0 end
+    $val insert 0 [lindex $default $idx]
+    incr idx  
   } 
+};#/*set_default_auth_v16*/
 
-};#/*staging_clear_uses_v16*/
+proc set_default_uses_v16 {} {
+  global widgets_name_v16
 
-proc staging_clear_meta_v16 {} {
-  global staging_meta_v16_udce
-  global staging_meta_v16_fdce
-  global staging_meta_v16_idce
-  global staging_meta_v16_pipe
-  global staging_meta_v16_love
+  [lindex $widgets_name_v16(uses) 0] configure -state normal
+  [lindex $widgets_name_v16(uses) 5] configure -state normal
+  [lindex $widgets_name_v16(uses) 0] select
+  [lindex $widgets_name_v16(uses) 5] select
+};#/*set_default_uses_v16*/
 
-  set staging_meta_v16_udce ""
-  set staging_meta_v16_fdce ""
-  set staging_meta_v16_idce ""
-  set staging_meta_v16_pipe ""
-  set staging_meta_v16_love ""
-};#/*staging_clear_meta_v16*/
-
-proc staging_get_tkn_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set arg {type value}
+proc set_default_meta_v16 {} {
+  global widgets_name_v16 
+  set default {"Balaagh" "NA" "NA" "NA" "" "500052"}
   set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
-  }
-
-  set str [regsub -all {\s+} $str ,]
-  set str "tkn={$str}"
-  return $str
-
-};#/*staging_get_tkn_attr_value*/
-
-proc staging_get_meta_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set arg {udc fdc idc pip lot lov}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
-  }
-
-  set str [regsub -all {\s+} $str ,]
-  set str "meta={$str}"
-  return $str
-
-};#/*staging_get_meta_attr_value*/
-
-
-proc staging_get_auth_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set auth_arg {uid tid txn ac sa ver lk}
-  set idx 0
-  set auth_str ""
-  set auth_attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $auth_attr {
-   set auth_str [concat $auth_str [lindex $auth_arg $idx]=[.$val get]]
-   incr idx
-  }
-
-  set auth_str [regsub -all {\s+} $auth_str ,]
-  set auth_str "auth={$auth_str}"
-  return $auth_str
-
-};#/*staging_get_auth_attr_value*/
-
-proc staging_get_uses_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  global staging_uses_selected
-
-  set arg {pi pa pfa bio pv demo}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-   set var [.$val cget -variable]
-   global $var
-   set str [concat $str [lindex $arg $idx]=[subst $$var]]
-   incr idx
-  }
-  
-  set staging_uses_selected $str
-  set str [regsub -all {\s+} $str ,]
-
-  set staging_uses_selected [regsub -all {=} $staging_uses_selected " == "]
-  set str "uses={$str}"
-  return $str
-
-};#/*staging_get_uses_attr_value*/
-
-proc staging_get_pi_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set arg {ms mv name lname lmv gender dob dobt age phone email}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-
-    if {$val == "child_win.canvas.container.staging_pi.pi.namee"} {
-      set name [.$val get]
-      set name [regsub -all {\s+} $name +]
-      set str [concat $str [lindex $arg $idx]=$name]
-
-    } else {
-      set str [concat $str [lindex $arg $idx]=[.$val get]]
+  foreach val $widgets_name_v16(meta) {
+    if {"Entry" == [winfo class $val]} {
+      $val delete 0 end
+      $val insert 0 [lindex $default $idx]
     }
-
     incr idx
   }
+};#/*set_default_meta_v16*/
 
-  set str [regsub -all {\s+} $str ,]
-  set str "pi={$str}"
-  return $str
+proc clear_auth_v16 {} {
+  global widgets_name_v16 
+ 
+  foreach val $widgets_name_v16(auth) {
+    $val delete 0 end
+  } 
+};#/*clear_auth_v16*/
 
-};#/*staging_get_pi_attr_value*/
+proc clear_uses_v16 {} {
+  global widgets_name_v16 
 
-proc staging_get_pa_attr_value {offset} {
+  foreach val $widgets_name_v16(uses) {
+    $val configure -state normal
+    $val deselect
+  } 
+};#/*clear_uses_v16*/
 
-  global staging_wi_pname_v16 
-  set arg {ms co house street lm loc vtc subdist dist state pc po}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
+proc clear_meta_v16 {} {
+  global widgets_name_v16
 
-  foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
+  foreach val $widgets_name_v16(meta) {
+    if {"Entry" == [winfo class $val]} {
+      $val delete 0 end
+    }
   }
+};#/*clear_meta_v16*/
 
-  set str [regsub -all {\s+} $str ,]
-  set str "pa={$str}"
-  return $str
-};#/*staging_get_pa_attr_value*/
+proc build_auth_request_v16 {} {
 
-proc staging_get_pfa_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set arg {ms mv av lav lmv}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
-  }
-
-  set str [regsub -all {\s+} $str ,]
-  set str "pfa={$str}"
-  return $str
-};#/*staging_get_pfa_attr_value*/
-
-proc staging_get_bio_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set arg {type posh}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
-  }
-
-  set str [regsub -all {\s+} $str ,]
-  set str "bio={$str}"
-  return $str
-
-};#/*staging_get_bio_attr_value*/
-
-proc staging_get_pv_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set arg {pin otp}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
-  }
-
-  set str [regsub -all {\s+} $str ,]
-  set str "pv={$str}"
-  return $str
-
-};#/*staging_get_pv_attr_value*/
-
-proc staging_get_demo_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set arg {lang}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
-  }
-
-  set str [regsub -all {\s+} $str ,]
-  set str "demo={$str}"
-  return $str
-
-};#/*staging_get_demo_attr_value*/
-
-proc staging_get_uidai_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set arg {uri host}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
-  }
-
-  set str [regsub -all {\s+} $str ,]
-  set str "uidai={$str}"
-  return $str
-
-};#/*staging_get_uidai_attr_value*/
-
-proc staging_get_crypto_attr_value {offset} {
-
-  global staging_wi_pname_v16 
-  set arg {public private password}
-  set idx 0
-  set str ""
-  set attr [lindex $staging_wi_pname_v16 $offset]
-
-  foreach val $attr {
-   set str [concat $str [lindex $arg $idx]=[.$val get]]
-   incr idx
-  }
-
-  set str [regsub -all {\s+} $str ,]
-  set str "crypto={$str}"
-  return $str
-
-};#/*staging_get_crypto_attr_value*/
-
-proc staging_retrieve_value_v16 {} {
-
-  global staging_uses_selected
-
-  set auth [staging_get_auth_attr_value 0]
-  set uses [staging_get_uses_attr_value 1]
-  set tkn [staging_get_tkn_attr_value 2]
-  set meta [staging_get_meta_attr_value 3]
+  set arg {uid tid txn ac sa ver lk}
+  set auth [get_value auth $arg]
+  set arg {pi pa pfa bio pv demo}
+  set uses [get_value uses $arg]
+  set arg {type value}
+  set tkn  [get_value tkn  $arg]
+  set arg {udc fdc idc pip lot lov}
+  set meta [get_value meta $arg]
 
   #/*Prepare the request*/
   set REQ "stage=staging&request=auth&$auth&$uses&$tkn&$meta"
 
-  foreach {var op val} $staging_uses_selected {
-    if {$var == "pi" && $val == 1} {
+  set checkbutton_var {pic pac pfac bioc pvc democ}
+  foreach val $checkbutton_var {
+    global $val
+    if {$val == "pic" && [subst $$val] == 1} {
       #/*Pi is selected*/
-      set pi [staging_get_pi_attr_value 4] 
+      set arg {ms mv name lname lmv gender dob dobt age phone email}
+      set pi [get_value pi $arg] 
       set REQ "$REQ&$pi"
 
-    } elseif {$var == "pa" && $val == 1} {
+    } elseif {$val == "pac" && [subst $$val] == 1} {
       #/*Pa is selected*/
-      set pa [staging_get_pa_attr_value 5] 
+      set arg {ms co house street lm loc vtc subdist dist state pc po}
+      set pa [get_value pa $arg] 
       set REQ "$REQ&$pa"
     
-    } elseif {$var == "pfa" && $val == 1} {
+    } elseif {$val == "pfac" && [subst $$val] == 1} {
       #/*pfa is selected*/
-      set pfa [staging_get_pfa_attr_value 6] 
+      set arg {ms mv av lav lmv}
+      set pfa [get_value pfa $arg] 
       set REQ "$REQ&$pfa"
 
-    } elseif {$var == "bio" && $val == 1} {
+    } elseif {$val == "bioc" && [subst $$val] == 1} {
       #/*bio is selected*/
-      set bio [staging_get_bio_attr_value 7] 
+      set arg {type posh}
+      set bio [get_value bio $arg] 
       set REQ "$REQ&$bio"
 
-    } elseif {$var == "pv" && $val == 1} {
+    } elseif {$val == "pvc" && [subst $$val] == 1} {
       #/*Pv is selected*/
-      set pv [staging_get_pv_attr_value 8] 
+      set arg {pin otp}
+      set pv [get_value pv $arg] 
       set REQ "$REQ&$pv"
 
-    } elseif {$var == "demo" && $val == 1} {
+    } elseif {$val == "democ" && [subst $$val] == 1} {
       #/*demo is selected*/
-      set demo [staging_get_demo_attr_value 9] 
+      set arg {lang}
+      set demo [get_value demo $arg] 
       set REQ "$REQ&$demo"
     }
   }
 
-  set uidai [staging_get_uidai_attr_value 10] 
+  set arg {uri host}
+  set uidai [get_value uidai $arg] 
   set REQ "$REQ&$uidai"
   #/*Extracting the crypto contents*/
-  set crypto [staging_get_crypto_attr_value 11] 
+  set arg {public private password}
+  set crypto [get_value crypto $arg] 
   set REQ "$REQ&$crypto"
 
   puts "/request?$REQ"
-};#/*staging_retrieve_value_v16*/
+};#/*build_auth_request_v16*/

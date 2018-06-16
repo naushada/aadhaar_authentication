@@ -1,0 +1,106 @@
+
+#/* 
+# @name util.tk
+# @brief This file is to hold utility function for GUI
+#
+# @author Mohad Naushad Ahmed
+# @email  NAUSHAD.DLN@GMAIL.COM
+# @dated  14-Jun-2018
+#*/
+
+package require BWidget
+
+#/*Global Array to holds the widgets path name*/
+set widgets_name_v16(uidai) "" 
+set widgets_name_v16(crypto) "" 
+set widgets_name_v16(btn) "" 
+
+proc build_form {frm arr_idx arg} {
+  global widgets_name_v16
+  set idx 0
+  set tmp ""
+  set tmp_lbl ""
+  
+  set sub_frame [frame $frm.$arr_idx]
+
+  foreach l $arg {
+
+    if {[string length [lindex $l 0]] > 0} {
+      set str "..............."
+      set str [string replace $str 0 [string length [lindex $l 0]] [lindex $l 0]]
+      set tmp_lbl [label $sub_frame.[lindex $l 0] -text $str]
+    }
+ 
+    if {"entry" == [lindex $l 2]} {
+      set tmp [entry $sub_frame.[lindex $l 1] -width 30 -relief groove]
+      set widgets_name_v16($arr_idx) [linsert $widgets_name_v16($arr_idx) $idx $tmp]
+
+      if {[string length [lindex $l 3]] > 0} {
+         $tmp insert end [lindex $l 3]
+      }
+    } 
+
+    if {"combobox" == [lindex $l 2]} {
+      set tmp [ComboBox $sub_frame.[lindex $l 1] -width 30 -values [lindex $l 3] -text [lindex [lindex $l 3] 0]]
+      set widgets_name_v16($arr_idx) [linsert $widgets_name_v16($arr_idx) $idx $tmp]
+    } 
+
+    if {"checkbutton" == [lindex $l 2]} {
+      set tmp [checkbutton $sub_frame.[lindex $l 1] -onvalue 1 -offvalue 0]
+      $tmp configure -variable [lindex $l 3]
+      set widgets_name_v16($arr_idx) [linsert $widgets_name_v16($arr_idx) $idx $tmp]
+    } 
+
+    if {"button" == [lindex $l 2]} {
+      set tmp [button $sub_frame.[lindex $l 1] -text [lindex $l 3] -command {[lindex $l 4]}] 
+    }
+
+    if {[string length [lindex $l 0]] > 0} {
+      grid $tmp_lbl $tmp  -pady 2 -padx 4 -sticky news
+    } else {
+      ;#/*Only Button widgets*/
+      grid $tmp  -pady 2 -padx 4 -sticky news
+    }
+    incr idx
+  }
+  grid $sub_frame
+
+};#/*build_form*/
+
+proc get_value {offset attr} {
+
+  global widgets_name_v16
+  set idx 0
+  set str ""
+
+  foreach val $widgets_name_v16($offset) {
+   #/*The space is replaces with + in name*/
+   if {$val == [lindex $widgets_name_v16(pi) 2]} {
+
+     set name [$val get]
+     set name [regsub -all {\s+} $name +]
+     set str [concat $str [lindex $attr $idx]=$name]
+
+   } else {
+
+     if {"Checkbutton" == [winfo class $val]} {
+       global [$val cget -variable]
+       set str [concat $str [lindex $attr $idx]=[subst $[$val cget -variable]]]
+
+     } else {
+       #/*encode the param only when length is > 0*/
+       if {[string length [$val get]] > 0} {
+         set str [concat $str [lindex $attr $idx]=[$val get]]
+       }
+     }
+   }
+   incr idx
+  }
+
+  set str [regsub -all {\s+} $str ,]
+  set str "$offset={$str}"
+
+  return $str
+};#/*get_value*/
+
+

@@ -1,0 +1,60 @@
+
+#/* 
+# @name otp_ui16.tk
+# @brief This file is to build the user form entry
+#        through which respective values can be supplied by end user
+#        This user form complies with specification version 1.6
+#
+# @author Mohad Naushad Ahmed
+# @email  NAUSHAD.DLN@GMAIL.COM
+# @dated  15-May-2018
+#*/
+
+set widgets_name_v16(otp) "" 
+set widgets_name_v16(opts) "" 
+
+proc staging_uidai_otp_server {frm} {
+
+  set arg { {uri urie combobox {/opt/1.6 /otp/2.0 /otp2.5}} 
+            {host hoste entry {developer.uidai.gov.in}} }
+
+  build_form $frm uidai $arg
+
+};#/*staging_uidai_auth_server*/
+
+proc staging_otp_attr_v16 {frm} {
+
+  set arg { {uid uide entry {}} {tid tide entry {}} {txn txne entry {}} \
+            {ac ace entry {}} {sa sae entry {}} {ver vere entry {}} \
+            {lk lke entry {}} {type typee combobox {"A" "M"}} }
+
+  build_form $frm otp $arg
+
+};#/*staging_otp_attr_v16*/
+
+proc staging_opts_attr_v16 {frm} {
+
+  set arg { {ch che combobox {"OTP via SMS only" \
+                              "OTP via both SMS and Email" \
+                              "OTP via Email only"}} }
+
+  build_form $frm opts $arg
+
+};#/*staging_opts_attr_v16*/
+
+proc build_otp_request_v16 {} {
+
+  set arg {uid tid txn ac sa ver lk type}
+  set otp [get_value otp $arg]
+  set arg {ch}
+  set opts [get_value opts $arg]
+  set arg {uri host}
+  set uidai [get_value uidai $arg]
+  set arg {public private password}
+  set crypto [get_value crypto $arg]
+
+  #/*Prepare the request*/
+  set REQ "/request?stage=staging&request=otp&$otp&$opts&$uidai&$crypto"
+  puts $REQ
+
+};#/*build_otp_request_v16*/
