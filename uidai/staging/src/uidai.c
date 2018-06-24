@@ -1,6 +1,8 @@
 #ifndef __UIDAI_C__
 #define __UIDAI_C__
 
+#include <unistd.h>
+#include <signal.h>
 #include "config.h"
 #include "common.h"
 #include "uidai.h"
@@ -1063,6 +1065,7 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
 
   return(0);
 }/*uidai_spawn_gui*/
+
 uint8_t *uidai_chunked_rsp(int32_t fd, uint32_t *rsp_len) {
   uint8_t wait_for_more_data;
   uint8_t *buffer = NULL;
@@ -1116,6 +1119,7 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
   uint8_t *req_ptr = NULL;
   uint8_t *rsp_ptr = NULL;
   uint32_t rsp_len = 0;
+  int32_t status = 0;
   uidai_ctx_t *pUidaiCtx = &uidai_ctx_g; 
   
   close(rd_fd[1]);
@@ -1134,31 +1138,64 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
   for(;;) {
     /*Request has been received from gui, Process it*/
     memset((void *)req_ptr, 0, len);
-
     ret = read(rd_fd[0], req_ptr, len);
-    ret = write(2, req_ptr, ret);
-    rsp_ptr = uidai_parse_req(req_ptr, (uint32_t)ret, wr_fd[1]);
-    /*send the packet*/
-    if(pUidaiCtx->uidai_fd < 0) {
-      uidai_connect_uidai();
+    
+    if(ret > 0) {
+      if(!strncmp(req_ptr, "Exit", 4)) {
+        /*Child is going to exit*/
+        write(wr_fd[1], "exit\n", 5);
+        raise(SIGCHLD);
+        continue;
+      }
+    }   
+ 
+    if(ret > 0) {
+      ret = write(2, req_ptr, ret);
+      rsp_ptr = uidai_parse_req(req_ptr, (uint32_t)ret, wr_fd[1]);
+      /*send the packet*/
+      if(pUidaiCtx->uidai_fd < 0) {
+        uidai_connect_uidai();
+      }
+
+      uidai_send(pUidaiCtx->uidai_fd, rsp_ptr, strlen(rsp_ptr));
+      free(rsp_ptr);
+      rsp_ptr = NULL;
+
+      /*Response from UIDAI*/
+      rsp_ptr = uidai_chunked_rsp(pUidaiCtx->uidai_fd, &rsp_len);
+      fprintf(stderr, "\n%s\n", rsp_ptr); 
+      free(rsp_ptr);
+      rsp_ptr = NULL;
+      /*Closing the connection with uidai server*/
+      close(pUidaiCtx->uidai_fd);
+      pUidaiCtx->uidai_fd = -1;
+
+    } else if(0 == ret) {
+      close(rd_fd[0]);
+      close(wr_fd[1]);
+      /*Freeing Memory*/
+      free(req_ptr);
+      req_ptr = NULL;
+      /*CHILD has exited*/
+      exit(0);
     }
-
-    uidai_send(pUidaiCtx->uidai_fd, rsp_ptr, strlen(rsp_ptr));
-    free(rsp_ptr);
-    rsp_ptr = NULL;
-
-    /*Response from UIDAI*/
-    rsp_ptr = uidai_chunked_rsp(pUidaiCtx->uidai_fd, &rsp_len);
-    fprintf(stderr, "\n%s\n", rsp_ptr); 
-    free(rsp_ptr);
-    rsp_ptr = NULL;
   }
-
-  close(rd_fd[0]);
-  close(wr_fd[1]);
 
   return(0);
 }/*uidai_process_gui_req*/
+
+void uidai_signal_handler(int signum, siginfo_t *sinfo, void *arg) {
+
+  printf("\nsignal received is %d\n", signum);
+
+  if(SIGCHLD == signum || 
+     SIGSEGV == signum ||
+     SIGINT  == signum) {
+    /*Child task has terminated*/
+    printf("\nsignal received is %d\n", signum);
+    exit(0);
+  }
+}/*uidai_signal_handler*/
 
 int32_t main(int32_t argc, char *argv[]) {
 
@@ -1166,6 +1203,12 @@ int32_t main(int32_t argc, char *argv[]) {
   int32_t rd_fd[2];
   int32_t wr_fd[2];
   pid_t gui_process;
+  struct sigaction sa;
+  struct sigaction oldsa;
+
+  memset (&sa, 0, sizeof(sa));
+  sa.sa_flags = SA_SIGINFO;
+  sa.sa_sigaction = uidai_signal_handler;
 
   if(pipe(rd_fd) < 0) {
     perror("pipe rd_fd");
@@ -1179,6 +1222,7 @@ int32_t main(int32_t argc, char *argv[]) {
     return(0);
   }
 
+
   gui_process = fork();
   if(gui_process < 0) {
     perror("fork failed");
@@ -1189,8 +1233,11 @@ int32_t main(int32_t argc, char *argv[]) {
     return(0);
  
   } else if(gui_process) {
+    /*Register the signal Handler*/    
+    sigaction((SIGINT|SIGCHLD), &sa, &oldsa);
     /*Parent Process*/
     uidai_process_gui_req(wr_fd, rd_fd, gui_path);
+
   } else {
     /*child process*/
     uidai_spawn_gui(rd_fd, wr_fd);

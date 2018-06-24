@@ -25,7 +25,7 @@ set menu_b {
   #/*Root     Menu Name      Parent/Leaf(proc) Argument for Leafnode*/
   #/*----------------------------------------------------------------*/
   {"."          "File"                  "+"   {}}
-  {"File"       "Exit"                  "exit" {}}
+  {"File"       "Exit"                  "Exit" {}}
   {"."          "Uidai"                 "+"            {}}
   {"Uidai"      "Staging"               "+"            {}}
   {"Staging"    "Authentication"        "+"            {}}
@@ -61,8 +61,9 @@ set menu_b {
 
 };#/*Menu bar*/
 
-proc Exit {arg} {
-  exit
+proc Exit {} {
+  #exit
+  puts "Exit"
 };#/**/
   
 proc staging_otp {version} {
@@ -385,6 +386,9 @@ proc init_frame {f_name} {
     .child_win.canvas configure -scrollregion [.child_win.canvas bbox all]
   }
 
+  #bind $container <ButtonPress-1> {%W scan mark %x %y}
+  #bind $container <B3-Motion> {%W scan dragto %x %y 1}
+
   return $container
 };#/*init_frame*/
 
@@ -514,25 +518,16 @@ proc build_menu {menu_b menu_bar} {
   }
 };#/*build_menu*/
 
-wm title . "Balaagh"
-menu .m
-. configure -menu .m -height 500 -width 1200
-build_menu $menu_b .m
+proc main_window {t} {
+  global menu_b
+  wm title . $t
+  menu .menubar
+  . configure -menu .menubar -height 500 -width 1200
+  build_menu $menu_b .menubar
+
+};#/*main_window*/
 
 
-#bind . <1> {
-#  set iX0 [expr %X-[winfo rootx .]]
-#  set iY0 [expr %Y-[winfo rooty .]]
-#  set bMoved 0
-#}
-
-#bind . <B1-Motion> {
-#  wm geometry . +[expr %X-$iX0]+[expr %Y-$iY0]
-#  set bMoved 1
-#}
-
-#bind . <ButtonRelease-1> {
-#  if { $bMoved } break
-#}
+main_window "Balaagh Technologies"
 
 
