@@ -1161,6 +1161,7 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
       free(rsp_ptr);
       rsp_ptr = NULL;
 
+
       /*Response from UIDAI*/
       rsp_ptr = uidai_chunked_rsp(pUidaiCtx->uidai_fd, &rsp_len);
       fprintf(stderr, "\n%s\n", rsp_ptr); 
@@ -1170,6 +1171,9 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
       close(pUidaiCtx->uidai_fd);
       pUidaiCtx->uidai_fd = -1;
 
+      /*Sending Response to GUI*/
+      //uint8_t *rsp = "response_display_response n \"998\" \"ASDASDDDDD\" \"A202\" \"02{sdes ssed }\"\n";
+      //write(wr_fd[1], rsp, strlen(rsp));
     } else if(0 == ret) {
       close(rd_fd[0]);
       close(wr_fd[1]);

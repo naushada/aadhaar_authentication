@@ -1,0 +1,128 @@
+
+#/* 
+# @Name: response.tk
+# @Description: This file is to build  the widgets for displaying
+#               the received Response.
+#
+# @Author: Mohd Naushad Ahmed
+# @Email:  NAUSHAD.DLN@GMAIL.COM
+# @Dated:  24-May-2018
+#*/
+
+proc response_build_button {container} {
+
+  #create a new frame
+  set btn_container [frame $container.btn_frm]
+  #Add button to this frame
+  button $btn_container.btn -text "OK" -width 10 -padx 5 -pady 5 -command "response_destroy_canvas response"
+  grid $btn_container.btn -row 90 -column 0
+  grid $btn_container
+  
+};#/*response_build_button*/
+
+
+proc response_display_failure {img_name err code actn info} {
+
+  set container [response_build_canvas response]
+
+  set img [image create photo]
+  $img read $img_name
+
+  label $container.img -image $img -bg white -justify left
+  grid $container.img -row 0  -columnspan 2 -column 0
+
+  label $container.err -text "err.........." -font {Ariel 12 bold} -bg white -justify left 
+  label $container.errValue -text $err -font {Ariel 14 bold} -bg white -justify left
+  grid $container.err -row 1 -column 0
+  grid $container.errValue -row 1 -column 1
+
+  label $container.actn -text "actn........." -font {Ariel 12 bold} -bg white -justify left 
+  label $container.actnValue -text $actn -font {Ariel 14 bold} -bg white -justify left
+  grid $container.actn -row 2 -column 0
+  grid $container.actnValue -row 2 -column 1
+  
+  label $container.code -text "code........." -font {Ariel 12 bold} -bg white -justify left 
+  label $container.codeValue -text $code -font {Ariel 14 bold} -bg white -justify left
+  grid $container.code -row 3 -column 0
+  grid $container.codeValue -row 3 -column 1
+
+  label $container.info -text "info........." -font {Ariel 12 bold} -bg white -justify left 
+  label $container.infoValue -text $info -font {Ariel 14 bold} -bg white -justify left
+  grid $container.info -row 4 -column 0
+  grid $container.infoValue -row 4 -column 1
+
+  response_build_button $container
+
+};#/*response_display_failure*/
+
+
+proc response_display_success {img_name code info} {
+
+  set container [response_build_canvas response]
+
+  set img [image create photo]
+  $img read $img_name
+
+  label $container.img -image $img -bg white -justify left
+  grid $container.img -row 0  -columnspan 2 -column 0
+
+  label $container.code -text "code........." -font {Ariel 12 bold} -bg white -justify left 
+  label $container.codeValue -text $code -font {Ariel 14 bold} -bg white -justify left
+  grid $container.code -row 1 -column 0
+  grid $container.codeValue -row 1 -column 1
+
+  label $container.info -text "info........." -font {Ariel 12 bold} -bg white -justify left 
+  label $container.infoValue -text $info -font {Ariel 14 bold} -bg white -justify left
+  grid $container.info -row 2 -column 0
+  grid $container.infoValue -row 2 -column 1
+
+  response_build_button $container
+
+};#/*response_display_success*/
+
+
+proc response_build_canvas {win_name} {
+  global cnv
+  set response [toplevel .$win_name]
+  wm title $response "Response"
+
+  set cnv [canvas $response.canvas -background white -width 100 -height 100 \
+          -xscrollcommand "$response.xscroll set" -yscrollcommand "$response.yscroll set" \
+          -relief raised]
+
+  scrollbar $response.xscroll -orient horizontal -command "$cnv xview"
+  scrollbar $response.yscroll -orient vertical -command "$cnv yview"
+  
+  set container [frame $cnv.frm -bg white]
+  $cnv create window 0 0 -anchor nw -window $container
+  
+  grid $cnv - $response.yscroll -sticky news -pady 4 -padx 2
+  grid $response.xscroll - x -sticky news
+  grid rowconfigure $response 0 -weight 1
+  grid columnconfigure $response 0 -weight 1
+
+  bind $container <Configure> {
+    $cnv configure -scrollregion [$cnv bbox all]
+  }
+
+  return $container
+};#/*response_build_canvas*/
+
+proc response_destroy_canvas {win_name} {
+  destroy .$win_name
+};#/*response_destroy_canvas*/
+
+proc response_display_response {ret err code actn info} {
+  set img_name ""
+
+  if {"y" == $ret} {
+   set img_name "../../gui/img/success.png"
+   response_display_success $img_name $code $info
+
+  } else {
+   set img_name "../../gui/img/failure.png"
+   response_display_failure $img_name $err $code $actn $info
+
+  }
+};#/*response_display_response*/
+

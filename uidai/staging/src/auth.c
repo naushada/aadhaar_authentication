@@ -1845,7 +1845,7 @@ int32_t auth_build_demo_v16(uint8_t *in_ptr,
                      "%s",
                      "  <Demo");
 
-  if(strlen(demo_attr[0])) {
+  if(demo_attr[0] && strlen(demo_attr[0])) {
     /*lang is present*/
     offset += snprintf(&demo_xml[offset],
                        (len - offset),
@@ -1892,7 +1892,7 @@ int32_t auth_build_pv_v16(uint8_t *in_ptr,
                      "%s",
                      "  <Pv");
 
-  if(strlen(pv_attr[0])) {
+  if(pv_attr[0] && strlen(pv_attr[0])) {
     /*otp is present*/
     offset += snprintf(&pv_xml[offset],
                        (len - offset),
@@ -1902,7 +1902,7 @@ int32_t auth_build_pv_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pv_attr[1])) {
+  if(pv_attr[1] && strlen(pv_attr[1])) {
     /*pin is present*/
     offset += snprintf(&pv_xml[offset],
                        (len - offset),
@@ -1953,7 +1953,7 @@ int32_t auth_build_bio_v16(uint8_t *in_ptr,
                      "  <Bios>\n",
                      "    <Bio");
 
-  if(strlen(bio_attr[0])) {
+  if(bio_attr[0] && strlen(bio_attr[0])) {
     /*type is present*/
     offset += snprintf(&bio_xml[offset],
                        (len - offset),
@@ -1963,7 +1963,7 @@ int32_t auth_build_bio_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(bio_attr[1])) {
+  if(bio_attr[1] && strlen(bio_attr[1])) {
     /*type is present*/
     offset += snprintf(&bio_xml[offset],
                        (len - offset),
@@ -1973,7 +1973,7 @@ int32_t auth_build_bio_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(bio_attr[2])) {
+  if(bio_attr[2] && strlen(bio_attr[2])) {
     /*type is present*/
     offset += snprintf(&bio_xml[offset],
                        (len - offset),
@@ -2029,7 +2029,7 @@ int32_t auth_build_pfa_v16(uint8_t *in_ptr,
                      "%s",
                      "    <Pfa");
 
-  if(strlen(pfa_attr[0])) {
+  if(pfa_attr[0] && strlen(pfa_attr[0])) {
     /*ms is present*/
     offset += snprintf(&pfa_xml[offset],
                        (len - offset),
@@ -2039,7 +2039,7 @@ int32_t auth_build_pfa_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pfa_attr[1])) {
+  if(pfa_attr[1] && strlen(pfa_attr[1])) {
     /*mv is present*/
     offset += snprintf(&pfa_xml[offset],
                        (len - offset),
@@ -2049,7 +2049,7 @@ int32_t auth_build_pfa_v16(uint8_t *in_ptr,
                        "\"");
   }
   
-  if(strlen(pfa_attr[2])) {
+  if(pfa_attr[2] && strlen(pfa_attr[2])) {
     /*av is present*/
     offset += snprintf(&pfa_xml[offset],
                        (len - offset),
@@ -2059,7 +2059,7 @@ int32_t auth_build_pfa_v16(uint8_t *in_ptr,
                        "\"");
   }
   
-  if(strlen(pfa_attr[3])) {
+  if(pfa_attr[3] && strlen(pfa_attr[3])) {
     /*lav is present*/
     offset += snprintf(&pfa_xml[offset],
                        (len - offset),
@@ -2069,7 +2069,7 @@ int32_t auth_build_pfa_v16(uint8_t *in_ptr,
                        "\"");
   }
   
-  if(strlen(pfa_attr[4])) {
+  if(pfa_attr[4] && strlen(pfa_attr[4])) {
     /*lmv is present*/
     offset += snprintf(&pfa_xml[offset],
                        (len - offset),
@@ -2130,7 +2130,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                      "\n",
                      "    <Pa");
 
-  if(strlen(pa_attr[0])) {
+  if(pa_attr[0] && strlen(pa_attr[0])) {
     /*ms is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2140,7 +2140,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pa_attr[1])) {
+  if(pa_attr[1] && strlen(pa_attr[1])) {
     /*co is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2150,7 +2150,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
   
-  if(strlen(pa_attr[2])) {
+  if(pa_attr[2] && strlen(pa_attr[2])) {
     /*house is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2160,7 +2160,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
   
-  if(strlen(pa_attr[3])) {
+  if(pa_attr[3] && strlen(pa_attr[3])) {
     /*street is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2170,7 +2170,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
   
-  if(strlen(pa_attr[4])) {
+  if(pa_attr[4] && strlen(pa_attr[4])) {
     /*lm is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2180,7 +2180,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pa_attr[5])) {
+  if(pa_attr[5] && strlen(pa_attr[5])) {
     /*loc is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2190,7 +2190,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pa_attr[6])) {
+  if(pa_attr[6] && strlen(pa_attr[6])) {
     /*vtc is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2200,7 +2200,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pa_attr[7])) {
+  if(pa_attr[7] && strlen(pa_attr[7])) {
     /*subdist is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2210,7 +2210,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pa_attr[8])) {
+  if(pa_attr[8] && strlen(pa_attr[8])) {
     /*dist is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2220,7 +2220,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pa_attr[9])) {
+  if(pa_attr[9] && strlen(pa_attr[9])) {
     /*state is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2230,7 +2230,8 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pa_attr[10])) {
+  if(pa_attr[10] && strlen(pa_attr[10])) {
+
     /*pc is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2240,7 +2241,7 @@ int32_t auth_build_pa_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pa_attr[11])) {
+  if(pa_attr[11] && strlen(pa_attr[11])) {
     /*po is present*/
     offset += snprintf(&pa_xml[offset],
                        (len - offset),
@@ -2317,7 +2318,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                      "\n",
                      "    <Pi");
 
-  if(strlen(pi_attr[0])) {
+  if(pi_attr[0] && strlen(pi_attr[0])) {
     /*ms is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -2327,7 +2328,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pi_attr[1])) {
+  if(pi_attr[1] && strlen(pi_attr[1])) {
     /*mv is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -2337,7 +2338,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
   
-  if(strlen(pi_attr[2])) {
+  if(pi_attr[2] && strlen(pi_attr[2])) {
     /*name is present*/
     memset((void *)name_str, 0, sizeof(name_str));
     auth_restore_str(pi_attr[2], name_str);
@@ -2350,7 +2351,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
   
-  if(strlen(pi_attr[3])) {
+  if(pi_attr[3] && strlen(pi_attr[3])) {
     /*lname is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -2360,7 +2361,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
   
-  if(strlen(pi_attr[4])) {
+  if(pi_attr[4] && strlen(pi_attr[4])) {
     /*lmv is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -2370,7 +2371,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pi_attr[5])) {
+  if(pi_attr[5] && strlen(pi_attr[5])) {
     /*gender is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -2380,7 +2381,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pi_attr[6])) {
+  if(pi_attr[6] && strlen(pi_attr[6])) {
     /*dob is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -2390,7 +2391,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pi_attr[7])) {
+  if(pi_attr[7] && strlen(pi_attr[7])) {
     /*dobt is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -2400,7 +2401,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pi_attr[8])) {
+  if(pi_attr[8] && strlen(pi_attr[8])) {
     /*age is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -2410,7 +2411,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pi_attr[9])) {
+  if(pi_attr[9] && strlen(pi_attr[9])) {
     /*phone is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -2420,7 +2421,7 @@ int32_t auth_build_pi_v16(uint8_t *in_ptr,
                        "\"");
   }
 
-  if(strlen(pi_attr[10])) {
+  if(pi_attr[10] && strlen(pi_attr[10])) {
     /*email is present*/
     offset += snprintf(&pi_xml[offset],
                        (len - offset),
@@ -3377,7 +3378,7 @@ void auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
             auth_attr[5],
             uidai_attr[2]);
   util_init(crypto_attr[0], crypto_attr[1], crypto_attr[2]);
-  uidai_init_ex("192.168.1.3", 8080, uidai_attr[1], 80);
+  uidai_init_ex("192.168.1.6", 8080, uidai_attr[1], 80);
 
   for(idx = 0; idx < 7; idx++) {
     free(auth_attr[idx]);
