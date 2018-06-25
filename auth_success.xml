@@ -1,0 +1,168 @@
+/request?stage=staging&request=auth&auth={uid=999938452218,tid=public,txn=TXN:BalaaghTesting,ac=public,sa=public,ver=1.6,lk=MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s}&uses={pi=1,pa=0,pfa=0,bio=0,pv=0,demo=1}&tkn={type=NA}&meta={udc=Balaagh,fdc=NA,idc=NA,pip=NA,lot=P,lov=500052}&pi={ms=E,mv=100,name=Naushad+Ahmed,gender=M,dobt=V}&demo={lang=NA}&uidai={uri=/uidauth,host=developer.uidai.gov.in}&crypto={public=/home/naushada/test/build_infra/uidai/keys/uidai_auth_stage.cer,private=/home/naushada/test/build_infra/uidai/keys/Staging_Signature_PrivateKey.p12,password=public}
+Version is 1.6 & len is 3
+Version is 16
+
+auth.c:2855 type is NA
+
+auth.c:2861 1.type is NA
+
+auth.c:2607 pi 1 pa 0 pfa 0 bio 0 pv 0 pv 1 demo H�H�=]e 
+
+auth.c:2441 
+    <Pi ms="E" mv="100" name="Naushad Ahmed" gender="M" dobt="V"/>
+
+
+pid_xml[1] 
+    <Pi ms="E" mv="100" name="Naushad Ahmed" gender="M" dobt="V"/>
+
+
+auth.c:2709 <Pid ts="2018-06-25T10:22:24" ver="1.0">
+  <Demo>
+    <Pi ms="E" mv="100" name="Naushad Ahmed" gender="M" dobt="V"/>
+  </Demo>
+</Pid>
+
+
+<Pid ts="2018-06-25T10:22:24" ver="1.0">
+  <Demo>
+    <Pi ms="E" mv="100" name="Naushad Ahmed" gender="M" dobt="V"/>
+  </Demo>
+</Pid>
+
+
+auth.c:706 ciphered data len HMAC 48
+
+auth.c:3263 c14n auth xml is 
+<Auth ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" sa="public" tid="public" txn="TXN:BalaaghTesting" uid="999938452218" ver="1.6">
+  <Uses bio="n" otp="n" pa="n" pfa="n" pi="y" pin="n"></Uses>
+  <Meta fdc="NA" idc="NA" lot="P" lov="500052" pip="NA" udc="Balaagh"></Meta>
+  <Skey ci="20200916">EU6NP8VMO+OxB0XhoIcpsPIJ+i0n2OScAzz62cCxrAP1i9b2UfjR7+Uyr2ql8guRykvdqaFOAFaDK5FV+BbSf/Z5O4KHxtaJWQQ/7RpkWj0LKYLScY6PNitY5ti7CaKOIICx7wPjLWoZS8tmPFp4AA6I5lxrmMxMxagpIpP5QFnx/kWT4aCkFjbnB9PYU+Rs81KU8tfiee0mA4do3kRW1qas/iZIfCj0uoUH7jgXgFn/o2JLVbkjGq3l9qqVuDlHgG9U+0+r5JW3ZnwFWVuZRgh2citQ0f6e/MZEVZq4VDPlD+qL4oYFTzlLIVyZuUy5JytILm6HaRnbK8Xs+dAYEw==</Skey>
+  <Hmac>o4TcpUiF8/6pMWkQAELF+fR1nH81hOtizmTk2pvLR4uI1ej839IyBwIayyEv5V9X</Hmac>
+  <Data type="X">nPEyfJbNJ/B1N86bEXXpGwPoLB3luyAkTi0hNm9Dp7GnVlVrxw8V3y/8zDWrxifHJ+TodjB1gVQXfXiRS+DkXibdjfRIy8AEhGrXZkNX7WUN2ievc+/FCfhLj/ba8P9gJzfXhQUFb4o+Fiwf+Lxs215fHYz7zVNMSh5pAZC6HBe3ht10eCo851HmLeC9wIHm</Data>
+  
+</Auth>
+Final XML 
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Auth ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" sa="public" tid="public" txn="TXN:BalaaghTesting" uid="999938452218" ver="1.6">
+  <Uses bio="n" otp="n" pa="n" pfa="n" pi="y" pin="n"/>
+  <Meta fdc="NA" idc="NA" lot="P" lov="500052" pip="NA" udc="Balaagh"/>
+  <Skey ci="20200916">EU6NP8VMO+OxB0XhoIcpsPIJ+i0n2OScAzz62cCxrAP1i9b2UfjR7+Uyr2ql8guRykvdqaFOAFaDK5FV+BbSf/Z5O4KHxtaJWQQ/7RpkWj0LKYLScY6PNitY5ti7CaKOIICx7wPjLWoZS8tmPFp4AA6I5lxrmMxMxagpIpP5QFnx/kWT4aCkFjbnB9PYU+Rs81KU8tfiee0mA4do3kRW1qas/iZIfCj0uoUH7jgXgFn/o2JLVbkjGq3l9qqVuDlHgG9U+0+r5JW3ZnwFWVuZRgh2citQ0f6e/MZEVZq4VDPlD+qL4oYFTzlLIVyZuUy5JytILm6HaRnbK8Xs+dAYEw==</Skey>
+  <Hmac>o4TcpUiF8/6pMWkQAELF+fR1nH81hOtizmTk2pvLR4uI1ej839IyBwIayyEv5V9X</Hmac>
+  <Data type="X">nPEyfJbNJ/B1N86bEXXpGwPoLB3luyAkTi0hNm9Dp7GnVlVrxw8V3y/8zDWrxifHJ+TodjB1gVQXfXiRS+DkXibdjfRIy8AEhGrXZkNX7WUN2ievc+/FCfhLj/ba8P9gJzfXhQUFb4o+Fiwf+Lxs215fHYz7zVNMSh5pAZC6HBe3ht10eCo851HmLeC9wIHm</Data>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <DigestValue>agqiXuPHtGb2o3n4SDFOxYw212s=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>DCx4CUJMiAGsAp0/DILU1XgJQ3n2c1vzvcH+lUNKP8hoRrPwadzfqCY4i8lXJpZFAJajAb2/uZC9NxNM7HcTpZMnxSMnAypaYLy9oo5mt5JYp7EHlThvPccQzthMNvM363XrWqqRYkHT2IGxpa+gEtCE6zhh3Jp9SfwekcK49m7YiX7lAumG9zLSyCtavkIx/hbkgWb/5aM7UD25djGfcodwOWrGFm/Z53syml/JAH8QLptwX7vzyAvRUBdJk+1HRfwmXh1owZWF4tPQLhIpLl2EHTnhuyRBAU658qwgY3tFreBMQtcqD+uKnTTwwbYGgISZl1ypFklAEsPYixiPwg==</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509SubjectName>C=IN,ST=KA,L=Bangalore,O=Public AUA,OU=Staging Services,CN=Public AUA for Staging Services</X509SubjectName>
+        <X509Certificate>MIIDuDCCAqCgAwIBAgIGA7J+eqryMA0GCSqGSIb3DQEBBQUAMIGNMQswCQYDVQQG
+EwJJTjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMK
+UHVibGljIEFVQTEZMBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEtMCsGA1UEAxMk
+Um9vdCBQdWJsaWMgQVVBIGZvciBTdGFnaW5nIFNlcnZpY2VzMB4XDTE2MDUyNDE0
+NDAzMVoXDTIwMDUyNDE0NDAzMVowgYgxCzAJBgNVBAYTAklOMQswCQYDVQQIEwJL
+QTESMBAGA1UEBxMJQmFuZ2Fsb3JlMRMwEQYDVQQKEwpQdWJsaWMgQVVBMRkwFwYD
+VQQLExBTdGFnaW5nIFNlcnZpY2VzMSgwJgYDVQQDEx9QdWJsaWMgQVVBIGZvciBT
+dGFnaW5nIFNlcnZpY2VzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+o4XxOsjK58Ud+tQd06Mk8Rd0qoyjA/3u+y0YVYEF6RgT8Ge1uVdTkIcVYaHyXuuH
+UPLLqGW1hPfVtn81UVIMGyrw5+t1c30wpGv3UJ6GCFu0sPGgG5NwkVbIUt2xgT/O
+r/kGzHjUJJy4Y6URSkZiDLDQQWRXvui5ZwwsYRJ8LhT0pSUwan1raG5Vl01GmlWV
+qsrCmnObuoYkN85iwG4/ERGshkgFCPak8B/jH3GPZSi1+FJLmCqMI1xxmTvf0kZb
+7ejm2IZFTo6ecYWJ1vylkzUI553RxVbnHCNZvFe3AyaKMyFlknFR0Fkl5+9Lpxz+
+VOajbCjicg7jIYCw76/xgQIDAQABoyEwHzAdBgNVHQ4EFgQUJHLir1/Tel8v/6Ou
+IXpLS0JH8jIwDQYJKoZIhvcNAQEFBQADggEBAFE15qMGIlp8+M306FbhDEvo1vzx
+N2Pfvg/f92NXH59d2XZ/wuHxugL8qfcM5xkqsDeIRVxRdISpwiIWlqTitn6lenF8
+5bvPQ09T/b09dVz/LxwU2Cm6+6H5/HZSoLtCKBOuRzAKQdxczpyfaqv9caFC+Leg
+PQIm2HCwOM0A4KzhYcFhumGeyCbyVZsSQcJE7bYc/IHkR2erup7h5BACOZ/a+hHL
+PQok/uGvtEsR3roydNcNlR8Ja6Wc4eUf7kisTuZTxwRJI9DPVimbs0VAqhnsnVWA
+K3X4+6sFUq5WfHS4wTRhrR93JvEV5LlQ6UCXYOQMvTii8l07qxkDiysVsLQ=</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+  </Signature>
+</Auth>
+
+auth.c:3335 req xml 
+POST http://developer.uidai.gov.in/uidauth/public/9/9/MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s HTTP/1.1
+Host: developer.uidai.gov.in
+Content-Type: text/xml
+Connection: Keep-alive
+Content-Length: 3534
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Auth ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" sa="public" tid="public" txn="TXN:BalaaghTesting" uid="999938452218" ver="1.6">
+  <Uses bio="n" otp="n" pa="n" pfa="n" pi="y" pin="n"/>
+  <Meta fdc="NA" idc="NA" lot="P" lov="500052" pip="NA" udc="Balaagh"/>
+  <Skey ci="20200916">EU6NP8VMO+OxB0XhoIcpsPIJ+i0n2OScAzz62cCxrAP1i9b2UfjR7+Uyr2ql8guRykvdqaFOAFaDK5FV+BbSf/Z5O4KHxtaJWQQ/7RpkWj0LKYLScY6PNitY5ti7CaKOIICx7wPjLWoZS8tmPFp4AA6I5lxrmMxMxagpIpP5QFnx/kWT4aCkFjbnB9PYU+Rs81KU8tfiee0mA4do3kRW1qas/iZIfCj0uoUH7jgXgFn/o2JLVbkjGq3l9qqVuDlHgG9U+0+r5JW3ZnwFWVuZRgh2citQ0f6e/MZEVZq4VDPlD+qL4oYFTzlLIVyZuUy5JytILm6HaRnbK8Xs+dAYEw==</Skey>
+  <Hmac>o4TcpUiF8/6pMWkQAELF+fR1nH81hOtizmTk2pvLR4uI1ej839IyBwIayyEv5V9X</Hmac>
+  <Data type="X">nPEyfJbNJ/B1N86bEXXpGwPoLB3luyAkTi0hNm9Dp7GnVlVrxw8V3y/8zDWrxifHJ+TodjB1gVQXfXiRS+DkXibdjfRIy8AEhGrXZkNX7WUN2ievc+/FCfhLj/ba8P9gJzfXhQUFb4o+Fiwf+Lxs215fHYz7zVNMSh5pAZC6HBe3ht10eCo851HmLeC9wIHm</Data>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <DigestValue>agqiXuPHtGb2o3n4SDFOxYw212s=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>DCx4CUJMiAGsAp0/DILU1XgJQ3n2c1vzvcH+lUNKP8hoRrPwadzfqCY4i8lXJpZFAJajAb2/uZC9NxNM7HcTpZMnxSMnAypaYLy9oo5mt5JYp7EHlThvPccQzthMNvM363XrWqqRYkHT2IGxpa+gEtCE6zhh3Jp9SfwekcK49m7YiX7lAumG9zLSyCtavkIx/hbkgWb/5aM7UD25djGfcodwOWrGFm/Z53syml/JAH8QLptwX7vzyAvRUBdJk+1HRfwmXh1owZWF4tPQLhIpLl2EHTnhuyRBAU658qwgY3tFreBMQtcqD+uKnTTwwbYGgISZl1ypFklAEsPYixiPwg==</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509SubjectName>C=IN,ST=KA,L=Bangalore,O=Public AUA,OU=Staging Services,CN=Public AUA for Staging Services</X509SubjectName>
+        <X509Certificate>MIIDuDCCAqCgAwIBAgIGA7J+eqryMA0GCSqGSIb3DQEBBQUAMIGNMQswCQYDVQQG
+EwJJTjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMK
+UHVibGljIEFVQTEZMBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEtMCsGA1UEAxMk
+Um9vdCBQdWJsaWMgQVVBIGZvciBTdGFnaW5nIFNlcnZpY2VzMB4XDTE2MDUyNDE0
+NDAzMVoXDTIwMDUyNDE0NDAzMVowgYgxCzAJBgNVBAYTAklOMQswCQYDVQQIEwJL
+QTESMBAGA1UEBxMJQmFuZ2Fsb3JlMRMwEQYDVQQKEwpQdWJsaWMgQVVBMRkwFwYD
+VQQLExBTdGFnaW5nIFNlcnZpY2VzMSgwJgYDVQQDEx9QdWJsaWMgQVVBIGZvciBT
+dGFnaW5nIFNlcnZpY2VzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+o4XxOsjK58Ud+tQd06Mk8Rd0qoyjA/3u+y0YVYEF6RgT8Ge1uVdTkIcVYaHyXuuH
+UPLLqGW1hPfVtn81UVIMGyrw5+t1c30wpGv3UJ6GCFu0sPGgG5NwkVbIUt2xgT/O
+r/kGzHjUJJy4Y6URSkZiDLDQQWRXvui5ZwwsYRJ8LhT0pSUwan1raG5Vl01GmlWV
+qsrCmnObuoYkN85iwG4/ERGshkgFCPak8B/jH3GPZSi1+FJLmCqMI1xxmTvf0kZb
+7ejm2IZFTo6ecYWJ1vylkzUI553RxVbnHCNZvFe3AyaKMyFlknFR0Fkl5+9Lpxz+
+VOajbCjicg7jIYCw76/xgQIDAQABoyEwHzAdBgNVHQ4EFgQUJHLir1/Tel8v/6Ou
+IXpLS0JH8jIwDQYJKoZIhvcNAQEFBQADggEBAFE15qMGIlp8+M306FbhDEvo1vzx
+N2Pfvg/f92NXH59d2XZ/wuHxugL8qfcM5xkqsDeIRVxRdISpwiIWlqTitn6lenF8
+5bvPQ09T/b09dVz/LxwU2Cm6+6H5/HZSoLtCKBOuRzAKQdxczpyfaqv9caFC+Leg
+PQIm2HCwOM0A4KzhYcFhumGeyCbyVZsSQcJE7bYc/IHkR2erup7h5BACOZ/a+hHL
+PQok/uGvtEsR3roydNcNlR8Ja6Wc4eUf7kisTuZTxwRJI9DPVimbs0VAqhnsnVWA
+K3X4+6sFUq5WfHS4wTRhrR93JvEV5LlQ6UCXYOQMvTii8l07qxkDiysVsLQ=</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+  </Signature>
+</Auth>
+
+uidai.c:624 uidai ip address 103.57.226.18
+
+uidai.c:655 uidai ip address 103.57.226.18
+
+HTTP/1.1 200 OK
+Date: Mon, 25 Jun 2018 04:52:25 GMT
+Server: Apache-Coyote/1.1
+Content-Type: application/xml
+X-Frame-Options: sameorigin
+Keep-Alive: timeout=5, max=5000
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+
+5d6
+<?xml version="1.0" encoding="UTF-8"?><AuthRes code="9c706bdc63054e0e9ae704f20119d19c" info="02{2ce68a0203c8029b1c94df035ed500ab46e8376779b1890b26e31652cc9801ab,35bc02bc875a5dd322c38c555891881a30707eab0fb1cff7b1f25b1bd641198f,01a000002a000020,1.0,20180625102224,0,0,0,1.6,20ef0f0c8d0eea98772412cea9b3b92612e3e53cb5e59152b5703165f56e8a53,efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7,public,P,500052,23,E,100,NA,NA,NA,NA,NA,NA,NA,efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7}" ret="y" ts="2018-06-25T10:22:25.033+05:30" txn="TXN:BalaaghTesting"><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>Cao5mSdcuIbOFsIgf6D1mWd59JOHxtUDowiJe2mL77I=</DigestValue></Reference></SignedInfo><SignatureValue>rwAGr8JXm0uIsbh9e5iKkljaAHM5AnJkoIiXoNaLYT387KbVsKCKfkR+I3I/sd4xybMxaJyZAiGB
+pdCR+U2IxdNi45OdXDGubeh/7bil4WpIRCuLscgeKoDmn4ERkVYzaQz4ZdlEer5qTEKU340VIynd
+s5JNQakyVwL1l183o6rfVXvYcsJvinnRgAnHJzaIGb4Eiw9iCv1MP/eSVCXMDds8K6mFhOJqGEB+
+gzAPQIKhebVB5sKSJB7//SGpXv+5bIjMFapHRaY38yNGlxtqJfYZYmpMFuaOP/eKBdZC1IvfrYEC
+qRiovaJetmy09YRWnWOl4osO6qs2SOHTQYJfbg==</SignatureValue></Signature></AuthRes>
+0
+

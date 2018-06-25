@@ -1847,12 +1847,14 @@ int32_t auth_build_demo_v16(uint8_t *in_ptr,
 
   if(demo_attr[0] && strlen(demo_attr[0])) {
     /*lang is present*/
-    offset += snprintf(&demo_xml[offset],
-                       (len - offset),
-                       "%s%s%s",
-                       " lang=\"",
-                       demo_attr[0],
-                       "\" ");
+    if(strncmp(demo_attr[0], "NA", 2)) {
+      offset += snprintf(&demo_xml[offset],
+                         (len - offset),
+                         "%s%s%s",
+                         " lang=\"",
+                         demo_attr[0],
+                         "\" ");
+    }
   }
   
   offset += snprintf(&demo_xml[offset],
@@ -3376,9 +3378,10 @@ void auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
             auth_attr[4],
             auth_attr[1],
             auth_attr[5],
-            uidai_attr[2]);
+            crypto_attr[2]);
+
   util_init(crypto_attr[0], crypto_attr[1], crypto_attr[2]);
-  uidai_init_ex("192.168.1.6", 8080, uidai_attr[1], 80);
+  uidai_init_ex("192.168.1.3", 8080, uidai_attr[1], 80);
 
   for(idx = 0; idx < 7; idx++) {
     free(auth_attr[idx]);

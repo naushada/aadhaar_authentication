@@ -1099,6 +1099,142 @@ uint8_t *uidai_chunked_rsp(int32_t fd, uint32_t *rsp_len) {
   return(buffer);
 }/*uidai_chunked_rsp*/
 
+uint8_t *uidai_get_rsp_param(uint8_t *rsp, 
+                             uint32_t rsp_len, 
+                             uint8_t *attr) {
+
+  uint8_t *param_ptr = NULL;
+  uint8_t param_name[256];
+  uint32_t len = 1024;
+  uint8_t *tmp_rsp = NULL;
+  char *save_ptr = NULL;
+  uint8_t *token_ptr = NULL;
+  int32_t ret = -1;
+
+  tmp_rsp = (uint8_t *)malloc(sizeof(uint8_t) * rsp_len);
+  assert(tmp_rsp != NULL);
+  memset((void *)tmp_rsp, 0, rsp_len);
+  memcpy((void *)tmp_rsp, rsp, rsp_len);
+
+  param_ptr = (uint8_t *)malloc(sizeof(uint8_t) * len);
+  assert(param_ptr != NULL);
+  memset((void *)param_ptr, 0, len);
+
+  token_ptr = strtok_r(tmp_rsp, " ", &save_ptr);
+  while(token_ptr) {
+
+    memset((void *)param_name, 0, sizeof(param_name));
+    ret = sscanf(token_ptr, "%[^=]=%s", param_name, param_ptr);
+    
+    if((2 == ret) && !strncmp(param_name, attr, sizeof(param_name))) {
+      free(tmp_rsp);
+      tmp_rsp = NULL;
+      return(param_ptr); 
+    }
+
+    token_ptr = strtok_r(NULL, " ", &save_ptr);
+  }
+
+  free(tmp_rsp);
+  free(param_ptr);
+  param_ptr = NULL;
+  tmp_rsp = NULL;
+  return(NULL);
+}/*uidai_get_rsp_param*/
+
+int32_t uidai_parse_rsp(uint8_t *rsp_ptr, 
+                        uint32_t rsp_len, 
+                        int32_t wr_fd) {
+  uint8_t *attr_ptr[10];
+  uint8_t *rsp = NULL;
+  uint32_t rsp_size = 2000;
+  uint32_t idx;
+  uint32_t len = 0;
+  int32_t ret = -1;
+
+  rsp = (uint8_t *)malloc(sizeof(uint8_t) * rsp_size);
+  assert(rsp != NULL);
+  memset((void *)rsp, 0, rsp_size);
+
+  /*Parsing of uidai response attribute/param*/
+  attr_ptr[0] = uidai_get_rsp_param(rsp_ptr, rsp_len, "ret");
+
+  if(!strncmp(attr_ptr[0], "y", 1)) {
+    /*Response is success*/
+    attr_ptr[1] = uidai_get_rsp_param(rsp_ptr, rsp_len, "code");
+    attr_ptr[2] = uidai_get_rsp_param(rsp_ptr, rsp_len, "ts");
+    attr_ptr[3] = uidai_get_rsp_param(rsp_ptr, rsp_len, "txn");
+    attr_ptr[4] = uidai_get_rsp_param(rsp_ptr, rsp_len, "info");
+
+    len = snprintf(rsp, rsp_size,
+                   "%s%s%s%s%s"
+                   "%s%s%s%s%s"
+                   "%s",
+                   "response_display_response ",
+                   /*ret*/
+                   attr_ptr[0],
+                   " ",
+                   /*err*/
+                   "\"\"",
+                   " ",
+                   /*code*/
+                   attr_ptr[1],
+                   " ",
+                   /*actn*/
+                   "\"\"",
+                   " ",
+                   /*info*/
+                   attr_ptr[4],
+                   "\n");
+          
+    for(idx = 0; idx < 5; idx++) {
+      free(attr_ptr[idx]);
+      attr_ptr[idx] = NULL;
+    }
+
+  } else {
+    /*Response is failure*/
+    attr_ptr[1] = uidai_get_rsp_param(rsp_ptr, rsp_len, "code");
+    attr_ptr[2] = uidai_get_rsp_param(rsp_ptr, rsp_len, "ts");
+    attr_ptr[3] = uidai_get_rsp_param(rsp_ptr, rsp_len, "txn");
+    attr_ptr[4] = uidai_get_rsp_param(rsp_ptr, rsp_len, "info");
+    attr_ptr[5] = uidai_get_rsp_param(rsp_ptr, rsp_len, "err");
+    attr_ptr[6] = uidai_get_rsp_param(rsp_ptr, rsp_len, "actn");
+
+    len = snprintf(rsp, rsp_size,
+                   "%s%s%s%s%s"
+                   "%s%s%s%s%s"
+                   "%s",
+                   "response_display_response ",
+                   /*ret*/
+                   attr_ptr[0],
+                   " ",
+                   /*err*/
+                   attr_ptr[5],
+                   " ",
+                   /*code*/
+                   attr_ptr[1],
+                   " ",
+                   /*actn*/
+                   attr_ptr[6],
+                   " ",
+                   /*info*/
+                   attr_ptr[4],
+                   "\n");
+
+    for(idx = 0; idx < 7; idx++) {
+      free(attr_ptr[idx]);
+      attr_ptr[idx] = NULL;
+    }
+  }
+  /*Sending Response to GUI*/
+  ret = write(wr_fd, rsp, len);
+  free(rsp);
+  rsp = NULL;
+
+  return(0);
+}/*uidai_parse_rsp*/
+
 /**
  * @brief This function processes the received request fro gui
  * and send to uidai server, rd_fd[0] shall be used for receiving request
@@ -1143,7 +1279,7 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
     if(ret > 0) {
       if(!strncmp(req_ptr, "Exit", 4)) {
         /*Child is going to exit*/
-        write(wr_fd[1], "exit\n", 5);
+        ret = write(wr_fd[1], "exit\n", 5);
         raise(SIGCHLD);
         continue;
       }
@@ -1161,19 +1297,18 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
       free(rsp_ptr);
       rsp_ptr = NULL;
 
-
       /*Response from UIDAI*/
       rsp_ptr = uidai_chunked_rsp(pUidaiCtx->uidai_fd, &rsp_len);
       fprintf(stderr, "\n%s\n", rsp_ptr); 
-      free(rsp_ptr);
-      rsp_ptr = NULL;
       /*Closing the connection with uidai server*/
       close(pUidaiCtx->uidai_fd);
       pUidaiCtx->uidai_fd = -1;
 
-      /*Sending Response to GUI*/
-      //uint8_t *rsp = "response_display_response n \"998\" \"ASDASDDDDD\" \"A202\" \"02{sdes ssed }\"\n";
-      //write(wr_fd[1], rsp, strlen(rsp));
+      /*Sending response to GUI*/
+      uidai_parse_rsp(rsp_ptr, rsp_len, wr_fd[1]);
+      free(rsp_ptr);
+      rsp_ptr = NULL;
+
     } else if(0 == ret) {
       close(rd_fd[0]);
       close(wr_fd[1]);

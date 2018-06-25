@@ -1,0 +1,159 @@
+auth.c:2607 pi 1 pa 0 pfa 0 bio 0 pv 0 pv 1 demo H�H�=]e 
+
+auth.c:2441 
+    <Pi ms="E" mv="100" name="Naushad Ahmed" lmv="P" gender="M" dobt="V"/>
+
+
+pid_xml[1] 
+    <Pi ms="E" mv="100" name="Naushad Ahmed" lmv="P" gender="M" dobt="V"/>
+
+
+auth.c:2709 <Pid ts="2018-06-25T08:54:30" ver="1.0">
+  <Demo>
+    <Pi ms="E" mv="100" name="Naushad Ahmed" lmv="P" gender="M" dobt="V"/>
+  </Demo>
+</Pid>
+
+
+<Pid ts="2018-06-25T08:54:30" ver="1.0">
+  <Demo>
+    <Pi ms="E" mv="100" name="Naushad Ahmed" lmv="P" gender="M" dobt="V"/>
+  </Demo>
+</Pid>
+
+
+auth.c:706 ciphered data len HMAC 48
+
+auth.c:3263 c14n auth xml is 
+<Auth ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" sa="public" tid="public" txn="TXN:BalaaghTesting" uid="999938452218" ver="1.6">
+  <Uses bio="n" otp="n" pa="n" pfa="n" pi="y" pin="n"></Uses>
+  <Meta fdc="NA" idc="NA" lot="P" lov="500052" pip="NA" udc="Balaagh"></Meta>
+  <Skey ci="20200916">fLmzUxA2wRSrw6scT1e+M9VD8r0dOkUW27Ff0m5zLeroeiUPheDyIDQvCQinu843SfekahPp9k9Z9Y7PQhpCcdZkQ77fkWmN4mN6VdeHJXJV5dL6yzGVRlVPJnkVM699I8khIfdaSLDSKUdoLYr8LFsNpvHkT3/l3WdkXpEJ58GS30LvEohLzTsGeFZlJdCjWvNCoJnO7bzu61WFsHh7i6UpqAt4CBrSIJW2xlQd44dSUkpN8Vgjzl4iOq9fMjmwRBlN4fuEnFvW0j+sW2vqq1WG2Os83BRUd5ZSErsxNb2XzyUl1cdlvyJ5N3xHj+oWZpq7OAHgdUXtSyRcN7NrTw==</Skey>
+  <Hmac>z84XPQrZhMJDXrPFgO1IM4PZfUpZcEno0+Jc1x7tm7iXgJNVoOHdZ/SbTlsrYGbX</Hmac>
+  <Data type="X">VD5bE4z04t1Z5gdqrBw+6c92YAd32i806PRA9yRAg0D6DYeFKKMLZXuFHUOt1o3ovLQvdL/Fmtp9AwvGOR66u7JJXxx4azBNqZ+iOMPze7Ftwgum4+ZquAcg34ZPFJPEP4AJFW/dmX/5isH2hso+Ey9KQLsxVh0bE3NxOLr38uGnnbjWoKzE8y8Ft9T4yCg5</Data>
+  
+</Auth>
+Final XML 
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Auth ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" sa="public" tid="public" txn="TXN:BalaaghTesting" uid="999938452218" ver="1.6">
+  <Uses bio="n" otp="n" pa="n" pfa="n" pi="y" pin="n"/>
+  <Meta fdc="NA" idc="NA" lot="P" lov="500052" pip="NA" udc="Balaagh"/>
+  <Skey ci="20200916">fLmzUxA2wRSrw6scT1e+M9VD8r0dOkUW27Ff0m5zLeroeiUPheDyIDQvCQinu843SfekahPp9k9Z9Y7PQhpCcdZkQ77fkWmN4mN6VdeHJXJV5dL6yzGVRlVPJnkVM699I8khIfdaSLDSKUdoLYr8LFsNpvHkT3/l3WdkXpEJ58GS30LvEohLzTsGeFZlJdCjWvNCoJnO7bzu61WFsHh7i6UpqAt4CBrSIJW2xlQd44dSUkpN8Vgjzl4iOq9fMjmwRBlN4fuEnFvW0j+sW2vqq1WG2Os83BRUd5ZSErsxNb2XzyUl1cdlvyJ5N3xHj+oWZpq7OAHgdUXtSyRcN7NrTw==</Skey>
+  <Hmac>z84XPQrZhMJDXrPFgO1IM4PZfUpZcEno0+Jc1x7tm7iXgJNVoOHdZ/SbTlsrYGbX</Hmac>
+  <Data type="X">VD5bE4z04t1Z5gdqrBw+6c92YAd32i806PRA9yRAg0D6DYeFKKMLZXuFHUOt1o3ovLQvdL/Fmtp9AwvGOR66u7JJXxx4azBNqZ+iOMPze7Ftwgum4+ZquAcg34ZPFJPEP4AJFW/dmX/5isH2hso+Ey9KQLsxVh0bE3NxOLr38uGnnbjWoKzE8y8Ft9T4yCg5</Data>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <DigestValue>4OdoIIQflwxyAg8cDi73uQcv66w=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>LCnKNorFBXdtYnFdF8Kz/ZZ7sY3+ZhFv4ovcvjHKDV6ZZsFmvIqjM2z4YInAkVsSMqJIn4If1UkYO5CZd2bFSWqSGdzvYN0L2ajk27ruYJ0rUdc6o8qW/GSHjdqJYBiy7UYE2O7Eh12ng/pxLcloNmZgp4OV7FEkGbmT5GQwvaQz3EgDInxTGEG4R+w9TyUeS/cVmrUiadNaVf4YNYjv1kkcWnIvM0WEwNsgLIH0alM75YPcXng4ZKT2fbtRJzrokRo2R1GItucKfbrAeMCKg5op0qdteA3w1VCrm25WRPfppMQKF2gKHLqAyg4MysdkTN1G4bdXOfuLz6ZY+nEH4g==</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509SubjectName>C=IN,ST=KA,L=Bangalore,O=Public AUA,OU=Staging Services,CN=Public AUA for Staging Services</X509SubjectName>
+        <X509Certificate>MIIDuDCCAqCgAwIBAgIGA7J+eqryMA0GCSqGSIb3DQEBBQUAMIGNMQswCQYDVQQG
+EwJJTjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMK
+UHVibGljIEFVQTEZMBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEtMCsGA1UEAxMk
+Um9vdCBQdWJsaWMgQVVBIGZvciBTdGFnaW5nIFNlcnZpY2VzMB4XDTE2MDUyNDE0
+NDAzMVoXDTIwMDUyNDE0NDAzMVowgYgxCzAJBgNVBAYTAklOMQswCQYDVQQIEwJL
+QTESMBAGA1UEBxMJQmFuZ2Fsb3JlMRMwEQYDVQQKEwpQdWJsaWMgQVVBMRkwFwYD
+VQQLExBTdGFnaW5nIFNlcnZpY2VzMSgwJgYDVQQDEx9QdWJsaWMgQVVBIGZvciBT
+dGFnaW5nIFNlcnZpY2VzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+o4XxOsjK58Ud+tQd06Mk8Rd0qoyjA/3u+y0YVYEF6RgT8Ge1uVdTkIcVYaHyXuuH
+UPLLqGW1hPfVtn81UVIMGyrw5+t1c30wpGv3UJ6GCFu0sPGgG5NwkVbIUt2xgT/O
+r/kGzHjUJJy4Y6URSkZiDLDQQWRXvui5ZwwsYRJ8LhT0pSUwan1raG5Vl01GmlWV
+qsrCmnObuoYkN85iwG4/ERGshkgFCPak8B/jH3GPZSi1+FJLmCqMI1xxmTvf0kZb
+7ejm2IZFTo6ecYWJ1vylkzUI553RxVbnHCNZvFe3AyaKMyFlknFR0Fkl5+9Lpxz+
+VOajbCjicg7jIYCw76/xgQIDAQABoyEwHzAdBgNVHQ4EFgQUJHLir1/Tel8v/6Ou
+IXpLS0JH8jIwDQYJKoZIhvcNAQEFBQADggEBAFE15qMGIlp8+M306FbhDEvo1vzx
+N2Pfvg/f92NXH59d2XZ/wuHxugL8qfcM5xkqsDeIRVxRdISpwiIWlqTitn6lenF8
+5bvPQ09T/b09dVz/LxwU2Cm6+6H5/HZSoLtCKBOuRzAKQdxczpyfaqv9caFC+Leg
+PQIm2HCwOM0A4KzhYcFhumGeyCbyVZsSQcJE7bYc/IHkR2erup7h5BACOZ/a+hHL
+PQok/uGvtEsR3roydNcNlR8Ja6Wc4eUf7kisTuZTxwRJI9DPVimbs0VAqhnsnVWA
+K3X4+6sFUq5WfHS4wTRhrR93JvEV5LlQ6UCXYOQMvTii8l07qxkDiysVsLQ=</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+  </Signature>
+</Auth>
+
+auth.c:3335 req xml 
+POST http://developer.uidai.gov.in/uidauth/public/9/9/MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s HTTP/1.1
+Host: developer.uidai.gov.in
+Content-Type: text/xml
+Connection: Keep-alive
+Content-Length: 3534
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Auth ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" sa="public" tid="public" txn="TXN:BalaaghTesting" uid="999938452218" ver="1.6">
+  <Uses bio="n" otp="n" pa="n" pfa="n" pi="y" pin="n"/>
+  <Meta fdc="NA" idc="NA" lot="P" lov="500052" pip="NA" udc="Balaagh"/>
+  <Skey ci="20200916">fLmzUxA2wRSrw6scT1e+M9VD8r0dOkUW27Ff0m5zLeroeiUPheDyIDQvCQinu843SfekahPp9k9Z9Y7PQhpCcdZkQ77fkWmN4mN6VdeHJXJV5dL6yzGVRlVPJnkVM699I8khIfdaSLDSKUdoLYr8LFsNpvHkT3/l3WdkXpEJ58GS30LvEohLzTsGeFZlJdCjWvNCoJnO7bzu61WFsHh7i6UpqAt4CBrSIJW2xlQd44dSUkpN8Vgjzl4iOq9fMjmwRBlN4fuEnFvW0j+sW2vqq1WG2Os83BRUd5ZSErsxNb2XzyUl1cdlvyJ5N3xHj+oWZpq7OAHgdUXtSyRcN7NrTw==</Skey>
+  <Hmac>z84XPQrZhMJDXrPFgO1IM4PZfUpZcEno0+Jc1x7tm7iXgJNVoOHdZ/SbTlsrYGbX</Hmac>
+  <Data type="X">VD5bE4z04t1Z5gdqrBw+6c92YAd32i806PRA9yRAg0D6DYeFKKMLZXuFHUOt1o3ovLQvdL/Fmtp9AwvGOR66u7JJXxx4azBNqZ+iOMPze7Ftwgum4+ZquAcg34ZPFJPEP4AJFW/dmX/5isH2hso+Ey9KQLsxVh0bE3NxOLr38uGnnbjWoKzE8y8Ft9T4yCg5</Data>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <DigestValue>4OdoIIQflwxyAg8cDi73uQcv66w=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>LCnKNorFBXdtYnFdF8Kz/ZZ7sY3+ZhFv4ovcvjHKDV6ZZsFmvIqjM2z4YInAkVsSMqJIn4If1UkYO5CZd2bFSWqSGdzvYN0L2ajk27ruYJ0rUdc6o8qW/GSHjdqJYBiy7UYE2O7Eh12ng/pxLcloNmZgp4OV7FEkGbmT5GQwvaQz3EgDInxTGEG4R+w9TyUeS/cVmrUiadNaVf4YNYjv1kkcWnIvM0WEwNsgLIH0alM75YPcXng4ZKT2fbtRJzrokRo2R1GItucKfbrAeMCKg5op0qdteA3w1VCrm25WRPfppMQKF2gKHLqAyg4MysdkTN1G4bdXOfuLz6ZY+nEH4g==</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509SubjectName>C=IN,ST=KA,L=Bangalore,O=Public AUA,OU=Staging Services,CN=Public AUA for Staging Services</X509SubjectName>
+        <X509Certificate>MIIDuDCCAqCgAwIBAgIGA7J+eqryMA0GCSqGSIb3DQEBBQUAMIGNMQswCQYDVQQG
+EwJJTjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMK
+UHVibGljIEFVQTEZMBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEtMCsGA1UEAxMk
+Um9vdCBQdWJsaWMgQVVBIGZvciBTdGFnaW5nIFNlcnZpY2VzMB4XDTE2MDUyNDE0
+NDAzMVoXDTIwMDUyNDE0NDAzMVowgYgxCzAJBgNVBAYTAklOMQswCQYDVQQIEwJL
+QTESMBAGA1UEBxMJQmFuZ2Fsb3JlMRMwEQYDVQQKEwpQdWJsaWMgQVVBMRkwFwYD
+VQQLExBTdGFnaW5nIFNlcnZpY2VzMSgwJgYDVQQDEx9QdWJsaWMgQVVBIGZvciBT
+dGFnaW5nIFNlcnZpY2VzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+o4XxOsjK58Ud+tQd06Mk8Rd0qoyjA/3u+y0YVYEF6RgT8Ge1uVdTkIcVYaHyXuuH
+UPLLqGW1hPfVtn81UVIMGyrw5+t1c30wpGv3UJ6GCFu0sPGgG5NwkVbIUt2xgT/O
+r/kGzHjUJJy4Y6URSkZiDLDQQWRXvui5ZwwsYRJ8LhT0pSUwan1raG5Vl01GmlWV
+qsrCmnObuoYkN85iwG4/ERGshkgFCPak8B/jH3GPZSi1+FJLmCqMI1xxmTvf0kZb
+7ejm2IZFTo6ecYWJ1vylkzUI553RxVbnHCNZvFe3AyaKMyFlknFR0Fkl5+9Lpxz+
+VOajbCjicg7jIYCw76/xgQIDAQABoyEwHzAdBgNVHQ4EFgQUJHLir1/Tel8v/6Ou
+IXpLS0JH8jIwDQYJKoZIhvcNAQEFBQADggEBAFE15qMGIlp8+M306FbhDEvo1vzx
+N2Pfvg/f92NXH59d2XZ/wuHxugL8qfcM5xkqsDeIRVxRdISpwiIWlqTitn6lenF8
+5bvPQ09T/b09dVz/LxwU2Cm6+6H5/HZSoLtCKBOuRzAKQdxczpyfaqv9caFC+Leg
+PQIm2HCwOM0A4KzhYcFhumGeyCbyVZsSQcJE7bYc/IHkR2erup7h5BACOZ/a+hHL
+PQok/uGvtEsR3roydNcNlR8Ja6Wc4eUf7kisTuZTxwRJI9DPVimbs0VAqhnsnVWA
+K3X4+6sFUq5WfHS4wTRhrR93JvEV5LlQ6UCXYOQMvTii8l07qxkDiysVsLQ=</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+  </Signature>
+</Auth>
+
+uidai.c:624 uidai ip address 103.57.226.18
+
+uidai.c:655 uidai ip address 103.57.226.18
+
+HTTP/1.1 200 OK
+Date: Mon, 25 Jun 2018 03:24:31 GMT
+Server: Apache-Coyote/1.1
+Content-Type: application/xml
+X-Frame-Options: sameorigin
+Keep-Alive: timeout=5, max=5000
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+
+5d6
+<?xml version="1.0" encoding="UTF-8"?><AuthRes code="486503afb1fe4a14a7c1b407a9b0d3c5" err="511" info="02{2ce68a0203c8029b1c94df035ed500ab46e8376779b1890b26e31652cc9801ab,0000000000000000000000000000000000000000000000000000000000000000,0100000000000000,NA,NA,NA,NA,NA,1.6,20ef0f0c8d0eea98772412cea9b3b92612e3e53cb5e59152b5703165f56e8a53,efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7,public,P,500052,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7}" ret="n" ts="2018-06-25T08:54:31.463+05:30" txn="TXN:BalaaghTesting"><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>Lw4ChQN0LaYZZi4MhQS4K2TYGmA6iJ9mE9mXV7l+Zn0=</DigestValue></Reference></SignedInfo><SignatureValue>Pa7hRLdw9WZoFfnuzAUqSTtGaddEX2Hy+QpNmOdlfXyKRiSpWg1pxSssuFnGxXtN2chw23FTb6im
+DNsoRuFxsD1I3kf3T06tkdXb5H58quV4wbbkPpis2mk3tK0HWf2Jqxl3aq96LyYMAmy5/Gywe6Uv
+ufDb2D1EqtT8ZsT/U4W9T21J0sw1+0nrGEjnY4Ri0V0F7HvT71tMz0BFexiPqMXKXj+qL6m/WGHM
+XZ1jS5ra8djDwKW9PbmWASUaxXVZy7g6DpzT2jd2HTpPF+hSqNE6Sm41CYmCJ9EMu0AyEjRAhsKb
+/ZRixMBjhqFGBH1WfRqixrk7h4LNmxLbQmBwNw==</SignatureValue></Signature></AuthRes>
+

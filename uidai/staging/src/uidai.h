@@ -179,4 +179,11 @@ int32_t uidai_init_ex(uint8_t *ip_addr,
                       uint8_t *uidai_host, 
                       uint32_t uidai_port);
 
+uint8_t *uidai_get_rsp_param(uint8_t *rsp, 
+                             uint32_t rsp_len, 
+                             uint8_t *attr);
+
+int32_t uidai_parse_rsp(uint8_t *rsp_ptr, 
+                        uint32_t rsp_len, 
+                        int32_t wr_fd);
 #endif /* __UIDAI_H__ */
