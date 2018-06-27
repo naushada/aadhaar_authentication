@@ -256,6 +256,13 @@ proc default_contents {type version} {
     } elseif {"2.0" == $version} { 
       
     }
+
+  } elseif {"otp" == $type} {
+
+    if {"1.6" == $version} {
+      set_default_otp_v16 
+    }
+
   }
 };#/*default_contents*/
 

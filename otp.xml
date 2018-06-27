@@ -1,0 +1,51 @@
+/request?stage=staging&request=otp&otp={uid=999938452218,tid=public,txn=TXN:BalaaghTesting,ac=public,sa=public,ver=1.6,lk=MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s,type=A}&opts={ch=01}&uidai={uri=/otp/1.6,host=developer.uidai.gov.in}&crypto={public=/home/naushada/test/build_infra/uidai/keys/uidai_auth_stage.cer,private=/home/naushada/test/build_infra/uidai/keys/Staging_Signature_PrivateKey.p12,password=public}
+
+otp.c:415 http_request POST http://developer.uidai.gov.in/otp/1.6/public/9/9/MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s HTTP/1.1
+Host: developer.uidai.gov.in
+Content-Type: text/xml
+Connection: Keep-alive
+Content-Length: 2760
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Otp ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" sa="public" tid="public" txn="TXN:BalaaghTesting" type="A" uid="999938452218" ver="1.6">
+  <Opts ch="01"/>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <DigestValue>gDHPgHm9Nu1UiOCtfS9OgUntzrc=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>oVvNEQnC2Ini9lhk40XGDv5RBS7BbIOkZVADrUjDFouubHWeg8cEl4axm9xCVoCpoAlRbl0eBh3UhTYydRffij4GLP3FXDp43EXLlNZU2m5SJ//DWKEhXuY3sijbSZ2GEHwSb/EU23K4Zgu6vULpDTPAa2PTS3/K6IPOu665oRlytj9SAjCgwv+CvUtwB9KStntRy8hYBgIQa8/VBbMhyY9W0cgBK+nTFcXytEDXco4Yr1DSwMR0dQ/4V1Sof0IQ9UQj/VrDxWfScIsVQyNCFV6zC368u07MrOamXKJ8GtMwrmI/w42VZZcHzhoiLyxZ1SqG4tAxLzEe1c6TCzRW1w==</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509SubjectName>C=IN,ST=KA,L=Bangalore,O=Public AUA,OU=Staging Services,CN=Public AUA for Staging Services</X509SubjectName>
+        <X509Certificate>MIIDuDCCAqCgAwIBAgIGA7J+eqryMA0GCSqGSIb3DQEBBQUAMIGNMQswCQYDVQQG
+EwJJTjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMK
+UHVibGljIEFVQTEZMBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEtMCsGA1UEAxMk
+Um9vdCBQdWJsaWMgQVVBIGZvciBTdGFnaW5nIFNlcnZpY2VzMB4XDTE2MDUyNDE0
+NDAzMVoXDTIwMDUyNDE0NDAzMVowgYgxCzAJBgNVBAYTAklOMQswCQYDVQQIEwJL
+QTESMBAGA1UEBxMJQmFuZ2Fsb3JlMRMwEQYDVQQKEwpQdWJsaWMgQVVBMRkwFwYD
+VQQLExBTdGFnaW5nIFNlcnZpY2VzMSgwJgYDVQQDEx9QdWJsaWMgQVVBIGZvciBT
+dGFnaW5nIFNlcnZpY2VzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+o4XxOsjK58Ud+tQd06Mk8Rd0qoyjA/3u+y0YVYEF6RgT8Ge1uVdTkIcVYaHyXuuH
+UPLLqGW1hPfVtn81UVIMGyrw5+t1c30wpGv3UJ6GCFu0sPGgG5NwkVbIUt2xgT/O
+r/kGzHjUJJy4Y6URSkZiDLDQQWRXvui5ZwwsYRJ8LhT0pSUwan1raG5Vl01GmlWV
+qsrCmnObuoYkN85iwG4/ERGshkgFCPak8B/jH3GPZSi1+FJLmCqMI1xxmTvf0kZb
+7ejm2IZFTo6ecYWJ1vylkzUI553RxVbnHCNZvFe3AyaKMyFlknFR0Fkl5+9Lpxz+
+VOajbCjicg7jIYCw76/xgQIDAQABoyEwHzAdBgNVHQ4EFgQUJHLir1/Tel8v/6Ou
+IXpLS0JH8jIwDQYJKoZIhvcNAQEFBQADggEBAFE15qMGIlp8+M306FbhDEvo1vzx
+N2Pfvg/f92NXH59d2XZ/wuHxugL8qfcM5xkqsDeIRVxRdISpwiIWlqTitn6lenF8
+5bvPQ09T/b09dVz/LxwU2Cm6+6H5/HZSoLtCKBOuRzAKQdxczpyfaqv9caFC+Leg
+PQIm2HCwOM0A4KzhYcFhumGeyCbyVZsSQcJE7bYc/IHkR2erup7h5BACOZ/a+hHL
+PQok/uGvtEsR3roydNcNlR8Ja6Wc4eUf7kisTuZTxwRJI9DPVimbs0VAqhnsnVWA
+K3X4+6sFUq5WfHS4wTRhrR93JvEV5LlQ6UCXYOQMvTii8l07qxkDiysVsLQ=</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+  </Signature>
+</Otp>

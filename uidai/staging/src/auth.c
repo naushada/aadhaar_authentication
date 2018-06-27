@@ -2603,8 +2603,9 @@ int32_t auth_build_pid_xml_v16(uint8_t *in_ptr,
 
   free(arg_ptr[0]);
 
-  fprintf(stderr, "\n%s:%d pi %s pa %s pfa %s bio %s pv %s pv %s demo %s\n",
+  /*fprintf(stderr, "\n%s:%d pi %s pa %s pfa %s bio %s pv %s pv %s demo %s\n",
                    __FILE__, __LINE__,uses_attr[0],uses_attr[1], uses_attr[2], uses_attr[3], uses_attr[4], uses_attr[5]);
+  */
   pid_xml[0] = NULL;
   auth_build_pid_init(in_ptr, in_len, version, &pid_xml[0]);
 
@@ -2942,20 +2943,16 @@ int32_t auth_build_uses_xml_v16(uint8_t *in_ptr,
     pv_attr[1] = uidai_get_attr(pv, "otp");
     free(pv);
 
-    if(strlen(pv_attr[0])) {
+    if(pv_attr[0] && strlen(pv_attr[0])) {
       offset += sprintf(&uses_tag[offset],
                         "%s",
                         " pin=\"y\"");
-    } else {
-      offset += sprintf(&uses_tag[offset],
-                        "%s",
-                        " pin=\"n\"");
-    }
 
-    if(strlen(pv_attr[1])) {
+    } else if(pv_attr[1] && strlen(pv_attr[1])) {
       offset += sprintf(&uses_tag[offset],
                         "%s",
                         " otp=\"y\"");
+       
     } else {
       offset += sprintf(&uses_tag[offset],
                         "%s",
@@ -2964,6 +2961,7 @@ int32_t auth_build_uses_xml_v16(uint8_t *in_ptr,
 
     free(pv_attr[0]);
     free(pv_attr[1]);
+
   } else {
 
     offset += sprintf(&uses_tag[offset],
@@ -3004,6 +3002,7 @@ int32_t auth_build_uses_xml_v16(uint8_t *in_ptr,
                       " pi=\"n\"");
   }
 
+  /*Attributes shall be in ascending order*/
   offset += sprintf(&uses_tag[offset],
                     "%s",
                     " pin=\"n\"");
@@ -3380,9 +3379,6 @@ void auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
             auth_attr[5],
             crypto_attr[2]);
 
-  util_init(crypto_attr[0], crypto_attr[1], crypto_attr[2]);
-  uidai_init_ex("192.168.1.3", 8080, uidai_attr[1], 80);
-
   for(idx = 0; idx < 7; idx++) {
     free(auth_attr[idx]);
   } 
@@ -3394,7 +3390,7 @@ void auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
   for(idx = 0; idx < 3; idx++) {
     free(crypto_attr[idx]);
   }
- 
+
 }/*auth_init_ex*/
 
 

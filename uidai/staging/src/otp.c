@@ -8,6 +8,475 @@
 
 otp_ctx_t otp_ctx_g;
 
+int32_t otp_compose_ts(void) {
+
+  otp_ctx_t *pOtpCtx = &otp_ctx_g;
+  time_t curr_time;
+  struct tm *local_time;
+
+  /*Retrieving the current time*/
+  curr_time = time(NULL);
+  local_time = localtime(&curr_time);
+  memset((void *)pOtpCtx->ts, 0, sizeof(pOtpCtx->ts));
+
+  snprintf(pOtpCtx->ts, 
+           sizeof(pOtpCtx->ts),
+           "%04d-%02d-%02dT%02d:%02d:%02d", 
+           local_time->tm_year+1900, 
+           local_time->tm_mon+1,
+           local_time->tm_mday, 
+           local_time->tm_hour,
+           local_time->tm_min, 
+           local_time->tm_sec);
+
+  return(0);
+}/*otp_compose_ts*/
+
+int32_t otp_init_ex(uint8_t *in_ptr, uint32_t in_len) {
+
+  uint8_t *attr[10];
+  uint8_t *param_ptr = NULL;
+  uint32_t idx = 0;
+  otp_ctx_t *pOtpCtx = &otp_ctx_g;
+
+  memset((void *)pOtpCtx, 0, sizeof(otp_ctx_t));
+
+  param_ptr = uidai_get_param(in_ptr, "otp");
+  attr[0] = uidai_get_attr(param_ptr, "ac");
+  attr[1] = uidai_get_attr(param_ptr, "sa");
+  attr[2] = uidai_get_attr(param_ptr, "lk");
+  attr[3] = uidai_get_attr(param_ptr, "ver");
+  attr[4] = uidai_get_attr(param_ptr, "type");
+  attr[5] = uidai_get_attr(param_ptr, "tid");
+  attr[6] = uidai_get_attr(param_ptr, "txn");
+  attr[7] = uidai_get_attr(param_ptr, "uid");
+  free(param_ptr);
+  param_ptr = NULL;
+ 
+  /*minus 1 for null terminated string*/
+  strncpy(pOtpCtx->ac, (const char *)attr[0], sizeof(pOtpCtx->ac) -1);
+  strncpy(pOtpCtx->sa, (const char *)attr[1], sizeof(pOtpCtx->sa) -1);
+  strncpy(pOtpCtx->lk, (const char *)attr[2], sizeof(pOtpCtx->lk) -1);
+  strncpy(pOtpCtx->ver, (const char *)attr[3], sizeof(pOtpCtx->ver) -1);
+  strncpy(pOtpCtx->type, (const char *)attr[4], sizeof(pOtpCtx->type) -1);
+  strncpy(pOtpCtx->tid, (const char *)attr[5], sizeof(pOtpCtx->tid) -1);
+  strncpy(pOtpCtx->txn, (const char *)attr[6], sizeof(pOtpCtx->txn) -1);
+  strncpy(pOtpCtx->uid, (const char *)attr[7], sizeof(pOtpCtx->uid) -1);
+
+  for(idx = 0; idx < 8; idx++) {
+    free(attr[idx]);
+    attr[idx] = NULL;
+  }
+
+  param_ptr = uidai_get_param(in_ptr, "opts");
+  attr[0] = uidai_get_attr(param_ptr, "ch");
+
+  /*00 - Send OTP via both SMS & e-mail
+   *01 - Send OTP via SMS only
+   *02 - Send OTP via e-mail only
+   */
+  pOtpCtx->ch = (uint8_t)atoi(attr[0]);
+  free(param_ptr);
+  free(attr[0]);
+  param_ptr = NULL;
+  attr[0] = NULL;
+
+  param_ptr = uidai_get_param(in_ptr, "uidai");
+  attr[0] = uidai_get_attr(param_ptr, "uri");
+  attr[1] = uidai_get_attr(param_ptr, "host");
+  
+  strncpy(pOtpCtx->uri, 
+          (const char *)attr[0], 
+          sizeof(pOtpCtx->uri) -1);
+
+  strncpy(pOtpCtx->uidai_host_name, 
+          (const char *)attr[1], 
+          sizeof(pOtpCtx->uidai_host_name) -1);
+
+  free(param_ptr);
+  free(attr[0]);
+  free(attr[1]);
+  /*Retrieve the current time and compose ISO ts format*/
+  otp_compose_ts();
+  return(0);
+}/*otp_init_ex*/
+
+/** @brief This function is to build the OTP xml
+ *
+ *  @param *len_ptr is the pointer to unsigned int which holds the 
+ *          length of the partial otp xml
+ *
+ *  @return It will return pointer to unsigned char to partial OTP xml,
+ *          caller must free the memory. 
+ */
+uint8_t *otp_compose_xml_v16(uint32_t *len_ptr) {
+  int32_t ret = -1;
+  otp_ctx_t *pOtpCtx = &otp_ctx_g;
+  uint8_t *xml_ptr = NULL;
+  uint32_t len = 0;
+  uint8_t *req_ptr;
+  uint32_t req_size = 4000;
+
+  req_ptr = (uint8_t *)malloc(sizeof(uint8_t) * req_size);
+  assert(req_ptr != NULL);
+  memset((void *)req_ptr, 0, (sizeof(uint8_t) * req_size));
+
+  xml_ptr = otp_compose_otp_v16(&len);
+  ret = snprintf(req_ptr,
+                 req_size,
+                 "%s%s%s",
+                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n",
+                 xml_ptr,
+                 "\n");
+
+  *len_ptr = (uint32_t)ret;
+  free(xml_ptr);
+  xml_ptr = NULL;
+
+  return(req_ptr);
+}/*otp_compose_xml_v16*/
+
+/** @brief This function is to build the otp atg of OTP xml without 
+ *         the end tag.
+ *
+ *  @param *len_ptr is the pointer to unsigned int for length of otp tag of otp xml 
+ *
+ *  @return It returns pointer to char to otp xml tag and caller must free the memory.
+ */
+uint8_t *otp_compose_otp_v16(uint32_t *len_ptr) {
+
+  int32_t ret = -1;
+  otp_ctx_t *pOtpCtx = &otp_ctx_g;
+  uint8_t *req_ptr = NULL;
+  uint32_t req_size = 1024;
+
+  req_ptr = (uint8_t *)malloc(sizeof(uint8_t) * req_size);
+  assert(req_ptr != NULL);
+  memset((void *)req_ptr, 0, (sizeof(uint8_t) * req_size));
+
+  ret = snprintf(req_ptr,
+                 req_size,
+                 "%s%s%s%s%s"
+                 "%s%s%s%s%s"
+                 "%s%s%s%s%s"
+                 "%s%s%s%s%s"
+                 "%s%.2d%s",
+                 "<Otp",
+                 " ac=\"",
+                 pOtpCtx->ac,
+                 "\" lk=\"",
+                 pOtpCtx->lk,
+                 "\" sa=\"",
+                 pOtpCtx->sa,
+                 "\" tid=\"",
+                 pOtpCtx->tid,
+                 "\" ts=\"",
+                 pOtpCtx->ts,
+                 "\" txn=\"",
+                 pOtpCtx->txn,
+                 "\" type=\"",
+                 pOtpCtx->type,
+                 "\" uid=\"",
+                 pOtpCtx->uid,
+                 "\" ver=\"",
+                 /*It's value shall be 1.6*/
+                 pOtpCtx->ver,
+                 /*Otp attribute ends here*/
+                 "\">\n",
+                 /*opts - options tag starts*/
+                 "  <Opts ch=\"",
+                 pOtpCtx->ch,
+                 "\"/>");
+
+  *len_ptr = (uint32_t)ret;
+
+  return(req_ptr);
+}/*otp_compose_otp_v16*/
+
+/** @brief This function is to build the xml in c14n format to compute the message
+ *         digest. In c14n format every xml tag shall be of form <tag></tang>
+ *
+ *  @param *c14n_len_ptr is the pointer to unsigned int to hold length of c14n xml 
+ * 
+ *  @return It returns the pointer to char for c14n xml, the caller has to free the memory
+ */
+uint8_t *otp_compose_c14n_v16(uint32_t *c14n_len_ptr) {
+
+  int32_t ret = -1;
+  otp_ctx_t *pOtpCtx = &otp_ctx_g;
+  uint8_t *c14n_ptr = NULL;
+  uint32_t c14n_size = 1024;
+
+  c14n_ptr = (uint8_t *)malloc(sizeof(uint8_t) * c14n_size);
+  assert(c14n_ptr != NULL);
+  memset((void *)c14n_ptr, 0, (sizeof(uint8_t) * c14n_size));
+
+  ret = snprintf(c14n_ptr,
+                 c14n_size,
+                 "%s%s%s%s%s"
+                 "%s%s%s%s%s"
+                 "%s%s%s%s%s"
+                 "%s%s%s%s%s"
+                 "%s%.2d%s%s%s",
+                 "<Otp",
+                 " ac=\"",
+                 pOtpCtx->ac,
+                 "\" lk=\"",
+                 pOtpCtx->lk,
+                 "\" sa=\"",
+                 pOtpCtx->sa,
+                 "\" tid=\"",
+                 pOtpCtx->tid,
+                 "\" ts=\"",
+                 pOtpCtx->ts,
+                 "\" txn=\"",
+                 pOtpCtx->txn,
+                 "\" type=\"",
+                 pOtpCtx->type,
+                 "\" uid=\"",
+                 pOtpCtx->uid,
+                 "\" ver=\"",
+                 /*It's value shall be 1.6*/
+                 pOtpCtx->ver,
+                 /*Otp attribute ends here*/
+                 "\">\n",
+                 /*opts - options tag starts*/
+                 "  <Opts ch=\"",
+                 pOtpCtx->ch,
+                 "\"></Opts>\n",
+                 /*https://www.di-mgt.com.au/xmldsig2.html#c14nit*/
+                 "  \n",
+                 "</Otp>");
+
+  *c14n_len_ptr = (uint32_t)ret;
+
+  return(c14n_ptr);
+}/*otp_compose_c14n_v16*/
+
+uint8_t *otp_compose_request(uint8_t *signed_xml, 
+                             uint32_t signed_xml_len, 
+                             uint32_t *http_req_len) {
+
+  uint8_t *req_ptr = NULL;
+  uint32_t req_len = 0;
+  int32_t ret = -1;
+  otp_ctx_t *pOtpCtx = &otp_ctx_g;
+
+  uint32_t req_size = signed_xml_len + 1024;
+  
+  req_ptr = (uint8_t *) malloc(req_size);
+  assert(req_ptr != NULL);
+  memset((void *)req_ptr, 0, req_size);
+
+  /*Prepare http request*/
+  ret = snprintf((char *)req_ptr,
+                 req_size,
+                 "%s%s%s%s%s"
+                 "%s%c%s%c%s"
+                 "%s%s%s%s%s"
+                 "%s%s%s%d%s",
+                 /*https://<host>/otp/<ver>/<ac>/<uid[0]>/<uid[1]>/<asalk>*/
+                 "POST http://",
+                 pOtpCtx->uidai_host_name,
+                 pOtpCtx->uri,
+                 "/",
+                 pOtpCtx->ac,
+                 "/",
+                 pOtpCtx->uid[0],
+                 "/",
+                 pOtpCtx->uid[1],
+                 "/",
+                 pOtpCtx->lk,
+                 " HTTP/1.1\r\n",
+                 "Host: ",
+                 pOtpCtx->uidai_host_name,
+                 "\r\n",
+                 "Content-Type: text/xml\r\n",
+                 "Connection: Keep-alive\r\n",
+                 "Content-Length: ",
+                 signed_xml_len,
+                 /*delimeter B/W http header and its body*/
+                 "\r\n\r\n");
+
+  memcpy((void *)&req_ptr[ret], signed_xml, signed_xml_len);
+  *http_req_len = ret + signed_xml_len;
+
+  return(req_ptr); 
+}/*otp_compose_request*/
+
+/*
+  1.Canonicalize* the text-to-be-signed, C = C14n(T).
+  2.Compute the message digest of the canonicalized text, m = Hash(C).
+  3.Encapsulate the message digest in an XML <SignedInfo> element, SI, in canonicalized form.
+  4.Compute the RSA signatureValue of the canonicalized <SignedInfo> element, SV = RsaSign(Ks, SI).
+  5.Compose the final XML document including the signatureValue, this time in non-canonicalized form.
+
+ */
+uint8_t *otp_sign_xml_v16(uint32_t *len_ptr) {
+
+  uint8_t *c14n_otp_ptr;
+  uint32_t c14n_otp_len;
+  uint8_t *otp_digest;
+  uint32_t otp_digest_len;
+  uint8_t otp_b64[128];
+  uint16_t otp_b64_len;
+  uint8_t otp_b64_signature[512];
+  uint16_t otp_b64_signature_len;
+  uint8_t *signed_xml_ptr;
+  uint16_t signed_xml_len;
+  uint8_t *signature_value = NULL;
+  uint16_t signature_value_len = 0;
+  uint8_t *subject = NULL;
+  uint16_t subject_len = 0;
+  uint8_t *certificate = NULL;
+  uint16_t certificate_len = 0;
+  uint32_t otp_xml_len;
+  uint8_t *final_xml_ptr;
+
+  /*C14N - Canonicalization of <otp> portion of xml*/
+  c14n_otp_ptr = otp_compose_c14n_v16(&c14n_otp_len); 
+
+  otp_digest = (uint8_t *)malloc(sizeof(uint8_t) * 128);
+  assert(otp_digest != NULL);
+  memset((void *)otp_digest, 0, (sizeof(uint8_t) * 128));
+
+  /*digest of c14n xml*/
+  util_compute_digest(c14n_otp_ptr, 
+                      c14n_otp_len, 
+                      otp_digest, 
+                      &otp_digest_len);
+
+  free(c14n_otp_ptr);
+  c14n_otp_ptr = NULL;
+  c14n_otp_len = 0;
+
+  memset((void *)otp_b64, 0, sizeof(otp_b64));
+  otp_b64_len = 0;
+  util_base64(otp_digest, otp_digest_len, otp_b64, &otp_b64_len);
+
+  free(otp_digest);
+  otp_digest = NULL;
+  otp_digest_len = 0;
+
+  signed_xml_ptr = (uint8_t *)malloc(sizeof(uint8_t) * 2048);
+  assert(signed_xml_ptr != NULL);
+  memset((void *)signed_xml_ptr, 0, (sizeof(uint8_t) * 2048));
+
+  /*C14N for <SignedInfo> portion of xml*/
+  util_c14n_signedinfo(signed_xml_ptr, 
+                       (sizeof(uint8_t) * 2048), 
+                       &signed_xml_len, 
+                       /*Message Digest in base64*/
+                       otp_b64);
+
+  /*Creating RSA Signature - by signing digest with private key*/
+  util_compute_rsa_signature(signed_xml_ptr, 
+                             signed_xml_len, 
+                             &signature_value, 
+                             &signature_value_len);
+  free(signed_xml_ptr);
+  signed_xml_ptr = NULL;
+  signed_xml_len = 0;
+
+  memset((void *)otp_b64_signature, 0, sizeof(otp_b64_signature));
+  otp_b64_signature_len = 0;
+
+  util_base64(signature_value, 
+              signature_value_len, 
+              otp_b64_signature, 
+              &otp_b64_signature_len);
+
+  free(signature_value);
+  signature_value = NULL;
+  signature_value_len = 0;
+
+  util_subject_certificate(&subject,
+                           &subject_len,
+                           &certificate,
+                           &certificate_len);
+
+  /*Create partial OTP xml*/ 
+  final_xml_ptr = otp_compose_xml_v16(&otp_xml_len);
+  *len_ptr = otp_xml_len;
+
+  /*Append signed info to OTP xml*/
+  util_compose_final_xml(&final_xml_ptr[otp_xml_len], 
+                         (4000 - otp_xml_len), 
+                         (uint16_t *)&otp_xml_len,
+                         /*digest*/
+                         otp_b64,
+                         /*Signature Value*/
+                         otp_b64_signature,
+                         /*Subject Name*/
+                         subject,
+                         /*Certificate*/
+                         certificate); 
+
+  *len_ptr += otp_xml_len;
+
+  otp_xml_len = snprintf(&final_xml_ptr[*len_ptr],
+                         (4000 - *len_ptr),
+                         "%s",
+                         "</Otp>");
+  
+  *len_ptr += otp_xml_len;
+  free(signature_value);
+  signature_value = NULL;
+  free(subject);
+  free(certificate);
+
+  return(final_xml_ptr);
+}/*otp_sign_xml_v16*/
+
+uint8_t *otp_main_ex_v16(uint8_t *in_ptr, 
+                         uint32_t in_len, 
+                         uint32_t *len_ptr) {
+
+  uint8_t *otp_xml_ptr = NULL;
+  uint8_t *http_req_ptr = NULL;
+  uint32_t http_len;
+
+  otp_xml_ptr = otp_sign_xml_v16(len_ptr);
+  http_req_ptr = otp_compose_request(otp_xml_ptr, *len_ptr, &http_len);
+  free(otp_xml_ptr);
+  otp_xml_ptr = NULL;
+
+  fprintf(stderr, "\n%s:%d http_request %s\n", __FILE__, __LINE__, http_req_ptr);
+
+  return(http_req_ptr);
+}/*otp_main_ex_v16*/
+
+uint8_t *otp_main_ex_v25(uint8_t *in_ptr, 
+                         uint32_t in_len, 
+                         uint32_t *len_ptr) {
+
+}/*otp_main_ex_v25*/
+
+uint8_t *otp_main_ex(uint8_t *in_ptr, 
+                     uint32_t in_len, 
+                     uint16_t version, 
+                     uint32_t *rsp_len) {
+
+  otp_init_ex(in_ptr, in_len);
+
+  if(16 == version) {
+    /*version 1.6*/
+    return(otp_main_ex_v16(in_ptr, in_len, rsp_len));
+
+  } else if(25 == version) {
+    /*version 2.5*/
+    return(otp_main_ex_v25(in_ptr, in_len, rsp_len));
+
+  } else {
+    /*Invalid version*/
+    fprintf(stderr, "%s:%d Invalid version %d\n", __FILE__, __LINE__, version);
+    return(NULL);
+  }
+
+}/*otp_main_ex*/
+
+
+/*===================================TO BE REMOVED=======================================*/ 
 int32_t otp_init(uint8_t *ac,
                  uint8_t *sa,
                  /*license key*/
@@ -18,9 +487,9 @@ int32_t otp_init(uint8_t *ac,
   otp_ctx_t *pOtpCtx = &otp_ctx_g;
   memset((void *)pOtpCtx, 0, sizeof(otp_ctx_t));
 
-  strncpy(pOtpCtx->ac, (const char *)ac, strlen((const char *)ac));
-  strncpy(pOtpCtx->sa, (const char *)sa, strlen((const char *)sa));
-  strncpy(pOtpCtx->lk, (const char *)lk, strlen((const char *)lk));
+  strncpy(pOtpCtx->ac, (const char *)ac, sizeof(pOtpCtx->ac));
+  strncpy(pOtpCtx->sa, (const char *)sa, sizeof(pOtpCtx->sa));
+  strncpy(pOtpCtx->lk, (const char *)lk, sizeof(pOtpCtx->lk));
   //strncpy(pOtpCtx->type, "A", 1);
   strncpy(pOtpCtx->type, "M", 1);
   strncpy(pOtpCtx->ver, "1.6", 3);
@@ -79,7 +548,7 @@ int32_t otp_build_c14n_otp_tag(uint8_t *c14n,
                  "%s%s%s%s%s"
                  "%s%s%s%s%s"
                  "%.2d%s%s%s",
-                 "<Otp xmlns=\"http://www.uidai.gov.in/authentication/otp/1.0\"",
+                 "<Otp",
                  " ac=\"",
                  pOtpCtx->ac,
                  "\" lk=\"",
@@ -112,7 +581,6 @@ int32_t otp_build_c14n_otp_tag(uint8_t *c14n,
 
   return(0);
 }/*otp_build_c14n_otp_tag*/
-
 /*
   1.Canonicalize* the text-to-be-signed, C = C14n(T).
   2.Compute the message digest of the canonicalized text, m = Hash(C).

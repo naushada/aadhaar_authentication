@@ -1,0 +1,67 @@
+otp.c:444 http_request POST http://developer.uidai.gov.in/otp/1.6/public/9/7/MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s HTTP/1.1
+Host: developer.uidai.gov.in
+Content-Type: text/xml
+Connection: Keep-alive
+Content-Length: 2783
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Otp ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" sa="public" tid="public" ts="2018-06-27T12:13:24" txn="TXN:BalaaghTesting" type="M" uid="9701361361" ver="1.6">
+  <Opts ch="01"/>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <DigestValue>62LrwodDm1yFup4PCO0SOxMIfRU=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>OmvI9gP9mTM8i+nMl8qepOBdE5r0lTxYjnWTyCKmaJPL0QlPhUl6vwTWn5iPwBGfNFhnrfdrnO24RRLiVsXar2PBrVboCd9ZdGiTxUTNO5gOUVmZFbNN8r6wYiPDo0O2IrbWYH0NhHwwa3dil8tkvJB9Jn15KIvmJJI9N1OmXTWOqdEhZJ/LY5HnoCB9mHNThLXjUcAsD8NIXuRI7pPpk3hJUUNFqmA1Um2B2cyaZp4ucODrG4XK+gKd8NtucgGpSZHkz5lqyWgVJEf/FSXOZXSj+WS/7E0jfLelS4u6OA2Iq32f6RF7ug37J24Vuh+JOtG5xZdPgqyawLyUo9xRxA==</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509SubjectName>C=IN,ST=KA,L=Bangalore,O=Public AUA,OU=Staging Services,CN=Public AUA for Staging Services</X509SubjectName>
+        <X509Certificate>MIIDuDCCAqCgAwIBAgIGA7J+eqryMA0GCSqGSIb3DQEBBQUAMIGNMQswCQYDVQQG
+EwJJTjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMK
+UHVibGljIEFVQTEZMBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEtMCsGA1UEAxMk
+Um9vdCBQdWJsaWMgQVVBIGZvciBTdGFnaW5nIFNlcnZpY2VzMB4XDTE2MDUyNDE0
+NDAzMVoXDTIwMDUyNDE0NDAzMVowgYgxCzAJBgNVBAYTAklOMQswCQYDVQQIEwJL
+QTESMBAGA1UEBxMJQmFuZ2Fsb3JlMRMwEQYDVQQKEwpQdWJsaWMgQVVBMRkwFwYD
+VQQLExBTdGFnaW5nIFNlcnZpY2VzMSgwJgYDVQQDEx9QdWJsaWMgQVVBIGZvciBT
+dGFnaW5nIFNlcnZpY2VzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+o4XxOsjK58Ud+tQd06Mk8Rd0qoyjA/3u+y0YVYEF6RgT8Ge1uVdTkIcVYaHyXuuH
+UPLLqGW1hPfVtn81UVIMGyrw5+t1c30wpGv3UJ6GCFu0sPGgG5NwkVbIUt2xgT/O
+r/kGzHjUJJy4Y6URSkZiDLDQQWRXvui5ZwwsYRJ8LhT0pSUwan1raG5Vl01GmlWV
+qsrCmnObuoYkN85iwG4/ERGshkgFCPak8B/jH3GPZSi1+FJLmCqMI1xxmTvf0kZb
+7ejm2IZFTo6ecYWJ1vylkzUI553RxVbnHCNZvFe3AyaKMyFlknFR0Fkl5+9Lpxz+
+VOajbCjicg7jIYCw76/xgQIDAQABoyEwHzAdBgNVHQ4EFgQUJHLir1/Tel8v/6Ou
+IXpLS0JH8jIwDQYJKoZIhvcNAQEFBQADggEBAFE15qMGIlp8+M306FbhDEvo1vzx
+N2Pfvg/f92NXH59d2XZ/wuHxugL8qfcM5xkqsDeIRVxRdISpwiIWlqTitn6lenF8
+5bvPQ09T/b09dVz/LxwU2Cm6+6H5/HZSoLtCKBOuRzAKQdxczpyfaqv9caFC+Leg
+PQIm2HCwOM0A4KzhYcFhumGeyCbyVZsSQcJE7bYc/IHkR2erup7h5BACOZ/a+hHL
+PQok/uGvtEsR3roydNcNlR8Ja6Wc4eUf7kisTuZTxwRJI9DPVimbs0VAqhnsnVWA
+K3X4+6sFUq5WfHS4wTRhrR93JvEV5LlQ6UCXYOQMvTii8l07qxkDiysVsLQ=</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+  </Signature>
+</Otp>
+
+uidai.c:624 uidai ip address 103.57.226.18
+
+uidai.c:655 uidai ip address 103.57.226.18
+
+HTTP/1.1 200 OK
+Date: Wed, 27 Jun 2018 06:43:25 GMT
+Server: Apache-Coyote/1.1
+Content-Type: application/xml
+X-Frame-Options: sameorigin
+Keep-Alive: timeout=5, max=5000
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+
+1d4
+<?xml version="1.0" encoding="UTF-8"?>
+<OtpRes txn="TXN:BalaaghTesting" code="49fa6e95b1154dc3970f56dd5beb9f09" ts="2018-06-27T12:13:25.428+05:30" ret="y" info="01{632b5bef8404cf79160b2c476da64de3532a68f8963f19ed23919340f9ff4da4,M,2018-06-27T12:13:24,1.6,20ef0f0c8d0eea98772412cea9b3b92612e3e53cb5e59152b5703165f56e8a53,efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7,efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7,*******1361,NA}"/>
+0

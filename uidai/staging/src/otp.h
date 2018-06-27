@@ -2,6 +2,8 @@
 #define __OTP_H__
 
 typedef struct {
+  /*Terminal Id*/
+  uint8_t tid[50];
   /*Transaction Id*/
   uint8_t txn[50];
   /*A 12 digits Aadhaar id*/
@@ -25,6 +27,8 @@ typedef struct {
   uint8_t ver[4];
   /*host name in the form of URI*/
   uint8_t uidai_host_name[255];
+  /*OTP URI*/
+  uint8_t uri[64];
 
 }otp_ctx_t;
 
@@ -128,7 +132,32 @@ int32_t otp_main(int32_t conn_fd,
                  uint8_t **rsp_ptr, 
                  uint32_t *rsp_len);
 
+int32_t otp_init_ex(uint8_t *in_ptr,
+                    uint32_t in_len);
 
+uint8_t *otp_compose_xml_v16(uint32_t *len_ptr);
 
+uint8_t *otp_compose_otp_v16(uint32_t *len_ptr);
+
+uint8_t *otp_compose_c14n_v16(uint32_t *len_ptr);
+
+uint8_t *otp_compose_request(uint8_t *signed_xml, 
+                             uint32_t signed_xml_len, 
+                             uint32_t *http_req_len);
+
+uint8_t *otp_sign_xml_v16(uint32_t *len_ptr);
+
+uint8_t *otp_main_ex_v16(uint8_t *in_ptr, 
+                         uint32_t in_len, 
+                         uint32_t *len_ptr);
+
+uint8_t *otp_main_ex_v25(uint8_t *in_ptr, 
+                         uint32_t in_len, 
+                         uint32_t *len_ptr);
+
+uint8_t *otp_main_ex(uint8_t *in_ptr, 
+                     uint32_t in_len, 
+                     uint16_t version, 
+                     uint32_t *rsp_len);
 
 #endif /* __OTP_H__ */

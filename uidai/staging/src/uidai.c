@@ -976,24 +976,35 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   uint8_t *uses_attr[32];
   uint8_t *tkn_attr[8];
   uint8_t *meta_attr[32];
+  uint32_t len = 0;
   uint32_t idx = 0;
   uint32_t offset = 0;
   uint16_t version = 0;
   uint8_t *rsp_ptr = NULL;
+  uint8_t *crypto_attr[4];
+  uint8_t *uidai_attr[4];
+  uint8_t *uidai = NULL;
+  uint8_t *crypto = NULL;
 
   arg_ptr[0]  = uidai_get_param(in_ptr, "request");
-  arg_ptr[1]  = uidai_get_param(in_ptr, "auth");
+
+  if(!strncmp(arg_ptr[0], "otp", 3)) {
+    arg_ptr[1]  = uidai_get_param(in_ptr, "otp");
+
+  } else if(!strncmp(arg_ptr[0], "auth", 4)) {
+    arg_ptr[1]  = uidai_get_param(in_ptr, "auth");
+
+  } else {
+    fprintf(stderr, "%s:%d Invalid Request %s\n", __FILE__, __LINE__,arg_ptr[0]);
+  }
   offset = 2;
 
   /*Process auth attribute*/
   auth_attr[0] = uidai_get_attr(arg_ptr[1], "ver");
 
-  fprintf(stderr, "Version is %s & len is %d\n", auth_attr[0], strlen(auth_attr[0]));
-
   if(!strncmp(auth_attr[0], "1.6", 3)) {
     /*version 1.6*/
     version = 16;
-    fprintf(stderr, "Version is 16\n");
   } else if(!strncmp(auth_attr[0], "2.0", 3)) {
     /*version 2.0*/
     version = 20;
@@ -1003,17 +1014,39 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   }
 
   free(auth_attr[0]);
+  auth_attr[0] = NULL;
+
+  uidai = uidai_get_param(in_ptr, "uidai");
+  uidai_attr[0] = uidai_get_attr(uidai, "host");
+  free(uidai);
+  uidai = NULL;
+  uidai_init_ex("192.168.1.3", 8080, uidai_attr[0], 80);
+  free(uidai_attr[0]);
+  uidai_attr[0] = NULL;
+
+  crypto = uidai_get_param(in_ptr, "crypto");
+  crypto_attr[0] = uidai_get_attr(crypto, "public");
+  crypto_attr[1] = uidai_get_attr(crypto, "private");
+  crypto_attr[2] = uidai_get_attr(crypto, "password");
+  free(crypto);
+  crypto = NULL;
+
+  util_init(crypto_attr[0], crypto_attr[1], crypto_attr[2]);
+  free(crypto_attr[0]);
+  free(crypto_attr[1]);
+  free(crypto_attr[2]);
+  
   if(!strncmp(arg_ptr[0], "auth", 4)) {
     /*auth_request*/
     rsp_ptr = auth_main_ex(in_ptr, in_len, version, rsp_fd);
 
-  } else if(!strncmp(arg_ptr[1], "otp", 3)) {
+  } else if(!strncmp(arg_ptr[0], "otp", 3)) {
     /*otp request*/
-    //otp_main_ex(in_ptr, in_len, version, rsp_fd);
+    rsp_ptr = otp_main_ex(in_ptr, in_len, version, &len);
 
-  } else if(!strncmp(arg_ptr[1], "ekyc", 4)) {
+  } else if(!strncmp(arg_ptr[0], "ekyc", 4)) {
     /*ekyc request*/
-    //ekyc_main_ex(in_ptr, in_len, version, rsp_fd);
+    //rsp_ptr = ekyc_main_ex(in_ptr, in_len, version, rsp_fd);
 
   }
 
