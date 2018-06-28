@@ -1,10 +1,11 @@
 #!/usr/bin/wish8.6 -f
 
 source [lindex $argv 0]/util.tk
-source [lindex $argv 0]/auth_ui16.tk
+source [lindex $argv 0]/auth16.tk
 source [lindex $argv 0]/auth_ui20.tk
 source [lindex $argv 0]/auth_ui25.tk
-source [lindex $argv 0]/otp_ui16.tk
+source [lindex $argv 0]/otp16.tk
+source [lindex $argv 0]/ekyc20.tk
 source [lindex $argv 0]/response.tk
 
 
@@ -37,7 +38,7 @@ set menu_b {
   {"Otp"               "Version1.6"    "{staging_otp 1.6}"  {}}
   {"Otp"               "Version2.5"    "{staging_otp 2.5}"  {}}
   {"Staging"           "eKyc"           "+"            {}}
-  {"eKyc"              "Version1.6"     "proc_ekyc16"  {}}
+  {"eKyc"              "Version2.0"     "{staging_ekyc 2.0 1.6}"  {}}
   {"eKyc"              "Version2.5"     "proc_ekyc25"  {}}
   {"Uidai"             "Pre-Production" "+"            {}}
   {"Pre-Production"    "Authentication" "+"            {}}
@@ -66,10 +67,30 @@ proc Exit {} {
   #exit
   puts "Exit"
 };#/**/
-  
+ 
+proc staging_ekyc {ekyc_version auth_version} {
+
+  set container [init_frame container eKYC]
+  staging_auth_form $container $auth_version 
+  staging_uses_form $container $auth_version
+  staging_tkn_form  $container $auth_version
+  staging_meta_form $container $auth_version
+  staging_pi_form   $container $auth_version
+  staging_pa_form   $container $auth_version
+  staging_pfa_form  $container $auth_version
+  staging_bio_form  $container $auth_version
+  staging_pv_form   $container $auth_version
+  staging_demo_form $container $auth_version
+  staging_kyc_form  $container $ekyc_version 
+  staging_uidai_form $container $auth_version 3 2 auth 
+  crypto_widget_form $container 4 0 
+  btn_widget $container kyc $ekyc_version
+
+};#/*staging_auth*/
+ 
 proc staging_otp {version} {
 
-  set container [init_frame container]
+  set container [init_frame container OTP]
   staging_otp_form $container $version 
   staging_opts_form $container $version
   staging_uidai_form $container $version 1 0 otp
@@ -80,7 +101,7 @@ proc staging_otp {version} {
 
 proc staging_auth {version} {
 
-  set container [init_frame container ]
+  set container [init_frame container Authentication]
   staging_auth_form $container $version 
   staging_uses_form $container $version
   staging_tkn_form  $container $version
@@ -197,8 +218,26 @@ proc staging_opts_form {f_name version} {
 
 };#/*staging_opts_form*/
 
+proc staging_kyc_form {f_name version} {
+  set lbl_frm [labelframe $f_name.staging_kyc -text "eKYC* (Attributes)"]
+  grid $lbl_frm -sticky news -row 3 -column 1 -pady 2 -padx 1
+
+  if {$version == "2.0"} {
+    kyc_attr_v20 $lbl_frm
+
+  } elseif {$version == "2.1"} {
+    auth_attr_v21 $lbl_frm
+
+  } elseif {$version == "2.5"} {
+    auth_attr_v25 $lbl_frm
+
+  }
+ 
+};#/*staging_auth_form*/
+
+
 proc staging_auth_form {f_name version} {
-  set lbl_frm [labelframe $f_name.staging_auth -text "Auth* (Attributes)" -relief raised]
+  set lbl_frm [labelframe $f_name.staging_auth -text "Auth* (Attributes)"]
   grid $lbl_frm -sticky news -row 0 -column 0 -pady 2 -padx 1
 
   if {$version == "1.6"} {
@@ -263,6 +302,16 @@ proc default_contents {type version} {
       set_default_otp_v16 
     }
 
+  } elseif {"kyc" == $type} {
+
+    if {"2.0" == $version} {
+      set_default_kyc_v20
+      set_default_auth_v16
+      set_default_uses_v16
+      uses_opt_enable "pvc"
+      set_default_meta_v16 
+    }
+    
   }
 };#/*default_contents*/
 
@@ -286,6 +335,20 @@ proc clear_contents {type version} {
     }
   } elseif {"otp" == $type} {
     
+  } elseif {"kyc" == $type} {
+
+    if {"2.0" == $version} {
+      clear_auth_v16
+      clear_uses_v16
+      uses_opt_disable "pic"
+      uses_opt_disable "pac"
+      uses_opt_disable "pfac"
+      uses_opt_disable "bioc"
+      uses_opt_disable "pvc"
+      uses_opt_disable "democ"
+      clear_meta_v16 
+    }
+    
   }
 };#/*clear_contents*/
 
@@ -298,9 +361,16 @@ proc submit_contents {type version} {
     } elseif {"2.0" == $version} { 
       
     }
+
   } elseif {"otp" == $type} {
     if {"1.6" == $version} {
       build_otp_request_v16 
+    }
+
+  } elseif {"kyc" == $type} {
+
+    if {"2.0" == $version} {
+      build_kyc_request_v20
     }
   }
 
@@ -372,10 +442,10 @@ proc browse_file {type} {
 # @return none
 # @author NAUSHAD.DLN@GMAIL.COM
 # */
-proc init_frame {f_name} {
+proc init_frame {f_name title} {
 
   toplevel .child_win
-  wm title .child_win "Authentication"
+  wm title .child_win $title 
 
   canvas .child_win.canvas -xscrollcommand ".child_win.xscroll set" -yscrollcommand ".child_win.yscroll set" -width 500 -height 600
   scrollbar .child_win.xscroll -orient horizontal -command ".child_win.canvas xview"

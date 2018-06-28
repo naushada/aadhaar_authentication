@@ -3135,6 +3135,48 @@ int32_t auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
 }/*auth_init_ex*/
 #endif
 
+uint8_t *auth_get_ts(void) {
+  uint8_t *ts_ptr = NULL;
+  auth_ctx_t *pAuthCtx = &auth_ctx_g;
+  /*+1 for NULL character*/
+  uint32_t ts_len = (strlen(pAuthCtx->ts) * sizeof(uint8_t)) + 1;
+
+  ts_ptr = (uint8_t *)malloc(ts_len);
+  assert(ts_ptr != NULL);
+  memset((void *)ts_ptr, 0, ts_len);
+
+  strncpy(ts_ptr, (const char *)pAuthCtx->ts, ts_len);
+
+  return(ts_ptr);
+}/*auth_get_ts*/
+
+uint8_t *auth_compose_http_req(uint8_t *in_ptr, 
+                               uint8_t *auth_xml, 
+                               uint32_t *len_ptr) {
+  uint8_t *auth_req_ptr = NULL;
+  uint32_t auth_req_size = 4000;
+  uint8_t *auth = NULL;
+  uint8_t *uid = NULL;
+
+  auth_req_ptr = (uint8_t *)malloc(sizeof(uint8_t) * auth_req_size);
+  assert(auth_req_ptr != NULL);
+  memset((void *)auth_req_ptr, 0, (sizeof(uint8_t) * auth_req_size));
+
+  auth = uidai_get_param(in_ptr, "auth");
+  assert(auth != NULL);
+  uid = uidai_get_attr(auth, "uid");
+  free(auth);
+
+  auth_req_auth(auth_req_ptr, 
+                auth_req_size, 
+                len_ptr, 
+                auth_xml,
+                uid);
+  free(uid);
+
+  return(auth_req_ptr);
+}/*auth_compose_http_req*/
+
 uint8_t *auth_main_ex_v16(uint8_t *in_ptr, 
                           uint32_t in_len, 
                           uint32_t *rsp_len) {
@@ -3159,10 +3201,6 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
   uint8_t *b64_signature = NULL;
   uint8_t *b64_subject = NULL;
   uint8_t *b64_certificate = NULL;
-  uint8_t *auth_req = NULL;
-  uint32_t auth_req_len;
-  uint32_t auth_req_size = 4000;
-
   
   for(idx = 0; idx < 4; idx++) {
     auth_xml_tag[idx] = (uint8_t *)malloc(sizeof(uint8_t) * 256);
@@ -3316,24 +3354,9 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
 
   fprintf(stderr, "Final XML \n%s\n", final_xml);
 
-  auth_req = (uint8_t *)malloc(sizeof(uint8_t) * auth_req_size);
-  assert(auth_req != NULL);
+  *rsp_len = strlen(final_xml);
 
-  uint8_t *auth = uidai_get_param(in_ptr, "auth");
-  assert(auth != NULL);
-  uint8_t *uid = uidai_get_attr(auth, "uid");
-  free(auth);
-  auth_req_auth(auth_req, 
-                auth_req_size, 
-                &auth_req_len, 
-                final_xml,
-                uid);
-  free(uid);
-  free(final_xml);
-  final_xml = NULL;
-  fprintf(stderr, "\n%s:%d req xml \n%s\n", __FILE__, __LINE__,auth_req);
-
-  return(auth_req);
+  return(final_xml);
 }/*auth_main_ex_v16*/
 
 void auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
@@ -3401,13 +3424,17 @@ uint8_t *auth_main_ex(uint8_t *in_ptr,
 
   uint32_t rsp_len = 0;
   uint8_t *rsp_ptr = NULL;
+  uint8_t *http_req_ptr = NULL;
 
   auth_init_ex(in_ptr, in_len);
   if(16 == version) {
     rsp_ptr = auth_main_ex_v16(in_ptr, in_len, &rsp_len);
+    http_req_ptr = auth_compose_http_req(in_ptr, rsp_ptr, &rsp_len);
+    free(rsp_ptr);
+    rsp_ptr = NULL;
   }
 
-  return(rsp_ptr);
+  return(http_req_ptr);
 }/*auth_main_ex*/
 
 #endif /* __AUTH_C__ */

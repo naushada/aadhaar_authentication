@@ -24,13 +24,15 @@ bin_PROGRAMS = staging_uidai
 UIDAI_SRC = util.c \
             uidai.c \
             otp.c \
-            auth.c
+            auth.c \
+            ekyc.c
 
 UIDAI_INC = type.h \
             common.h \
             uidai.h \
             otp.h \
             auth.h \
+            ekyc.h \
             util.h
 
 staging_uidai_SOURCES = $(UIDAI_SRC)

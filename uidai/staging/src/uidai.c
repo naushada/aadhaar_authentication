@@ -9,6 +9,7 @@
 #include "util.h"
 #include "otp.h"
 #include "auth.h"
+#include "ekyc.h"
 
 uidai_ctx_t uidai_ctx_g;
 
@@ -164,10 +165,8 @@ int32_t uidai_parse_uidai_rsp(int32_t conn_fd,
   assert(chunked_ptr != NULL);
 
   memset((void *)chunked_ptr, 0, chunked_len);
-  //sscanf((const char *)&packet_ptr[chunked_starts_at], "%*[^\n]\r\n%[^\n]", chunked_ptr);
   memcpy((void *)chunked_ptr, (void *)&packet_ptr[chunked_starts_at], chunked_len);
 
-  //fprintf(stderr, "\n%s:%d chunked data %s\n", __FILE__, __LINE__, chunked_ptr);
   /*The delimeter is space*/
   tmp_ptr = chunked_ptr;
   token_ptr = strtok_r(tmp_ptr, " ", &save_ptr);
@@ -681,6 +680,11 @@ int32_t uidai_init_ex(uint8_t *ip_addr,
   size_t addr_len = sizeof(addr);
   uidai_ctx_t *pUidaiCtx = &uidai_ctx_g;
 
+  if(pUidaiCtx->fd) {
+    /*IP address is already bound to socket*/
+    return(0);
+  }
+
   fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
   if(fd < 0) {
@@ -692,7 +696,6 @@ int32_t uidai_init_ex(uint8_t *ip_addr,
   
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
-  //addr.sin_addr.s_addr = htonl(ip_addr);
   addr.sin_addr.s_addr = inet_addr(ip_addr);
 
   memset((void *)addr.sin_zero, 0, sizeof(addr.sin_zero));
@@ -985,6 +988,7 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   uint8_t *uidai_attr[4];
   uint8_t *uidai = NULL;
   uint8_t *crypto = NULL;
+  uint8_t *tmp_ptr = NULL;
 
   arg_ptr[0]  = uidai_get_param(in_ptr, "request");
 
@@ -993,6 +997,9 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
 
   } else if(!strncmp(arg_ptr[0], "auth", 4)) {
     arg_ptr[1]  = uidai_get_param(in_ptr, "auth");
+
+  } else if(!strncmp(arg_ptr[0], "ekyc", 4)) {
+    arg_ptr[1]  = uidai_get_param(in_ptr, "kyc");
 
   } else {
     fprintf(stderr, "%s:%d Invalid Request %s\n", __FILE__, __LINE__,arg_ptr[0]);
@@ -1046,8 +1053,7 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
 
   } else if(!strncmp(arg_ptr[0], "ekyc", 4)) {
     /*ekyc request*/
-    //rsp_ptr = ekyc_main_ex(in_ptr, in_len, version, rsp_fd);
-
+    rsp_ptr = ekyc_main_ex(in_ptr, in_len, version, rsp_fd);
   }
 
   for(idx = 0; idx < offset; idx++) {
@@ -1104,7 +1110,9 @@ uint8_t *uidai_chunked_rsp(int32_t fd, uint32_t *rsp_len) {
   uint8_t *buffer = NULL;
   uint32_t buffer_size = 3500;
   uint32_t buffer_len = 0;
+  uint8_t status[8];
 
+  memset((void *)status, 0, sizeof(status) * sizeof(uint8_t));
   /*Allocate the memory*/
   buffer = (uint8_t *)malloc(sizeof(uint8_t) * buffer_size);
   assert(buffer != NULL);
@@ -1114,6 +1122,15 @@ uint8_t *uidai_chunked_rsp(int32_t fd, uint32_t *rsp_len) {
     memset((void *)buffer, 0, buffer_size);
     buffer_len = buffer_size;
     uidai_recv(fd, buffer, &buffer_len, MSG_PEEK);
+    sscanf(buffer, "%*s%s%*s", status);
+
+    if(strncmp(status, "200", 3)) {
+      free(buffer);
+      buffer = NULL;
+      buffer_len = 0;
+      break;
+    }
+
     wait_for_more_data = uidai_pre_process_uidai_rsp(fd, 
                                                      buffer, 
                                                      buffer_len);
@@ -1332,15 +1349,17 @@ int32_t uidai_process_gui_req(int32_t rd_fd[2],
 
       /*Response from UIDAI*/
       rsp_ptr = uidai_chunked_rsp(pUidaiCtx->uidai_fd, &rsp_len);
-      fprintf(stderr, "\n%s\n", rsp_ptr); 
       /*Closing the connection with uidai server*/
       close(pUidaiCtx->uidai_fd);
       pUidaiCtx->uidai_fd = -1;
 
-      /*Sending response to GUI*/
-      uidai_parse_rsp(rsp_ptr, rsp_len, wr_fd[1]);
-      free(rsp_ptr);
-      rsp_ptr = NULL;
+      if(rsp_len) {
+        /*Sending response to GUI*/
+        fprintf(stderr, "\n%s\n", rsp_ptr); 
+        uidai_parse_rsp(rsp_ptr, rsp_len, wr_fd[1]);
+        free(rsp_ptr);
+        rsp_ptr = NULL;
+      }
 
     } else if(0 == ret) {
       close(rd_fd[0]);
@@ -1405,6 +1424,8 @@ int32_t main(int32_t argc, char *argv[]) {
     return(0);
  
   } else if(gui_process) {
+
+    memset((void *)&uidai_ctx_g, 0, sizeof(uidai_ctx_g));
     /*Register the signal Handler*/    
     sigaction((SIGINT|SIGCHLD), &sa, &oldsa);
     /*Parent Process*/

@@ -103,7 +103,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" \
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 = staging_uidai-util.$(OBJEXT) \
 	staging_uidai-uidai.$(OBJEXT) staging_uidai-otp.$(OBJEXT) \
-	staging_uidai-auth.$(OBJEXT)
+	staging_uidai-auth.$(OBJEXT) staging_uidai-ekyc.$(OBJEXT)
 am_staging_uidai_OBJECTS = $(am__objects_1)
 staging_uidai_OBJECTS = $(am_staging_uidai_OBJECTS)
 staging_uidai_LDADD = $(LDADD)
@@ -303,13 +303,15 @@ staging_uidaidir = $(includedir)/staging
 UIDAI_SRC = util.c \
             uidai.c \
             otp.c \
-            auth.c
+            auth.c \
+            ekyc.c
 
 UIDAI_INC = type.h \
             common.h \
             uidai.h \
             otp.h \
             auth.h \
+            ekyc.h \
             util.h
 
 staging_uidai_SOURCES = $(UIDAI_SRC)
@@ -406,6 +408,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staging_uidai-auth.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staging_uidai-ekyc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staging_uidai-otp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staging_uidai-uidai.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staging_uidai-util.Po@am__quote@
@@ -481,6 +484,20 @@ staging_uidai-auth.obj: auth.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='auth.c' object='staging_uidai-auth.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(staging_uidai_CPPFLAGS) $(CPPFLAGS) $(staging_uidai_CFLAGS) $(CFLAGS) -c -o staging_uidai-auth.obj `if test -f 'auth.c'; then $(CYGPATH_W) 'auth.c'; else $(CYGPATH_W) '$(srcdir)/auth.c'; fi`
+
+staging_uidai-ekyc.o: ekyc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(staging_uidai_CPPFLAGS) $(CPPFLAGS) $(staging_uidai_CFLAGS) $(CFLAGS) -MT staging_uidai-ekyc.o -MD -MP -MF $(DEPDIR)/staging_uidai-ekyc.Tpo -c -o staging_uidai-ekyc.o `test -f 'ekyc.c' || echo '$(srcdir)/'`ekyc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/staging_uidai-ekyc.Tpo $(DEPDIR)/staging_uidai-ekyc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ekyc.c' object='staging_uidai-ekyc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(staging_uidai_CPPFLAGS) $(CPPFLAGS) $(staging_uidai_CFLAGS) $(CFLAGS) -c -o staging_uidai-ekyc.o `test -f 'ekyc.c' || echo '$(srcdir)/'`ekyc.c
+
+staging_uidai-ekyc.obj: ekyc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(staging_uidai_CPPFLAGS) $(CPPFLAGS) $(staging_uidai_CFLAGS) $(CFLAGS) -MT staging_uidai-ekyc.obj -MD -MP -MF $(DEPDIR)/staging_uidai-ekyc.Tpo -c -o staging_uidai-ekyc.obj `if test -f 'ekyc.c'; then $(CYGPATH_W) 'ekyc.c'; else $(CYGPATH_W) '$(srcdir)/ekyc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/staging_uidai-ekyc.Tpo $(DEPDIR)/staging_uidai-ekyc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ekyc.c' object='staging_uidai-ekyc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(staging_uidai_CPPFLAGS) $(CPPFLAGS) $(staging_uidai_CFLAGS) $(CFLAGS) -c -o staging_uidai-ekyc.obj `if test -f 'ekyc.c'; then $(CYGPATH_W) 'ekyc.c'; else $(CYGPATH_W) '$(srcdir)/ekyc.c'; fi`
 install-staging_uidaiHEADERS: $(staging_uidai_HEADERS)
 	@$(NORMAL_INSTALL)
 	@list='$(staging_uidai_HEADERS)'; test -n "$(staging_uidaidir)" || list=; \
