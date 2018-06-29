@@ -233,7 +233,7 @@ proc staging_kyc_form {f_name version} {
 
   }
  
-};#/*staging_auth_form*/
+};#/*staging_kyc_form*/
 
 
 proc staging_auth_form {f_name version} {
@@ -424,7 +424,7 @@ proc browse_file {type} {
         {{Text Files}       {}        TEXT}
       }
 
-  set filename_list [tk_getOpenFile -filetypes $types]
+  set filename_list [tk_getOpenFile -title "PKI Selection" -parent .child_win -filetypes $types]
 
   if {"public" == $type} {
     set crypto_public_key_file $filename_list
@@ -444,14 +444,20 @@ proc browse_file {type} {
 # */
 proc init_frame {f_name title} {
 
+  if {1 == [winfo exists .child_win]} {
+    destroy .child_win
+  }
+
   toplevel .child_win
   wm title .child_win $title 
-
-  canvas .child_win.canvas -xscrollcommand ".child_win.xscroll set" -yscrollcommand ".child_win.yscroll set" -width 500 -height 600
+  wm geometry .child_win 900x400+100+100
+  canvas .child_win.canvas -xscrollcommand ".child_win.xscroll set" \
+         -yscrollcommand ".child_win.yscroll set" -width 500 -height 600 \
+         -bd 4
   scrollbar .child_win.xscroll -orient horizontal -command ".child_win.canvas xview"
   scrollbar .child_win.yscroll -orient vertical -command ".child_win.canvas yview"
 
-  set container [frame .child_win.canvas.$f_name]
+  set container [frame .child_win.canvas.$f_name -relief raised -padx 5 -pady 5]
 
   .child_win.canvas create window 0 0 -anchor nw -window $container
 

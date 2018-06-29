@@ -1125,6 +1125,7 @@ uint8_t *uidai_chunked_rsp(int32_t fd, uint32_t *rsp_len) {
     sscanf(buffer, "%*s%s%*s", status);
 
     if(strncmp(status, "200", 3)) {
+      fprintf(stderr, "\n%s:%d %s", __FILE__, __LINE__, buffer);
       free(buffer);
       buffer = NULL;
       buffer_len = 0;

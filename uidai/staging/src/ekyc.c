@@ -26,8 +26,6 @@ uint8_t *ekyc_compose_xml_v20(uint8_t *in_ptr,
 
   util_base64(auth_xml_ptr, (uint16_t)strlen(auth_xml_ptr), b64_auth_xml_ptr, &len);
 
-  fprintf(stderr, "%s:%d eKyc b64 %s\n", __FILE__, __LINE__, b64_auth_xml_ptr);
-
   param_ptr = uidai_get_param(in_ptr, "kyc");
   assert(param_ptr != NULL);
 
@@ -75,7 +73,6 @@ uint8_t *ekyc_compose_xml_v20(uint8_t *in_ptr,
                       b64_auth_xml_ptr,
                       "</Rad>\n</Kyc>");
   
-  fprintf(stderr, "%s:%d eKyc XML %s\n", __FILE__, __LINE__, ekyc_xml_ptr);
   free(b64_auth_xml_ptr);
   b64_auth_xml_ptr = NULL;
 
@@ -204,7 +201,7 @@ uint8_t *ekyc_main_ex_v20(uint8_t *in_ptr,
   free(ekyc_xml_ptr);
   ekyc_xml_ptr = NULL;
 
-  fprintf(stderr, "%s:%d auth xml %s\n", __FILE__, __LINE__, auth_ptr); 
+  fprintf(stderr, "%s:%d ekyc xml \n%s", __FILE__, __LINE__, auth_ptr); 
   free(version_ptr);
 
   return(auth_ptr);
