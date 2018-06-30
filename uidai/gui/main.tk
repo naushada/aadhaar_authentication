@@ -82,8 +82,8 @@ proc staging_ekyc {ekyc_version auth_version} {
   staging_demo_form $container $auth_version
   staging_kyc_form  $container $ekyc_version 
   staging_uidai_form $container $auth_version 3 2 auth 
-  crypto_form $container $auth_version 
-  btn_widget $container kyc $ekyc_version
+  crypto_form $container ekyc 
+  btn_widget $container kyc $ekyc_version $auth_version
 
 };#/*staging_ekyc*/
  
@@ -93,8 +93,8 @@ proc staging_otp {version} {
   staging_otp_form $container $version 
   staging_opts_form $container $version
   staging_uidai_form $container $version 1 0 otp
-  crypto_form $container $version 
-  btn_widget $container otp $version
+  crypto_form $container otp 
+  btn_widget $container otp $version $version
 
 };#/*staging_otp*/
 
@@ -112,8 +112,8 @@ proc staging_auth {version} {
   staging_pv_form   $container $version
   staging_demo_form $container $version
   staging_uidai_form $container $version 3 1 auth 
-  crypto_form $container $version 
-  btn_widget $container auth $version
+  crypto_form $container auth 
+  btn_widget $container auth $version $version
 
 };#/*staging_auth*/
 
@@ -191,10 +191,16 @@ proc staging_uidai_form {f_name version row col type} {
   }
 };#/*staging_uidai_form*/
 
-proc crypto_form {f_name version} {
+proc crypto_form {f_name type} {
 
-  if {"1.6" == $version} {
+  if {"auth" == $type} {
     authV16::crypto_attr $f_name
+  } elseif {"ekyc" == $type} {
+    ekycV20::crypto_attr $f_name
+  } elseif {"otp" == $type} {
+    otpV16::crypto_attr $f_name
+  } else {
+    puts stderr "Invalid type"
   }
 
 };#/*crypto_form*/
@@ -229,7 +235,7 @@ proc staging_kyc_form {f_name version} {
   grid $lbl_frm -sticky news -row 3 -column 1 -pady 2 -padx 1
 
   if {$version == "2.0"} {
-    kyc_attr_v20 $lbl_frm
+    ekycV20::kyc_attr $lbl_frm
 
   } elseif {$version == "2.1"} {
     auth_attr_v21 $lbl_frm
@@ -288,7 +294,7 @@ proc staging_meta_form {f_name version} {
 
 };#/*staging_meta_form*/
 
-proc default_contents {type version} {
+proc default_contents {type version version_ex} {
 
   if {"auth" == $type} {
 
@@ -311,17 +317,26 @@ proc default_contents {type version} {
   } elseif {"kyc" == $type} {
 
     if {"2.0" == $version} {
-      set_default_kyc_v20
-      set_default_auth_v16
-      set_default_uses_v16
-      uses_opt_enable "pvc"
-      set_default_meta_v16 
+      ekycV20::set_default_kyc
+
+      if {"1.6" == $version_ex} {
+        set ctx "authV16" 
+      } elseif {"2.0" == $version_ex} {
+        set ctx "authV20"
+      } elseif {"2.5" == $version_ex} {
+        set ctx "authV25"
+      }
+
+      [subst $ctx]::set_default_auth
+      [subst $ctx]::set_default_uses
+      [subst $ctx]::uses_opt_enable "pvc"
+      [subst $ctx]::set_default_meta
     }
     
   }
 };#/*default_contents*/
 
-proc clear_contents {type version} {
+proc clear_contents {type version version_ex} {
 
   if {"auth" == $type} {
 
@@ -344,52 +359,75 @@ proc clear_contents {type version} {
   } elseif {"kyc" == $type} {
 
     if {"2.0" == $version} {
-      clear_auth_v16
-      clear_uses_v16
-      uses_opt_disable "pic"
-      uses_opt_disable "pac"
-      uses_opt_disable "pfac"
-      uses_opt_disable "bioc"
-      uses_opt_disable "pvc"
-      uses_opt_disable "democ"
-      clear_meta_v16 
+
+      if {"1.6" == $version_ex} {
+        set ctx "authV16" 
+      } elseif {"2.0" == $version_ex} {
+        set ctx "authV20"
+      } elseif {"2.5" == $version_ex} {
+        set ctx "authV25"
+      }
+
+      [subst $ctx]::clear_auth
+      [subst $ctx]::clear_uses
+      [subst $ctx]::uses_opt_disable "pic"
+      [subst $ctx]::uses_opt_disable "pac"
+      [subst $ctx]::uses_opt_disable "pfac"
+      [subst $ctx]::uses_opt_disable "bioc"
+      [subst $ctx]::uses_opt_disable "pvc"
+      [subst $ctx]::uses_opt_disable "democ"
+      [subst $ctx]::clear_meta
     }
     
   }
 };#/*clear_contents*/
 
-proc submit_contents {type version} {
+proc submit_contents {type version version_ex} {
+  set REQ ""
 
   if {"auth" == $type} {
 
     if {"1.6" == $version} {
-      authV16::build_auth_request    
+      set REQ [authV16::build_auth_request auth]
+
     } elseif {"2.0" == $version} { 
+      set REQ [authV20::build_auth_request auth]
+      
+    } elseif {"2.5" == $version} {
+      set REQ [authV25::build_auth_request auth]
       
     }
-
   } elseif {"otp" == $type} {
     if {"1.6" == $version} {
-      build_otp_request_v16 
+      set REQ [build_otp_request_v16]
+
     }
 
   } elseif {"kyc" == $type} {
 
     if {"2.0" == $version} {
-      build_kyc_request_v20
+      set REQ [ekycV20::build_kyc_request $version_ex]
+
+    } elseif {"2.1" == $version} {
+      set REQ [ekycV21::build_kyc_request $version_ex]
+      
+    } elseif {"2.5" == $version} {
+      set REQ [ekycV25::build_kyc_request $version_ex]
+      
     }
   }
 
+  puts $REQ
 };#submit_contents
 
-proc btn_widget {f_name type version} {
+proc btn_widget {f_name type version version_ex} {
 
   set frm [frame $f_name.btn_frame]
   set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
 
-  button $lbl_frm.clear -text "Clear Contents" -command "clear_contents $type $version"
-  button $lbl_frm.default -text "Set Default Value" -command "default_contents $type $version"
-  button $lbl_frm.submit -text "Submit Request" -command "submit_contents $type $version"
+  button $lbl_frm.clear -text "Clear Contents" -command "clear_contents $type $version $version_ex"
+  button $lbl_frm.default -text "Set Default Value" -command "default_contents $type $version $version_ex"
+  button $lbl_frm.submit -text "Submit Request" -command "submit_contents $type $version $version_ex"
   grid $lbl_frm.clear $lbl_frm.default $lbl_frm.submit -row 4 -pady 5 -padx 5
   grid $lbl_frm 
   grid $frm -sticky w -pady 8 -padx 9

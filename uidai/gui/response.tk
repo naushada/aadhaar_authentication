@@ -47,7 +47,7 @@ proc response_display_failure {img_name err code actn info} {
   grid $container.codeValue -row 3 -column 1
 
   label $container.info -text "info........." -font {Ariel 12 bold} -bg white -justify left 
-  label $container.infoValue -text $info -font {Ariel 14 bold} -bg white -justify left
+  label $container.infoValue -text $info -font {Ariel 14 bold} -bg white -justify left -wraplength 30
   grid $container.info -row 4 -column 0
   grid $container.infoValue -row 4 -column 1
 
@@ -71,8 +71,8 @@ proc response_display_success {img_name code info} {
   grid $container.code -row 1 -column 0
   grid $container.codeValue -row 1 -column 1
 
-  label $container.info -text "info........." -font {Ariel 12 bold} -bg white -justify left 
-  label $container.infoValue -text $info -font {Ariel 14 bold} -bg white -justify left
+  label $container.info -text "info........." -font {Ariel 12 bold} -bg white -justify left
+  label $container.infoValue -text $info -font {Ariel 14 bold} -bg white -justify left -wraplength 30
   grid $container.info -row 2 -column 0
   grid $container.infoValue -row 2 -column 1
 
