@@ -1027,7 +1027,7 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   uidai_attr[0] = uidai_get_attr(uidai, "host");
   free(uidai);
   uidai = NULL;
-  uidai_init_ex("192.168.1.3", 8080, uidai_attr[0], 80);
+  uidai_init_ex("192.168.1.4", 8080, uidai_attr[0], 80);
   free(uidai_attr[0]);
   uidai_attr[0] = NULL;
 

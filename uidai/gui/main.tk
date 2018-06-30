@@ -8,7 +8,6 @@ source [lindex $argv 0]/otp16.tk
 source [lindex $argv 0]/ekyc20.tk
 source [lindex $argv 0]/response.tk
 
-
 #/* 
 # @Name: main.tk
 # @Description: This file is to build the menu bar with anylevel of
@@ -83,10 +82,10 @@ proc staging_ekyc {ekyc_version auth_version} {
   staging_demo_form $container $auth_version
   staging_kyc_form  $container $ekyc_version 
   staging_uidai_form $container $auth_version 3 2 auth 
-  crypto_widget_form $container 4 0 
+  crypto_form $container $auth_version 
   btn_widget $container kyc $ekyc_version
 
-};#/*staging_auth*/
+};#/*staging_ekyc*/
  
 proc staging_otp {version} {
 
@@ -94,7 +93,7 @@ proc staging_otp {version} {
   staging_otp_form $container $version 
   staging_opts_form $container $version
   staging_uidai_form $container $version 1 0 otp
-  crypto_widget_form $container 1 1 
+  crypto_form $container $version 
   btn_widget $container otp $version
 
 };#/*staging_otp*/
@@ -113,7 +112,7 @@ proc staging_auth {version} {
   staging_pv_form   $container $version
   staging_demo_form $container $version
   staging_uidai_form $container $version 3 1 auth 
-  crypto_widget_form $container 3 2 
+  crypto_form $container $version 
   btn_widget $container auth $version
 
 };#/*staging_auth*/
@@ -124,7 +123,7 @@ proc staging_pi_form {f_name version} {
   grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 1
 
   if {$version == "1.6"} {
-    pi_attr_v16 $lbl_frm
+    authV16::pi_attr $lbl_frm
   }
 };#/*staging_pi_form*/
 
@@ -134,7 +133,7 @@ proc staging_pa_form {f_name version} {
   grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 2
 
   if {$version == "1.6"} {
-    pa_attr_v16 $lbl_frm
+    authV16::pa_attr $lbl_frm
   }
 };#/*staging_pa_form*/
 
@@ -144,7 +143,7 @@ proc staging_pfa_form {f_name version} {
   grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 0
 
   if {$version == "1.6"} {
-    pfa_attr_v16 $lbl_frm
+    authV16::pfa_attr $lbl_frm
   }
 };#/*staging_pfa_form*/
 
@@ -154,7 +153,7 @@ proc staging_bio_form {f_name version} {
   grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 1
 
   if {$version == "1.6"} {
-    bio_attr_v16 $lbl_frm
+    authV16::bio_attr $lbl_frm
   }
 };#/*staging_bio_form*/
 
@@ -164,7 +163,7 @@ proc staging_pv_form {f_name version} {
   grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 2
 
   if {$version == "1.6"} {
-    pv_attr_v16 $lbl_frm
+    authV16::pv_attr $lbl_frm
   }
 };#/*staging_pv_form*/
 
@@ -174,7 +173,7 @@ proc staging_demo_form {f_name version} {
   grid $lbl_frm -sticky news -pady 2 -padx 1 -row 3 -column 0
 
   if {$version == "1.6"} {
-    demo_attr_v16 $lbl_frm
+    authV16::demo_attr $lbl_frm
   }
 };#/*staging_demo_form*/
 
@@ -185,13 +184,20 @@ proc staging_uidai_form {f_name version row col type} {
 
   if {$version == "1.6"} {
     if {"auth" == $type} {
-      uidai_auth_server $lbl_frm
+      authV16::uidai_auth_server $lbl_frm
     } elseif {"otp" == $type} {
       uidai_otp_server $lbl_frm 
     }
   }
 };#/*staging_uidai_form*/
 
+proc crypto_form {f_name version} {
+
+  if {"1.6" == $version} {
+    authV16::crypto_attr $f_name
+  }
+
+};#/*crypto_form*/
 
 proc staging_otp_form {f_name version} {
   set lbl_frm [labelframe $f_name.staging_otp -text "Otp* (Attributes)"]
@@ -241,13 +247,13 @@ proc staging_auth_form {f_name version} {
   grid $lbl_frm -sticky news -row 0 -column 0 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    auth_attr_v16 $lbl_frm
+    authV16::auth_attr $lbl_frm
 
   } elseif {$version == "2.0"} {
-    auth_attr_v20 $lbl_frm
+    authV20::auth_attr $lbl_frm
 
   } elseif {$version == "2.5"} {
-    auth_attr_v25 $lbl_frm
+    authV25::auth_attr $lbl_frm
 
   }
  
@@ -258,7 +264,7 @@ proc staging_uses_form {f_name version} {
   grid $lbl_frm -sticky news -row 0 -column 1 -row 0 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    uses_attr_v16 $lbl_frm
+    authV16::uses_attr $lbl_frm
   }
 
 };#/*staging_uses_form*/
@@ -268,7 +274,7 @@ proc staging_tkn_form {f_name version} {
   grid $lbl_frm -sticky news -row 0 -column 2 -row 0 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    tkn_attr_v16 $lbl_frm
+    authV16::tkn_attr $lbl_frm
   }
 };#/*staging_tkn_form*/
 
@@ -277,7 +283,7 @@ proc staging_meta_form {f_name version} {
   grid $lbl_frm -sticky news -column 0 -row 1 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    meta_attr_v16 $lbl_frm
+    authV16::meta_attr $lbl_frm
   }
 
 };#/*staging_meta_form*/
@@ -287,10 +293,10 @@ proc default_contents {type version} {
   if {"auth" == $type} {
 
     if {"1.6" == $version} {
-     set_default_auth_v16
-     set_default_uses_v16
-     uses_opt_enable "pic"
-     set_default_meta_v16 
+     authV16::set_default_auth
+     authV16::set_default_uses
+     authV16::uses_opt_enable "pic"
+     authV16::set_default_meta
 
     } elseif {"2.0" == $version} { 
       
@@ -320,15 +326,15 @@ proc clear_contents {type version} {
   if {"auth" == $type} {
 
     if {"1.6" == $version} {
-      clear_auth_v16
-      clear_uses_v16
-      uses_opt_disable "pic"
-      uses_opt_disable "pac"
-      uses_opt_disable "pfac"
-      uses_opt_disable "bioc"
-      uses_opt_disable "pvc"
-      uses_opt_disable "democ"
-      clear_meta_v16 
+      authV16::clear_auth
+      authV16::clear_uses
+      authV16::uses_opt_disable "pic"
+      authV16::uses_opt_disable "pac"
+      authV16::uses_opt_disable "pfac"
+      authV16::uses_opt_disable "bioc"
+      authV16::uses_opt_disable "pvc"
+      authV16::uses_opt_disable "democ"
+      authV16::clear_meta 
 
     } elseif {"2.0" == $version} { 
       
@@ -357,7 +363,7 @@ proc submit_contents {type version} {
   if {"auth" == $type} {
 
     if {"1.6" == $version} {
-      build_auth_request_v16    
+      authV16::build_auth_request    
     } elseif {"2.0" == $version} { 
       
     }
@@ -381,58 +387,15 @@ proc btn_widget {f_name type version} {
   set frm [frame $f_name.btn_frame]
   set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
 
-  button $lbl_frm.clear -text "Clear" -command "clear_contents $type $version"
+  button $lbl_frm.clear -text "Clear Contents" -command "clear_contents $type $version"
   button $lbl_frm.default -text "Set Default Value" -command "default_contents $type $version"
-  button $lbl_frm.submit -text "Submit" -command "submit_contents $type $version"
+  button $lbl_frm.submit -text "Submit Request" -command "submit_contents $type $version"
   grid $lbl_frm.clear $lbl_frm.default $lbl_frm.submit -row 4 -pady 5 -padx 5
   grid $lbl_frm 
   grid $frm -sticky w -pady 8 -padx 9
     
 };#/*btn_widget*/
 
-proc crypto_widget_form {f_name row col} {
-  global widgets_name_v16
-  set lbl_frm [labelframe $f_name.crypto_lbl_frame -text "Public/Privte Keys File"]
-  grid $lbl_frm -sticky news -column $col -row $row -pady 2 -padx 1
-
-  set tmp [entry $lbl_frm.public -width 30 -textvariable crypto_public_key_file]
-  set widgets_name_v16(crypto) [linsert $widgets_name_v16(crypto) 0 $tmp]
-  set tmp [entry $lbl_frm.private -width 30 -textvariable crypto_private_key_file]
-  set widgets_name_v16(crypto) [linsert $widgets_name_v16(crypto) 1 $tmp]
-  set tmp [entry $lbl_frm.password -width 30 -textvariable crypto_password]
-  set widgets_name_v16(crypto) [linsert $widgets_name_v16(crypto) 2 $tmp]
-
-  label $lbl_frm.lbl_password -text "Password"
-  button $lbl_frm.btn_public -text "Sel Public File" -command "browse_file public"
-  button $lbl_frm.btn_private -text "Sel Private Key File" -command "browse_file private"
-  grid $lbl_frm.public $lbl_frm.btn_public -pady 2 -padx 4 -sticky news
-  grid $lbl_frm.private $lbl_frm.btn_private -pady 2 -padx 4 -sticky news
-  grid $lbl_frm.password $lbl_frm.lbl_password -pady 2 -padx 4 -sticky ew
-  grid $lbl_frm
-    
-};#/*crypto_widget_form*/
-
-proc browse_file {type} {
-  global crypto_public_key_file
-  global crypto_private_key_file
-  set types {
-        {{All Files}        *             }
-        {{Text Files}       {.txt}        }
-        {{TCL Scripts}      {.tcl}        }
-        {{C Source Files}   {.c}      TEXT}
-        {{GIF Files}        {.gif}        }
-        {{Text Files}       {}        TEXT}
-      }
-
-  set filename_list [tk_getOpenFile -title "PKI Selection" -parent .child_win -filetypes $types]
-
-  if {"public" == $type} {
-    set crypto_public_key_file $filename_list
-  } else {
-    set crypto_private_key_file $filename_list
-  }
-
-};#/*browser_file*/
 
 # /**
 # @brief This function creates the canvas with vertical and horizontal 

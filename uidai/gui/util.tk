@@ -11,12 +11,10 @@
 package require BWidget
 
 #/*Global Array to holds the widgets path name*/
-set widgets_name_v16(uidai) "" 
-set widgets_name_v16(crypto) "" 
 set widgets_name_v16(btn) "" 
 
-proc build_form {frm arr_idx arg} {
-  global widgets_name_v16
+proc build_form {frm arr_idx arg ctx} {
+  variable [subst $ctx]::widgets_name
   set idx 0
   set tmp ""
   set tmp_lbl ""
@@ -32,9 +30,9 @@ proc build_form {frm arr_idx arg} {
     }
  
     if {"entry" == [lindex $l 2]} {
-      set tmp [entry $sub_frame.[lindex $l 1] -width 30 -relief groove]
-      set widgets_name_v16($arr_idx) [linsert $widgets_name_v16($arr_idx) $idx $tmp]
-
+      set tmp [entry $sub_frame.[lindex $l 1] -width 30]
+      set [subst $ctx]::widgets_name($arr_idx) [linsert [set [subst $ctx]::widgets_name($arr_idx)] $idx $tmp]
+      
       if {[string length [lindex $l 3]] > 0} {
          $tmp insert end [lindex $l 3]
       }
@@ -42,13 +40,13 @@ proc build_form {frm arr_idx arg} {
 
     if {"combobox" == [lindex $l 2]} {
       set tmp [ComboBox $sub_frame.[lindex $l 1] -width 30 -values [lindex $l 3] -text [lindex [lindex $l 3] 0]]
-      set widgets_name_v16($arr_idx) [linsert $widgets_name_v16($arr_idx) $idx $tmp]
+      set [subst $ctx]::widgets_name($arr_idx) [linsert [set [subst $ctx]::widgets_name($arr_idx)] $idx $tmp]
     } 
 
     if {"checkbutton" == [lindex $l 2]} {
       set tmp [checkbutton $sub_frame.[lindex $l 1] -onvalue 1 -offvalue 0]
       $tmp configure -variable [lindex $l 3]
-      set widgets_name_v16($arr_idx) [linsert $widgets_name_v16($arr_idx) $idx $tmp]
+      set [subst $ctx]::widgets_name($arr_idx) [linsert [set [subst $ctx]::widgets_name($arr_idx)] $idx $tmp]
     } 
 
     if {"button" == [lindex $l 2]} {
@@ -67,15 +65,15 @@ proc build_form {frm arr_idx arg} {
 
 };#/*build_form*/
 
-proc get_value {offset attr} {
+proc get_value {offset attr ctx} {
 
-  global widgets_name_v16
+  variable [subst $ctx]::widgets_name
   set idx 0
   set str ""
 
-  foreach val $widgets_name_v16($offset) {
+  foreach val [set [subst $ctx]::widgets_name($offset)] {
    #/*The space is replaces with + in name*/
-   if {$val == [lindex $widgets_name_v16(pi) 2]} {
+   if {$val == [lindex [set [subst $ctx]::widgets_name(pi)] 2]} {
 
      set name [$val get]
      set name [regsub -all {\s+} $name +]

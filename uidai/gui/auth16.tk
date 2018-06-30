@@ -1,4 +1,3 @@
-package require BWidget
 
 #/* 
 # @name ui16.tk
@@ -11,95 +10,98 @@ package require BWidget
 # @dated  15-May-2018
 #*/
 
+namespace eval authV16 {
+set widgets_name(auth) "" 
+set widgets_name(uses) "" 
+set widgets_name(tkn) "" 
+set widgets_name(meta) "" 
+set widgets_name(pi) "" 
+set widgets_name(pa) "" 
+set widgets_name(pfa) "" 
+set widgets_name(bio) "" 
+set widgets_name(pv) "" 
+set widgets_name(demo) "" 
+set widgets_name(uidai) "" 
+set widgets_name(crypto) "" 
 
-set widgets_name_v16(auth) "" 
-set widgets_name_v16(uses) "" 
-set widgets_name_v16(tkn) "" 
-set widgets_name_v16(meta) "" 
-set widgets_name_v16(pi) "" 
-set widgets_name_v16(pa) "" 
-set widgets_name_v16(pfa) "" 
-set widgets_name_v16(bio) "" 
-set widgets_name_v16(pv) "" 
-set widgets_name_v16(demo) "" 
 
-proc auth_attr_v16 {frm} {
+proc auth_attr {frm} {
 
   set arg { {uid uide entry {}} {tid tide entry {}} {txn txne entry {}} 
             {ac ace entry {}} {sa sae entry {}} {ver vere entry {}} 
             {lk lke entry {}} }
 
-  build_form $frm auth $arg
-};#/*auth_attr_v16*/
+  build_form $frm auth $arg authV16
+};#/*auth_attr*/
 
-proc uses_attr_v16 {frm} {
+proc uses_attr {frm} {
 
   set arg { {pi pic checkbutton {pic}} {pa pac checkbutton {pac}} {pfa pfac checkbutton {pfac}}
             {bio bioc checkbutton {bioc}} {pv pvc checkbutton {pvc}} {demo democ checkbutton {democ}} }
 
-  build_form $frm uses $arg
-};#/*uses_attr_v16*/
+  build_form $frm uses $arg authV16
+};#/*uses_attr*/
 
-proc tkn_attr_v16 {frm} {
+proc tkn_attr {frm} {
 
   set arg { {type typee combobox {NA "Mobile Number"}} {value valuee entry {}} }
 
-  build_form $frm tkn $arg
-};#/*tkn_attr_v16*/
+  build_form $frm tkn $arg authV16
+};#/*tkn_attr*/
 
-proc meta_attr_v16 {frm} {
+proc meta_attr {frm} {
 
   set arg { {udc udce entry {}} {fdc fdce combobox {NA NC}} {idc idce entry {}} 
             {pip pipe entry {}} {lot lote combobox {P G}} {lov love entry {}} }
 
-  build_form $frm meta $arg
-};#/*meta_attr_v16*/
+  build_form $frm meta $arg authV16
+};#/*meta_attr*/
 
-proc pi_attr_v16 {frm} {
+proc pi_attr {frm} {
 
   set arg { {ms mse combobox {E P}} {mv mve combobox {100 80 60 40 20 10}} {name namee entry {}} 
             {lname lnamee entry {}} {lmv lmve entry {}} {gender gendere combobox {M F T}} 
             {dob dobe entry {}} {dobt dobte combobox {V D A}} {age agee entry {}} {phone phonee entry {}} 
             {email emaile entry {}}}
 
-  build_form $frm pi $arg
-};#/*pi_attr_v16*/
+  build_form $frm pi $arg authV16
+};#/*pi_attr*/
 
-proc pa_attr_v16 {frm} {
+proc pa_attr {frm} {
 
   set arg { {ms mse combobox {E P}} {co coe entry {}} {house housee entry {}} 
             {street streete entry {}} {lm lme entry {}} {loc loce entry {}} 
             {vtc vtce entry {}} {subdist subdiste entry {}} {dist diste entry {}} {state statee entry {}} 
             {pc pce entry {}} {po poe entry {}} }
 
-  build_form $frm pa $arg
-};#/*pa_attr_v16*/
+  build_form $frm pa $arg authV16
+};#/*pa_attr*/
 
-proc pfa_attr_v16 {frm} {
+proc pfa_attr {frm} {
 
   set arg { {ms mse combobox {E P}} {mv mve entry {}} {av ave entry {}} 
             {lav lave entry {}} {lmv lmve entry {}} }
 
-  build_form $frm pfa $arg
-};#/*pfa_attr_v16*/
+  build_form $frm pfa $arg authV16
+};#/*pfa_attr*/
 
-proc bio_attr_v16 {frm} {
+proc bio_attr {frm} {
 
   set arg { {type typee combobox {FMR FIR IIR}} {posh poshe combobox {UNKNOWN LEFT_IRIS 
             RIGHT_IRIS LEFT_INDEX LEFT_LITTLE LEFT_MIDDLE LEFT_RING 
             LEFT_THUMB RIGHT_INDEX RIGHT_LITTLE RIGHT_MIDDLE RIGHT_RING RIGHT_THUMB}}}
 
-  build_form $frm bio $arg
-};#/*bio_attr_v16*/
+  build_form $frm bio $arg authV16
+};#/*bio_attr*/
 
-proc pv_attr_v16 {frm} {
+proc pv_attr {frm} {
 
   set arg { {pin pine entry {}} {otp otpe entry {}} }
 
-  build_form $frm pv $arg
-};#/*pv_attr_v16*/
+  build_form $frm pv $arg authV16
+};#/*pv_attr*/
 
-proc demo_attr_v16 {frm} {
+proc demo_attr {frm} {
 
   set arg { {lang lange combobox {NA
                                   Assamese
@@ -115,14 +117,35 @@ proc demo_attr_v16 {frm} {
                                   Tamil
                                   Telugu
                                   Urdu}} }
-  build_form $frm demo $arg
-};#/*demo_attr_v16*/
+
+  build_form $frm demo $arg authV16
+};#/*demo_attr*/
+
+proc crypto_attr {frm} {
+
+  set lbl_frm [labelframe $frm.crypto_lbl_frame -text "Public/Privte Keys File"]
+  grid $lbl_frm -sticky news -column 2 -row 3 -pady 2 -padx 1
+
+  set arg { {public  publice entry {}} 
+            {private privatee entry {}} \
+            {password passworde entry {}}}
+
+  build_form $lbl_frm crypto $arg authV16
+  
+  set btn_frm [frame $lbl_frm.btn_frm]
+
+  button $btn_frm.btn_public -text "Select Public Key File" -command "authV16::browse_file public"
+  button $btn_frm.btn_private -text "Select Private Key File" -command "authV16::browse_file private"
+  grid $btn_frm.btn_public $btn_frm.btn_private -pady 2 -padx 2 -sticky news
+  grid $btn_frm
+
+};#/*crypto_attr*/
 
 proc uidai_auth_server {frm} {
 
   set arg { {uri urie combobox {/uidauth /auth /auth2.5}} {host hoste entry {developer.uidai.gov.in}} }
 
-  build_form $frm uidai $arg
+  build_form $frm uidai $arg authV16
 };#/*uidai_auth_server*/
 
 proc demo_lang_get {p_name} {
@@ -147,25 +170,25 @@ proc demo_lang_get {p_name} {
 };#/*demo_lang_get*/
 
 proc uses_opt_disable {uses_opt} {
-  global widgets_name_v16 
+  variable widgets_name 
 
   if {$uses_opt == "pic"} {
-    set demo_list [lindex $widgets_name_v16(uses) 0]
+    set demo_list [lindex $widgets_name(uses) 0]
   } elseif {$uses_opt == "pac"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 1]
+    set demo_list [lindex $widgets_name(uses) 1]
   } elseif {$uses_opt == "pfac"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 2]
+    set demo_list [lindex $widgets_name(uses) 2]
   } elseif {$uses_opt == "bioc"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 3]
+    set demo_list [lindex $widgets_name(uses) 3]
   } elseif {$uses_opt == "pvc"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 4]
+    set demo_list [lindex $widgets_name(uses) 4]
   } elseif {$uses_opt == "democ"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 5]
+    set demo_list [lindex $widgets_name(uses) 5]
   } else {
     #;/*Invalid Option*/
   }
@@ -174,25 +197,25 @@ proc uses_opt_disable {uses_opt} {
 };#/*uses_opt_disable*/
 
 proc uses_opt_enable {uses_opt} {
-  global widgets_name_v16
+  variable widgets_name
 
   if {$uses_opt == "pic"} {
-    set demo_list [lindex $widgets_name_v16(uses) 0]
+    set demo_list [lindex $widgets_name(uses) 0]
   } elseif {$uses_opt == "pac"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 1]
+    set demo_list [lindex $widgets_name(uses) 1]
   } elseif {$uses_opt == "pfac"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 2]
+    set demo_list [lindex $widgets_name(uses) 2]
   } elseif {$uses_opt == "bioc"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 3]
+    set demo_list [lindex $widgets_name(uses) 3]
   } elseif {$uses_opt == "pvc"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 4]
+    set demo_list [lindex $widgets_name(uses) 4]
   } elseif {$uses_opt == "democ"} {
 
-    set demo_list [lindex $widgets_name_v16(uses) 5]
+    set demo_list [lindex $widgets_name(uses) 5]
   } else {
     #;/*Invalid Option*/
   }
@@ -212,77 +235,77 @@ proc uses_opt {chk_btn chk_selected} {
   }
 };#uses_opt*/
 
-proc set_default_auth_v16 {} {
-  global widgets_name_v16 
+proc set_default_auth {} {
+  variable widgets_name 
   set default {"999938452218" "public" "TXN:BalaaghTesting" "public" \
                "public" "1.6" "MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s"}
   set idx 0
-  foreach val $widgets_name_v16(auth) {
+  foreach val $widgets_name(auth) {
     $val delete 0 end
     $val insert 0 [lindex $default $idx]
     incr idx  
   } 
-};#/*set_default_auth_v16*/
+};#/*set_default_auth*/
 
-proc set_default_uses_v16 {} {
-  global widgets_name_v16
+proc set_default_uses {} {
+  variable widgets_name
 
-  [lindex $widgets_name_v16(uses) 0] configure -state normal
-  [lindex $widgets_name_v16(uses) 5] configure -state normal
-  [lindex $widgets_name_v16(uses) 0] select
-  [lindex $widgets_name_v16(uses) 5] select
-};#/*set_default_uses_v16*/
+  [lindex $widgets_name(uses) 0] configure -state normal
+  [lindex $widgets_name(uses) 5] configure -state normal
+  [lindex $widgets_name(uses) 0] select
+  [lindex $widgets_name(uses) 5] select
+};#/*set_default_uses*/
 
-proc set_default_meta_v16 {} {
-  global widgets_name_v16 
+proc set_default_meta {} {
+  variable widgets_name 
   set default {"Balaagh" "NA" "NA" "NA" "" "500052"}
   set idx 0
-  foreach val $widgets_name_v16(meta) {
+  foreach val $widgets_name(meta) {
     if {"Entry" == [winfo class $val]} {
       $val delete 0 end
       $val insert 0 [lindex $default $idx]
     }
     incr idx
   }
-};#/*set_default_meta_v16*/
+};#/*set_default_meta*/
 
-proc clear_auth_v16 {} {
-  global widgets_name_v16 
+proc clear_auth {} {
+  variable widgets_name 
  
-  foreach val $widgets_name_v16(auth) {
+  foreach val $widgets_name(auth) {
     $val delete 0 end
   } 
-};#/*clear_auth_v16*/
+};#/*clear_auth*/
 
-proc clear_uses_v16 {} {
-  global widgets_name_v16 
+proc clear_uses {} {
+  variable widgets_name 
 
-  foreach val $widgets_name_v16(uses) {
+  foreach val $widgets_name(uses) {
     $val configure -state normal
     $val deselect
   } 
-};#/*clear_uses_v16*/
+};#/*clear_uses*/
 
-proc clear_meta_v16 {} {
-  global widgets_name_v16
+proc clear_meta {} {
+  variable widgets_name
 
-  foreach val $widgets_name_v16(meta) {
+  foreach val $widgets_name(meta) {
     if {"Entry" == [winfo class $val]} {
       $val delete 0 end
     }
   }
-};#/*clear_meta_v16*/
+};#/*clear_meta*/
 
-proc build_auth_request_v16 {} {
+proc build_auth_request {} {
 
   set arg {uid tid txn ac sa ver lk}
-  set auth [get_value auth $arg]
+  set auth [get_value auth $arg authV16]
   set arg {pi pa pfa bio pv demo}
-  set uses [get_value uses $arg]
+  set uses [get_value uses $arg authV16]
   set arg {type value}
-  set tkn  [get_value tkn  $arg]
+  set tkn  [get_value tkn  $arg authV16]
   set arg {udc fdc idc pip lot lov}
-  set meta [get_value meta $arg]
+  set meta [get_value meta $arg authV16]
 
   #/*Prepare the request*/
   set REQ "stage=staging&request=auth&$auth&$uses&$tkn&$meta"
@@ -293,48 +316,75 @@ proc build_auth_request_v16 {} {
     if {$val == "pic" && [subst $$val] == 1} {
       #/*Pi is selected*/
       set arg {ms mv name lname lmv gender dob dobt age phone email}
-      set pi [get_value pi $arg] 
+      set pi [get_value pi $arg authV16] 
       set REQ "$REQ&$pi"
 
     } elseif {$val == "pac" && [subst $$val] == 1} {
       #/*Pa is selected*/
       set arg {ms co house street lm loc vtc subdist dist state pc po}
-      set pa [get_value pa $arg] 
+      set pa [get_value pa $arg authV16] 
       set REQ "$REQ&$pa"
     
     } elseif {$val == "pfac" && [subst $$val] == 1} {
       #/*pfa is selected*/
       set arg {ms mv av lav lmv}
-      set pfa [get_value pfa $arg] 
+      set pfa [get_value pfa $arg authV16] 
       set REQ "$REQ&$pfa"
 
     } elseif {$val == "bioc" && [subst $$val] == 1} {
       #/*bio is selected*/
       set arg {type posh}
-      set bio [get_value bio $arg] 
+      set bio [get_value bio $arg authV16] 
       set REQ "$REQ&$bio"
 
     } elseif {$val == "pvc" && [subst $$val] == 1} {
       #/*Pv is selected*/
       set arg {pin otp}
-      set pv [get_value pv $arg] 
+      set pv [get_value pv $arg authV16] 
       set REQ "$REQ&$pv"
 
     } elseif {$val == "democ" && [subst $$val] == 1} {
       #/*demo is selected*/
       set arg {lang}
-      set demo [get_value demo $arg] 
+      set demo [get_value demo $arg authV16] 
       set REQ "$REQ&$demo"
     }
   }
 
   set arg {uri host}
-  set uidai [get_value uidai $arg] 
+  set uidai [get_value uidai $arg authV16] 
   set REQ "$REQ&$uidai"
   #/*Extracting the crypto contents*/
   set arg {public private password}
-  set crypto [get_value crypto $arg] 
+  set crypto [get_value crypto $arg authV16] 
   set REQ "$REQ&$crypto"
 
   puts "/request?$REQ"
-};#/*build_auth_request_v16*/
+};#/*build_auth_request*/
+
+proc browse_file {type} {
+  variable widgets_name
+
+  set types {
+        {{All Files}        *             }
+        {{Text Files}       {.txt}        }
+        {{TCL Scripts}      {.tcl}        }
+        {{GIF Files}        {.gif}        }
+        {{Text Files}       {}        TEXT}
+      }
+
+  set file_name [tk_getOpenFile -title "PKI Selection" -parent .child_win -filetypes $types]
+
+  if {"public" == $type} {
+    [lindex $widgets_name(crypto) 0] delete 0 end
+    [lindex $widgets_name(crypto) 0] insert 0 $file_name
+
+  } else {
+    [lindex $widgets_name(crypto) 1] delete 0 end
+    [lindex $widgets_name(crypto) 1] insert 0 $file_name
+  }
+
+};#/*browser_file*/
+
+
+}
