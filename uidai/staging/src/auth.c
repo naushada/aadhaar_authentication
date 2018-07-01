@@ -1891,7 +1891,7 @@ int32_t auth_build_pv_v16(uint8_t *in_ptr,
   free(pv);
   offset += snprintf(&pv_xml[offset],
                      (len - offset),
-                     "%s",
+                     "\n%s",
                      "  <Pv");
 
   if(pv_attr[0] && strlen(pv_attr[0])) {
@@ -3196,7 +3196,7 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
   uint8_t *c14n_auth_xml = NULL;
   uint16_t c14n_len = 4000;
   uint8_t *final_xml = NULL;
-  uint16_t final_xml_size = 4000;
+  uint16_t final_xml_size = 5000;
   uint8_t *b64_digest = NULL;
   uint8_t *b64_signature = NULL;
   uint8_t *b64_subject = NULL;

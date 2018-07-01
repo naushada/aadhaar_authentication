@@ -82,7 +82,7 @@ proc staging_ekyc {ekyc_version auth_version} {
   staging_demo_form $container $auth_version
   staging_kyc_form  $container $ekyc_version 
   staging_uidai_form $container $auth_version 3 2 auth 
-  crypto_form $container ekyc 
+  crypto_form $container ekyc $ekyc_version
   btn_widget $container kyc $ekyc_version $auth_version
 
 };#/*staging_ekyc*/
@@ -93,7 +93,7 @@ proc staging_otp {version} {
   staging_otp_form $container $version 
   staging_opts_form $container $version
   staging_uidai_form $container $version 1 0 otp
-  crypto_form $container otp 
+  crypto_form $container otp $version
   btn_widget $container otp $version $version
 
 };#/*staging_otp*/
@@ -112,7 +112,7 @@ proc staging_auth {version} {
   staging_pv_form   $container $version
   staging_demo_form $container $version
   staging_uidai_form $container $version 3 1 auth 
-  crypto_form $container auth 
+  crypto_form $container auth $version
   btn_widget $container auth $version $version
 
 };#/*staging_auth*/
@@ -182,23 +182,62 @@ proc staging_uidai_form {f_name version row col type} {
   set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
   grid $lbl_frm -sticky news -pady 2 -padx 1 -row $row -column $col
 
-  if {$version == "1.6"} {
-    if {"auth" == $type} {
+  if {"auth" == $type} {
+
+    if {$version == "1.6"} {
       authV16::uidai_auth_server $lbl_frm
-    } elseif {"otp" == $type} {
-      uidai_otp_server $lbl_frm 
+    } elseif {"2.0" == $version} {
+      authV20::uidai_auth_server $lbl_frm
+    } elseif {"2.5" == $version} {
+      authV25::uidai_auth_server $lbl_frm
     }
+
+  } elseif {"otp" == $type} {
+
+    if {"1.6" == $version} {
+      otpV16::uidai_otp_server $lbl_frm 
+    } elseif {"2.0" == $version} {
+      otpV20::uidai_otp_server $lbl_frm 
+    } elseif {"2.5" == $version} {
+      otpV25::uidai_otp_server $lbl_frm 
+    }
+
   }
+
 };#/*staging_uidai_form*/
 
-proc crypto_form {f_name type} {
+proc crypto_form {f_name type version} {
 
   if {"auth" == $type} {
-    authV16::crypto_attr $f_name
+
+    if {"1.6" == $version} {
+      authV16::crypto_attr $f_name
+    } elseif {"2.0" == $version} {
+      authV20::crypto_attr $f_name
+    } elseif {"2.5" == $version} {
+      authV25::crypto_attr $f_name
+    }
+
   } elseif {"ekyc" == $type} {
-    ekycV20::crypto_attr $f_name
+
+    if {"2.0" == $version} {
+      ekycV20::crypto_attr $f_name
+    } elseif {"2.1" == $version} {
+      ekycV21::crypto_attr $f_name
+    } elseif {"2.5" == $version} {
+      ekycV25::crypto_attr $f_name
+    }
+
   } elseif {"otp" == $type} {
-    otpV16::crypto_attr $f_name
+
+    if {"1.6" == $version} {
+      otpV16::crypto_attr $f_name
+    } elseif {"2.0" == $version} {
+      otpV20::crypto_attr $f_name
+    } elseif {"2.5" == $version} {
+      otpV25::crypto_attr $f_name
+    }
+
   } else {
     puts stderr "Invalid type"
   }
@@ -210,7 +249,7 @@ proc staging_otp_form {f_name version} {
   grid $lbl_frm -sticky news -row 0 -column 0 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    otp_attr_v16 $lbl_frm
+    otpV16::otp_attr $lbl_frm
 
   } elseif {$version == "2.0"} {
 
@@ -225,7 +264,7 @@ proc staging_opts_form {f_name version} {
   grid $lbl_frm -sticky news -row 0 -column 1 -row 0 -pady 2 -padx 1
 
   if {$version == "1.6"} {
-    opts_attr_v16 $lbl_frm
+    otpV16::opts_attr $lbl_frm
   }
 
 };#/*staging_opts_form*/
@@ -311,7 +350,7 @@ proc default_contents {type version version_ex} {
   } elseif {"otp" == $type} {
 
     if {"1.6" == $version} {
-      set_default_otp_v16 
+      otpV16::set_default_otp 
     }
 
   } elseif {"kyc" == $type} {
@@ -399,7 +438,7 @@ proc submit_contents {type version version_ex} {
     }
   } elseif {"otp" == $type} {
     if {"1.6" == $version} {
-      set REQ [build_otp_request_v16]
+      set REQ [otpV16::build_otp_request]
 
     }
 
