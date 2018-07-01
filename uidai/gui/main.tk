@@ -6,6 +6,8 @@ source [lindex $argv 0]/auth20.tk
 source [lindex $argv 0]/auth25.tk
 source [lindex $argv 0]/otp16.tk
 source [lindex $argv 0]/ekyc20.tk
+source [lindex $argv 0]/ekyc21.tk
+source [lindex $argv 0]/ekyc25.tk
 source [lindex $argv 0]/response.tk
 
 #/* 
@@ -439,6 +441,16 @@ proc default_contents {type version version_ex} {
      authV16::set_default_meta
 
     } elseif {"2.0" == $version} { 
+     authV20::set_default_auth
+     authV20::set_default_uses
+     authV20::uses_opt_enable "pic"
+     authV20::set_default_meta
+      
+    } elseif {"2.5" == $version} {
+     authV20::set_default_auth
+     authV20::set_default_uses
+     authV20::uses_opt_enable "pic"
+     authV20::set_default_meta
       
     }
 
@@ -451,23 +463,30 @@ proc default_contents {type version version_ex} {
   } elseif {"kyc" == $type} {
 
     if {"2.0" == $version} {
+
       ekycV20::set_default_kyc
+    } elseif {"2.1" == $version} {
 
-      if {"1.6" == $version_ex} {
-        set ctx "authV16" 
-      } elseif {"2.0" == $version_ex} {
-        set ctx "authV20"
-      } elseif {"2.5" == $version_ex} {
-        set ctx "authV25"
-      }
+      ekycV21::set_default_kyc
+    } elseif {"2.5" == $version} {
 
-      [subst $ctx]::set_default_auth
-      [subst $ctx]::set_default_uses
-      [subst $ctx]::uses_opt_enable "pvc"
-      [subst $ctx]::set_default_meta
+      ekycV25::set_default_kyc
     }
-    
+
+    if {"1.6" == $version_ex} {
+      set ctx "authV16" 
+    } elseif {"2.0" == $version_ex} {
+      set ctx "authV20"
+    } elseif {"2.5" == $version_ex} {
+      set ctx "authV25"
+    }
+
+    [subst $ctx]::set_default_auth
+    [subst $ctx]::set_default_uses
+    [subst $ctx]::uses_opt_enable "pvc"
+    [subst $ctx]::set_default_meta
   }
+
 };#/*default_contents*/
 
 proc clear_contents {type version version_ex} {
@@ -486,34 +505,52 @@ proc clear_contents {type version version_ex} {
       authV16::clear_meta 
 
     } elseif {"2.0" == $version} { 
+      authV20::clear_auth
+      authV20::clear_uses
+      authV20::uses_opt_disable "pic"
+      authV20::uses_opt_disable "pac"
+      authV20::uses_opt_disable "pfac"
+      authV20::uses_opt_disable "bioc"
+      authV20::uses_opt_disable "pvc"
+      authV20::uses_opt_disable "democ"
+      authV20::clear_meta 
       
+    } elseif {"2.5" == $version} {
+      authV25::clear_auth
+      authV25::clear_uses
+      authV25::uses_opt_disable "pic"
+      authV25::uses_opt_disable "pac"
+      authV25::uses_opt_disable "pfac"
+      authV25::uses_opt_disable "bioc"
+      authV25::uses_opt_disable "pvc"
+      authV25::uses_opt_disable "democ"
+      authV25::clear_meta 
+
     }
+
   } elseif {"otp" == $type} {
     
   } elseif {"kyc" == $type} {
 
-    if {"2.0" == $version} {
-
-      if {"1.6" == $version_ex} {
-        set ctx "authV16" 
-      } elseif {"2.0" == $version_ex} {
-        set ctx "authV20"
-      } elseif {"2.5" == $version_ex} {
-        set ctx "authV25"
-      }
-
-      [subst $ctx]::clear_auth
-      [subst $ctx]::clear_uses
-      [subst $ctx]::uses_opt_disable "pic"
-      [subst $ctx]::uses_opt_disable "pac"
-      [subst $ctx]::uses_opt_disable "pfac"
-      [subst $ctx]::uses_opt_disable "bioc"
-      [subst $ctx]::uses_opt_disable "pvc"
-      [subst $ctx]::uses_opt_disable "democ"
-      [subst $ctx]::clear_meta
+    if {"1.6" == $version_ex} {
+      set ctx "authV16" 
+    } elseif {"2.0" == $version_ex} {
+      set ctx "authV20"
+    } elseif {"2.5" == $version_ex} {
+      set ctx "authV25"
     }
-    
+
+    [subst $ctx]::clear_auth
+    [subst $ctx]::clear_uses
+    [subst $ctx]::uses_opt_disable "pic"
+    [subst $ctx]::uses_opt_disable "pac"
+    [subst $ctx]::uses_opt_disable "pfac"
+    [subst $ctx]::uses_opt_disable "bioc"
+    [subst $ctx]::uses_opt_disable "pvc"
+    [subst $ctx]::uses_opt_disable "democ"
+    [subst $ctx]::clear_meta
   }
+
 };#/*clear_contents*/
 
 proc submit_contents {type version version_ex} {

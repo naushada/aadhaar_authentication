@@ -1,0 +1,116 @@
+package require BWidget
+
+#/* 
+# @name ekyc20.tk
+# @brief This file is to build the user form entry
+#        through which respective values can be supplied by end user
+#        This user form complies with specification version 1.6
+#
+# @author Mohad Naushad Ahmed
+# @email  NAUSHAD.DLN@GMAIL.COM
+# @dated  27-May-2018
+#*/
+
+namespace eval ekycV21 {
+
+  set widgets_name(kyc) "" 
+  set widgets_name(crypto) "" 
+  set widgets_name(pi) "" 
+
+  proc kyc_attr {frm} {
+
+    set arg { {ver vere entry {}} {ra rae combobox {O F I P}} {rc rce combobox {Y N}} 
+              {mec mece combobox {N Y}} {lr lre combobox {N Y}} {de dee combobox {N Y}} 
+              {pfr pfre combobox {Y N}} {uri urie combobox {"/kyc/2.0" "/ekyc2.5" "/kyc/1.0"}} }
+
+    build_form $frm kyc $arg ekycV21
+  };#/*kyc_attr*/
+
+  proc set_default_kyc {} {
+    variable widgets_name 
+    set default {"2.1"}
+    set idx 0
+    foreach val $widgets_name(kyc) {
+      if {"Entry" == [winfo class $val]} {
+        $val delete 0 end
+        $val insert 0 [lindex $default $idx]
+      }
+      incr idx  
+    } 
+  };#/*set_default_kyc*/
+
+  proc build_kyc_request {auth_version} {
+    
+    if {"1.6" == $auth_version} {
+      set auth_req [authV16::build_auth_request ekyc]
+
+    } elseif {"2.0" == $auth_version} {
+      set auth_req [authV20::build_auth_request ekyc]
+
+    } elseif {"2.5" == $auth_version} {
+      set auth_req [authV25::build_auth_request ekyc]
+
+    } else {
+      puts stderr "Invalid authversion"
+
+    }
+
+    #/*Extracting the crypto contents*/
+    set arg {public private password}
+    set crypto [get_value crypto $arg ekycV21] 
+    set REQ "$auth_req&$crypto"
+    #eKYC attributes
+    set arg {ver ra rc mec lr de pfr uri}
+    set ekyc [get_value kyc $arg ekycV21]
+
+    #/*Prepare the request*/
+    set REQ "$REQ&$ekyc"
+
+    return $REQ
+  };#/*build_kyc_request*/
+
+  proc crypto_attr {frm} {
+
+    set lbl_frm [labelframe $frm.crypto_lbl_frame -text "Public/Privte Keys File"]
+    grid $lbl_frm -sticky news -column 0 -row 4 -pady 2 -padx 1
+
+    set arg { {public  publice entry {}} 
+              {private privatee entry {}} \
+              {password passworde entry {}}}
+
+    build_form $lbl_frm crypto $arg ekycV21 
+  
+    set btn_frm [frame $lbl_frm.btn_frm]
+
+    button $btn_frm.btn_public -text "Select Public Key File" -command "ekycV21::browse_file public"
+    button $btn_frm.btn_private -text "Select Private Key File" -command "ekycV21::browse_file private"
+    grid $btn_frm.btn_public $btn_frm.btn_private -pady 2 -padx 2 -sticky news
+    grid $btn_frm
+
+  };#/*crypto_attr*/
+
+  proc browse_file {type} {
+    variable widgets_name
+
+    set types {
+          {{All Files}        *             }
+          {{Text Files}       {.txt}        }
+          {{TCL Scripts}      {.tcl}        }
+          {{GIF Files}        {.gif}        }
+          {{Text Files}       {}        TEXT}
+        }
+
+    set file_name [tk_getOpenFile -title "PKI Selection" -parent .child_win -filetypes $types]
+
+    if {"public" == $type} {
+      [lindex $widgets_name(crypto) 0] delete 0 end
+      [lindex $widgets_name(crypto) 0] insert 0 $file_name
+
+    } else {
+      [lindex $widgets_name(crypto) 1] delete 0 end
+      [lindex $widgets_name(crypto) 1] insert 0 $file_name
+    }
+
+  };#/*browser_file*/
+
+};#/*namespace end*/

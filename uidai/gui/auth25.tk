@@ -233,7 +233,7 @@ namespace eval authV25 {
   proc set_default_auth {} {
     variable widgets_name 
     set default {"999938452218" "public" "TXN:BalaaghTesting" "public" \
-                 "public" "1.6" "Y" "MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s"}
+                 "public" "2.5" "Y" "MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s"}
     set idx 0
     foreach val $widgets_name(auth) {
       $val delete 0 end
@@ -293,7 +293,7 @@ namespace eval authV25 {
 
   proc build_auth_request {req_type} {
 
-    set arg {uid tid txn ac sa ver lk}
+    set arg {uid tid txn ac sa ver rc lk}
     set auth [get_value auth $arg authV25]
     set arg {pi pa pfa bio pv demo}
     set uses [get_value uses $arg authV25]
@@ -301,7 +301,7 @@ namespace eval authV25 {
     set meta [get_value meta $arg authV25]
 
     #/*Prepare the request*/
-    set REQ "stage=staging&request=$req_type&$auth&$uses&$tkn&$meta"
+    set REQ "stage=staging&request=$req_type&$auth&$uses&$meta"
 
     set checkbutton_var {pic pac pfac bioc pvc democ}
     foreach val $checkbutton_var {
