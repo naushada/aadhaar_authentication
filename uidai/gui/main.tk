@@ -2,8 +2,8 @@
 
 source [lindex $argv 0]/util.tk
 source [lindex $argv 0]/auth16.tk
-source [lindex $argv 0]/auth_ui20.tk
-source [lindex $argv 0]/auth_ui25.tk
+source [lindex $argv 0]/auth20.tk
+source [lindex $argv 0]/auth25.tk
 source [lindex $argv 0]/otp16.tk
 source [lindex $argv 0]/ekyc20.tk
 source [lindex $argv 0]/response.tk
@@ -119,76 +119,140 @@ proc staging_auth {version} {
 
 proc staging_pi_form {f_name version} {
 
-  set lbl_frm [labelframe $f_name.staging_pi -text "Pi (Attributes)"]
-  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 1
-
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pi -text "Pi (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 1
     authV16::pi_attr $lbl_frm
+  } elseif {"2.0" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pi -text "Pi (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 0
+    authV20::pi_attr $lbl_frm
+  } elseif {"2.5" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pi -text "Pi (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 0
+    authV25::pi_attr $lbl_frm
+  } else {
+    puts stderr "Invalid version $version"
   }
 };#/*staging_pi_form*/
 
 proc staging_pa_form {f_name version} {
 
-  set lbl_frm [labelframe $f_name.staging_pa -text "Pa (Attributes)"]
-  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 2
 
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pa -text "Pa (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 2
     authV16::pa_attr $lbl_frm
+  } elseif {"2.0" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pa -text "Pa (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 1
+    authV20::pa_attr $lbl_frm
+  } elseif {"2.5" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pa -text "Pa (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 1
+    authV25::pa_attr $lbl_frm
+  } else {
+    puts stderr "Invalid version $version"
   }
+
 };#/*staging_pa_form*/
 
 proc staging_pfa_form {f_name version} {
 
-  set lbl_frm [labelframe $f_name.staging_pfa -text "Pfa (Attributes)"]
-  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 0
 
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pfa -text "Pfa (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 0
     authV16::pfa_attr $lbl_frm
+  } elseif {"2.0" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pfa -text "Pfa (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 2
+    authV20::pfa_attr $lbl_frm
+  } elseif {"2.5" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pfa -text "Pfa (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 2
+    authV25::pfa_attr $lbl_frm
+  } else {
+    puts stderr "Invalid version $version"
   }
 };#/*staging_pfa_form*/
 
 proc staging_bio_form {f_name version} {
 
-  set lbl_frm [labelframe $f_name.staging_bio -text "Bio (Attributes)"]
-  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 1
 
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
+    set lbl_frm [labelframe $f_name.staging_bio -text "Bio (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 1
     authV16::bio_attr $lbl_frm
+  } elseif {"2.0" == $version} {
+    set lbl_frm [labelframe $f_name.staging_bio -text "Bio (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 0
+    authV20::bio_attr $lbl_frm
+  } elseif {"2.5" == $version} {
+    set lbl_frm [labelframe $f_name.staging_bio -text "Bio (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 0
+    authV25::bio_attr $lbl_frm
+  } else {
+    puts stderr "Invalid version $version"
   }
 };#/*staging_bio_form*/
 
 proc staging_pv_form {f_name version} {
 
-  set lbl_frm [labelframe $f_name.staging_pv -text "Pv (Attributes)"]
-  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 2
 
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pv -text "Pv (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 2
     authV16::pv_attr $lbl_frm
+  } elseif {"2.0" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pv -text "Pv (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 1
+    authV20::pv_attr $lbl_frm
+  } elseif {"2.5" == $version} {
+    set lbl_frm [labelframe $f_name.staging_pv -text "Pv (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 1
+    authV25::pv_attr $lbl_frm
+  } else {
+    puts stderr "Invalid version $version"
   }
 };#/*staging_pv_form*/
 
 proc staging_demo_form {f_name version} {
 
-  set lbl_frm [labelframe $f_name.staging_demo -text "Demo (Attributes)"]
-  grid $lbl_frm -sticky news -pady 2 -padx 1 -row 3 -column 0
 
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
+    set lbl_frm [labelframe $f_name.staging_demo -text "Demo (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 3 -column 0
     authV16::demo_attr $lbl_frm
+  } elseif {"2.0" == $version} {
+    set lbl_frm [labelframe $f_name.staging_demo -text "Demo (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 2
+    authV20::demo_attr $lbl_frm
+  } elseif {"2.5" == $version} {
+    set lbl_frm [labelframe $f_name.staging_demo -text "Demo (Attributes)"]
+    grid $lbl_frm -sticky news -pady 2 -padx 1 -row 2 -column 2
+    authV25::demo_attr $lbl_frm
+  } else {
+    puts stderr "Invalid version $version"
   }
 };#/*staging_demo_form*/
 
 proc staging_uidai_form {f_name version row col type} {
 
-  set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
-  grid $lbl_frm -sticky news -pady 2 -padx 1 -row $row -column $col
 
   if {"auth" == $type} {
 
     if {$version == "1.6"} {
+      set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
+      grid $lbl_frm -sticky news -pady 2 -padx 1 -row $row -column $col
       authV16::uidai_auth_server $lbl_frm
     } elseif {"2.0" == $version} {
+      set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
+      grid $lbl_frm -sticky news -pady 2 -padx 1 -row 3 -column 0
       authV20::uidai_auth_server $lbl_frm
     } elseif {"2.5" == $version} {
+      set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
+      grid $lbl_frm -sticky news -pady 2 -padx 1 -row 3 -column 0
       authV25::uidai_auth_server $lbl_frm
     }
 
@@ -277,10 +341,10 @@ proc staging_kyc_form {f_name version} {
     ekycV20::kyc_attr $lbl_frm
 
   } elseif {$version == "2.1"} {
-    auth_attr_v21 $lbl_frm
+    ekycV21::kyc_attr $lbl_frm
 
   } elseif {$version == "2.5"} {
-    auth_attr_v25 $lbl_frm
+    ekycV25::kyc_attr $lbl_frm
 
   }
  
@@ -306,29 +370,45 @@ proc staging_auth_form {f_name version} {
 
 proc staging_uses_form {f_name version} {
   set lbl_frm [labelframe $f_name.staging_uses -text "Uses* (Attributes)"]
-  grid $lbl_frm -sticky news -row 0 -column 1 -row 0 -pady 2 -padx 1
+  grid $lbl_frm -sticky news -row 0 -column 1 -pady 2 -padx 1
 
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
     authV16::uses_attr $lbl_frm
+  } elseif {"2.0" == $version} {
+    authV20::uses_attr $lbl_frm
+  } elseif {"2.5" == $version} {
+    authV25::uses_attr $lbl_frm
+  } else {
+    puts stderr "Invalid version $version"
   }
 
 };#/*staging_uses_form*/
 
 proc staging_tkn_form {f_name version} {
-  set lbl_frm [labelframe $f_name.staging_tkn -text "Tkn (Attributes)"]
-  grid $lbl_frm -sticky news -row 0 -column 2 -row 0 -pady 2 -padx 1
 
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
+    set lbl_frm [labelframe $f_name.staging_tkn -text "Tkn (Attributes)"]
+    grid $lbl_frm -sticky news -row 0 -column 2 -pady 2 -padx 1
     authV16::tkn_attr $lbl_frm
   }
 };#/*staging_tkn_form*/
 
 proc staging_meta_form {f_name version} {
-  set lbl_frm [labelframe $f_name.staging_meta -text "Meta* (Attributes)"]
-  grid $lbl_frm -sticky news -column 0 -row 1 -pady 2 -padx 1
 
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
+    set lbl_frm [labelframe $f_name.staging_meta -text "Meta* (Attributes)"]
+    grid $lbl_frm -sticky news -row 1 -column 0 -pady 2 -padx 1
     authV16::meta_attr $lbl_frm
+  } elseif {"2.0" == $version} {
+    set lbl_frm [labelframe $f_name.staging_meta -text "Meta* (Attributes)"]
+    grid $lbl_frm -sticky news -row 0 -column 2 -pady 2 -padx 1
+    authV20::meta_attr $lbl_frm
+  } elseif {"2.5" == $version} {
+    set lbl_frm [labelframe $f_name.staging_meta -text "Meta* (Attributes)"]
+    grid $lbl_frm -sticky news -row 0 -column 2 -pady 2 -padx 1
+    authV25::meta_attr $lbl_frm
+  } else {
+    puts stderr "Invalid version $version"
   }
 
 };#/*staging_meta_form*/
@@ -463,6 +543,9 @@ proc btn_widget {f_name type version version_ex} {
 
   set frm [frame $f_name.btn_frame]
   set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
+
+  #set frm [frame .child_win.btn_frame]
+  #set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
 
   button $lbl_frm.clear -text "Clear Contents" -command "clear_contents $type $version $version_ex"
   button $lbl_frm.default -text "Set Default Value" -command "default_contents $type $version $version_ex"
