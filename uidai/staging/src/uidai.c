@@ -812,7 +812,7 @@ void *uidai_main(void *tid) {
   uidai_session_t *session = NULL;
 
   FD_ZERO(&rd);
-  buffer_len = 3500;
+  buffer_len = 5500;
   buffer = (uint8_t *)malloc(buffer_len);
   assert(buffer != NULL);
 
@@ -848,8 +848,8 @@ void *uidai_main(void *tid) {
       for(session = pUidaiCtx->session; session; session = session->next) { 
         if((session->conn_id > 0) && FD_ISSET(session->conn_id, &rd)) {
           /*Request received from Access Controller /NAS*/
-          memset((void *)buffer, 0, 3500);
-          buffer_len = 3500;
+          memset((void *)buffer, 0, 5500);
+          buffer_len = 5500;
           uidai_recv(session->conn_id, buffer, &buffer_len, 0);
 
           if(buffer_len) {
@@ -864,8 +864,8 @@ void *uidai_main(void *tid) {
       if((pUidaiCtx->uidai_fd > 0) && (FD_ISSET(pUidaiCtx->uidai_fd, &rd))) { 
         /*Response UIDAI Server*/
         do {
-          memset((void *)buffer, 0, 3500);
-          buffer_len = 3500;
+          memset((void *)buffer, 0, 5500);
+          buffer_len = 5500;
           uidai_recv(pUidaiCtx->uidai_fd, buffer, &buffer_len, MSG_PEEK);
           wait_for_more_data = uidai_pre_process_uidai_rsp(pUidaiCtx->uidai_fd, 
                                                            buffer, 
@@ -1027,7 +1027,7 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   uidai_attr[0] = uidai_get_attr(uidai, "host");
   free(uidai);
   uidai = NULL;
-  uidai_init_ex("192.168.1.4", 8080, uidai_attr[0], 80);
+  uidai_init_ex("192.168.1.3", 8080, uidai_attr[0], 80);
   free(uidai_attr[0]);
   uidai_attr[0] = NULL;
 
@@ -1108,7 +1108,7 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
 uint8_t *uidai_chunked_rsp(int32_t fd, uint32_t *rsp_len) {
   uint8_t wait_for_more_data;
   uint8_t *buffer = NULL;
-  uint32_t buffer_size = 3500;
+  uint32_t buffer_size = 5500;
   uint32_t buffer_len = 0;
   uint8_t status[8];
 
@@ -1161,6 +1161,7 @@ uint8_t *uidai_get_rsp_param(uint8_t *rsp,
   char *save_ptr = NULL;
   uint8_t *token_ptr = NULL;
   int32_t ret = -1;
+  uint32_t idx = 0;
 
   tmp_rsp = (uint8_t *)malloc(sizeof(uint8_t) * rsp_len);
   assert(tmp_rsp != NULL);
@@ -1175,11 +1176,21 @@ uint8_t *uidai_get_rsp_param(uint8_t *rsp,
   while(token_ptr) {
 
     memset((void *)param_name, 0, sizeof(param_name));
-    ret = sscanf(token_ptr, "%[^=]=%s", param_name, param_ptr);
+    ret = sscanf(token_ptr, "%[^=]=%*s", param_name);
     
-    if((2 == ret) && !strncmp(param_name, attr, sizeof(param_name))) {
+    if((1 == ret) && !strncmp(param_name, attr, sizeof(param_name))) {
       free(tmp_rsp);
       tmp_rsp = NULL;
+      /*+1 for =*/
+      ret = strlen(param_name) + 1;
+
+      while((' ' != token_ptr[ret]) && 
+            ('>' != token_ptr[ret]) && 
+            ('/' != token_ptr[ret])) {
+        param_ptr[idx++] = token_ptr[ret++];
+      }
+      param_ptr[idx] = 0;
+
       return(param_ptr); 
     }
 
@@ -1239,8 +1250,12 @@ int32_t uidai_parse_rsp(uint8_t *rsp_ptr,
                    "\n");
           
     for(idx = 0; idx < 5; idx++) {
-      free(attr_ptr[idx]);
-      attr_ptr[idx] = NULL;
+
+      if(attr_ptr[idx]) {
+        free(attr_ptr[idx]);
+        attr_ptr[idx] = NULL;
+      }
+
     }
 
   } else {
@@ -1274,8 +1289,12 @@ int32_t uidai_parse_rsp(uint8_t *rsp_ptr,
                    "\n");
 
     for(idx = 0; idx < 7; idx++) {
-      free(attr_ptr[idx]);
-      attr_ptr[idx] = NULL;
+
+      if(attr_ptr[idx]) {
+        free(attr_ptr[idx]);
+        attr_ptr[idx] = NULL;
+      }
+
     }
   }
   /*Sending Response to GUI*/

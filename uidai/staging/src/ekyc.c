@@ -17,7 +17,7 @@ uint8_t *ekyc_compose_xml_v20(uint8_t *in_ptr,
   uint8_t *ekyc_xml_ptr = NULL;
   uint32_t ekyc_xml_size = 6500;
   uint8_t *b64_auth_xml_ptr = NULL;
-  uint32_t b64_auth_xml_size = 5500;
+  uint32_t b64_auth_xml_size = 6500;
   uint16_t len;
 
   b64_auth_xml_ptr = (uint8_t *)malloc(sizeof(uint8_t) * b64_auth_xml_size);
@@ -52,6 +52,7 @@ uint8_t *ekyc_compose_xml_v20(uint8_t *in_ptr,
                       "%s%s%s%s%s"
                       "%s%s%s%s%s"
                       "%s%s%s%s%s",
+                      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                       "<Kyc ver=\"",
                       attr_ptr[0],
                       "\" ts=\"",
