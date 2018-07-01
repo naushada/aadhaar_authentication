@@ -25,45 +25,60 @@ source [lindex $argv 0]/response.tk
 set menu_b {
   #/*Root     Menu Name      Parent/Leaf(proc) Argument for Leafnode*/
   #/*----------------------------------------------------------------*/
-  {"."          "File"                  "+"   {}}
-  {"File"       "Exit"                  "Exit" {}}
-  {"."          "Uidai"                 "+"            {}}
-  {"Uidai"      "Staging"               "+"            {}}
-  {"Staging"    "Authentication"        "+"            {}}
-  {"Authentication"    "Version1.6"    "{staging_auth 1.6}" {}}
-  {"Authentication"    "Version2.0"    "{staging_auth 2.0}" {}}
-  {"Authentication"    "Version2.5"    "{staging_auth 2.5}" {}}
-  {"Staging"           "Otp"            "+"            {}}
-  {"Otp"               "Version1.6"    "{staging_otp 1.6}"  {}}
-  {"Otp"               "Version2.5"    "{staging_otp 2.5}"  {}}
-  {"Staging"           "eKyc"           "+"            {}}
-  {"eKyc"              "Version2.0"     "{staging_ekyc 2.0 1.6}"  {}}
-  {"eKyc"              "Version2.5"     "proc_ekyc25"  {}}
-  {"Uidai"             "Pre-Production" "+"            {}}
-  {"Pre-Production"    "Authentication" "+"            {}}
-  {"Authentication"    "Version1.6"    "dot6"        {}}
-  {"Authentication"    "Version2.0"    "dot0"        {}}
-  {"Pre-Production"    "Otp"            "+"            {}}
-  {"Otp"               "Version1.6"    "proc_otp16"   {}}
-  {"Otp"               "Version2.5"    "proc_otp25"   {}}
-  {"Pre-Production"    "eKyc"           "+"            {}}
-  {"eKyc"              "Version1.6"    "proc_ekyc16"  {}}
-  {"eKyc"              "Version2.5"    "proc_ekyc25"  {}}
-  {"Uidai"             "Production" "+"            {}}
-  {"Production"    "Authentication" "+"            {}}
-  {"Authentication"    "Version1.6"    "dot6"        {}}
-  {"Authentication"    "Version2.0"    "dot0"        {}}
-  {"Production"    "Otp"            "+"            {}}
-  {"Otp"               "Version1.6"    "proc_otp16"   {}}
-  {"Otp"               "Version2.5"    "proc_otp25"   {}}
-  {"Production"    "eKyc"           "+"            {}}
-  {"eKyc"              "Version1.6"    "proc_ekyc16"  {}}
-  {"eKyc"              "Version2.5"    "proc_ekyc25"  {}}
+  {"."                 "File"                  "+"    {}}
+  {"File"              "Exit"                  "Exit" {}}
+  {"."                 "Uidai"                 "+"    {}}
+  {"Uidai"             "Staging"               "+"    {}}
+  {"Staging"           "Authentication"        "+"    {}}
+  {"Authentication"    "Version1.6"            "{staging_auth 1.6}" {}}
+  {"Authentication"    "Version2.0"            "{staging_auth 2.0}" {}}
+  {"Authentication"    "Version2.5"            "{staging_auth 2.5}" {}}
+  {"Staging"           "Otp"                   "+"    {}}
+  {"Otp"               "Version1.6"            "{staging_otp 1.6}"  {}}
+  {"Otp"               "Version2.5"            "{staging_otp 2.5}"  {}}
+  {"Staging"           "eKyc"                  "+"    {}}
+  {"eKyc"              "eKyc2dot0"             "+"    {}}
+  {"eKyc2dot0"         "Authentication1.6"     "{staging_ekyc 2.0 1.6}"  {}}
+  {"eKyc2dot0"         "Authentication2.0"     "{staging_ekyc 2.0 2.0}"  {}}
+  {"eKyc2dot0"         "Authentication2.5"     "{staging_ekyc 2.0 2.5}"  {}}
+  {"eKyc"              "eKyc2dot1"             "+"    {}}
+  {"eKyc2dot1"         "Authentication1.6"     "{staging_ekyc 2.1 1.6}"  {}}
+  {"eKyc2dot1"         "Authentication2.0"     "{staging_ekyc 2.1 2.0}"  {}}
+  {"eKyc2dot1"         "Authentication2.5"     "{staging_ekyc 2.1 2.5}"  {}}
+  {"eKyc"              "eKyc2dot5"             "+"    {}}
+  {"eKyc2dot5"         "Authentication1.6"     "{staging_ekyc 2.5 1.6}"  {}}
+  {"eKyc2dot5"         "Authentication2.0"     "{staging_ekyc 2.5 2.0}"  {}}
+  {"eKyc2dot5"         "Authentication2.5"     "{staging_ekyc 2.5 2.5}"  {}}
+  {"Uidai"             "Pre-Production"        "+"      {}}
+  {"Pre-Production"    "Authentication"        "+"      {}}
+  {"Authentication"    "Version1.6"            "dummy"  {}}
+  {"Authentication"    "Version2.0"            "dummy"  {}}
+  {"Authentication"    "Version2.5"            "dummy"  {}}
+  {"Pre-Production"    "Otp"                   "+"      {}}
+  {"Otp"               "Version1.6"            "dummy"  {}}
+  {"Otp"               "Version2.5"            "dummy"  {}}
+  {"Pre-Production"    "eKyc"                  "+"      {}}
+  {"eKyc"              "Version1.6"            "dummy"  {}}
+  {"eKyc"              "Version2.5"            "dummy"  {}}
+  {"Uidai"             "Production"            "+"      {}}
+  {"Production"        "Authentication"        "+"      {}}
+  {"Authentication"    "Version1.6"            "dummy"  {}}
+  {"Authentication"    "Version2.0"            "dummy"  {}}
+  {"Production"        "Otp"                   "+"      {}}
+  {"Otp"               "Version1.6"            "dummy"  {}}
+  {"Otp"               "Version2.5"            "dummy"  {}}
+  {"Production"        "eKyc"                  "+"      {}}
+  {"eKyc"              "Version1.6"            "dummy"  {}}
+  {"eKyc"              "Version2.5"            "dummy"  {}}
 
 };#/*Menu bar*/
 
+proc dummy {} {
+ after 3000 {destroy .dummy}
+ tk_dialog .dummy "Balaagh Technologies" "Under development!" info 0 OK
+};#/*dummy*/
+
 proc Exit {} {
-  #exit
   puts "Exit"
 };#/**/
  
