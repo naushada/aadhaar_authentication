@@ -123,21 +123,7 @@ int32_t uidai_build_ext_rsp(uint8_t *param_ptr,
 
   } else if(!strncmp(session->req_type, "auth", 4)) {
     /*Build auth Response*/
-    auth_process_rsp(param_ptr, rsp_ptr, rsp_len);
-    /*Add the subtype in response*/
-    sprintf(&(*rsp_ptr)[*rsp_len],
-            "%s%s%s%s%s"
-            "%s",
-            "&subtype=",
-            session->req_subtype,
-            "&ip=",
-            session->ip_str,
-            "&name=",
-            session->uid_name);
-
-    *rsp_len = strlen(*rsp_ptr);
   }
-  fprintf(stderr, "\n%s:%d auth rsp %s\n", __FILE__, __LINE__, *rsp_ptr);        
 
   return(0);  
 }/*uidai_build_ext_rsp*/
@@ -515,7 +501,6 @@ int32_t uidai_process_req(int32_t conn_fd,
     strncpy(session->req_subtype, subtype_ptr, sizeof(session->req_subtype));
     free(subtype_ptr);
     /*Process Auth Request*/
-    auth_main(conn_fd, packet_ptr, packet_len, &rsp_ptr, &rsp_len);
 
   } else {
     /*Request Type is not supported*/
@@ -1027,7 +1012,7 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   uidai_attr[0] = uidai_get_attr(uidai, "host");
   free(uidai);
   uidai = NULL;
-  uidai_init_ex("192.168.1.3", 8080, uidai_attr[0], 80);
+  uidai_init_ex("192.168.1.6", 8080, uidai_attr[0], 80);
   free(uidai_attr[0]);
   uidai_attr[0] = NULL;
 
