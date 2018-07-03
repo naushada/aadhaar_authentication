@@ -121,4 +121,14 @@ namespace eval otpV16 {
 
   };#/*browser_file*/
 
+  proc clear_otp {} {
+    variable widgets_name 
+ 
+    foreach val $widgets_name(otp) {
+      if {"Entry" == [winfo class $val]} {
+        $val delete 0 end
+      }
+    } 
+  };#/*clear_otp*/
+
 };#/*namespace end*/

@@ -5,6 +5,7 @@ source [lindex $argv 0]/auth16.tk
 source [lindex $argv 0]/auth20.tk
 source [lindex $argv 0]/auth25.tk
 source [lindex $argv 0]/otp16.tk
+source [lindex $argv 0]/otp25.tk
 source [lindex $argv 0]/ekyc20.tk
 source [lindex $argv 0]/ekyc21.tk
 source [lindex $argv 0]/ekyc25.tk
@@ -256,19 +257,17 @@ proc staging_demo_form {f_name version} {
 
 proc staging_uidai_form {f_name version row col type} {
 
+  set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
 
   if {"auth" == $type} {
 
     if {$version == "1.6"} {
-      set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
       grid $lbl_frm -sticky news -pady 2 -padx 1 -row $row -column $col
       authV16::uidai_auth_server $lbl_frm
     } elseif {"2.0" == $version} {
-      set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
       grid $lbl_frm -sticky news -pady 2 -padx 1 -row 3 -column 0
       authV20::uidai_auth_server $lbl_frm
     } elseif {"2.5" == $version} {
-      set lbl_frm [labelframe $f_name.staging_uidai -text "Uidai Host (Attributes)"]
       grid $lbl_frm -sticky news -pady 2 -padx 1 -row 3 -column 0
       authV25::uidai_auth_server $lbl_frm
     }
@@ -276,10 +275,10 @@ proc staging_uidai_form {f_name version row col type} {
   } elseif {"otp" == $type} {
 
     if {"1.6" == $version} {
+      grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 0
       otpV16::uidai_otp_server $lbl_frm 
-    } elseif {"2.0" == $version} {
-      otpV20::uidai_otp_server $lbl_frm 
     } elseif {"2.5" == $version} {
+      grid $lbl_frm -sticky news -pady 2 -padx 1 -row 1 -column 0
       otpV25::uidai_otp_server $lbl_frm 
     }
 
@@ -335,7 +334,7 @@ proc staging_otp_form {f_name version} {
   } elseif {$version == "2.0"} {
 
   } elseif {$version == "2.5"} {
-
+    otpV25::otp_attr $lbl_frm
   }
  
 };#/*staging_otp_form*/
@@ -344,8 +343,10 @@ proc staging_opts_form {f_name version} {
   set lbl_frm [labelframe $f_name.staging_opts -text "Opts* (Attributes)"]
   grid $lbl_frm -sticky news -row 0 -column 1 -row 0 -pady 2 -padx 1
 
-  if {$version == "1.6"} {
+  if {"1.6" == $version} {
     otpV16::opts_attr $lbl_frm
+  } elseif {"2.5" == $version} {
+    otpV25::opts_attr $lbl_frm
   }
 
 };#/*staging_opts_form*/
@@ -458,6 +459,8 @@ proc default_contents {type version version_ex} {
 
     if {"1.6" == $version} {
       otpV16::set_default_otp 
+    } elseif {"2.5" == $version} {
+      otpV25::set_default_otp 
     }
 
   } elseif {"kyc" == $type} {
@@ -529,7 +532,12 @@ proc clear_contents {type version version_ex} {
     }
 
   } elseif {"otp" == $type} {
-    
+  
+    if {"1.6" == $version} {
+      otpV16::clear_otp
+    } elseif {"2.5" == $version} {
+      otpV25::clear_otp
+    }  
   } elseif {"kyc" == $type} {
 
     if {"1.6" == $version_ex} {
@@ -571,7 +579,8 @@ proc submit_contents {type version version_ex} {
   } elseif {"otp" == $type} {
     if {"1.6" == $version} {
       set REQ [otpV16::build_otp_request]
-
+    } elseif {"2.5" == $version} {
+      set REQ [otpV25::build_otp_request]
     }
 
   } elseif {"kyc" == $type} {

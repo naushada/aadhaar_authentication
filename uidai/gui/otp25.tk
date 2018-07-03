@@ -1,0 +1,134 @@
+
+#/* 
+# @name otp_ui16.tk
+# @brief This file is to build the user form entry
+#        through which respective values can be supplied by end user
+#        This user form complies with specification version 1.6
+#
+# @author Mohad Naushad Ahmed
+# @email  NAUSHAD.DLN@GMAIL.COM
+# @dated  15-May-2018
+#*/
+
+namespace eval otpV25 {
+  set widgets_name(otp) "" 
+  set widgets_name(opts) "" 
+  set widgets_name(pi) "" 
+  set widgets_name(uidai) "" 
+  set widgets_name(crypto) "" 
+
+  proc uidai_otp_server {frm} {
+
+    set arg { {uri urie combobox {/otp2.5 /otp/1.6 /otp/2.0}} 
+              {host hoste entry {developer.uidai.gov.in}} }
+
+    build_form $frm uidai $arg otpV25
+
+  };#/*uidai_otp_server*/
+
+  proc otp_attr {frm} {
+
+    set arg { {uid uide entry {}} {txn txne entry {}} \
+              {ac ace entry {}} {sa sae entry {}} {ver vere entry {}} \
+              {lk lke entry {}} {type typee combobox {"A" "E" "V" "T" "M"}} }
+
+    build_form $frm otp $arg otpV25
+
+  };#/*otp_attr*/
+
+  proc opts_attr {frm} {
+
+    set arg { {ch che combobox {"00" \
+                                "01" \
+                                "02"}} }
+
+    build_form $frm opts $arg otpV25
+
+  };#/*opts_attr*/
+
+  proc build_otp_request {} {
+
+    set arg {uid txn ac sa ver lk type}
+    set otp [get_value otp $arg otpV25]
+    set arg {ch}
+    set opts [get_value opts $arg otpV25]
+    set arg {uri host}
+    set uidai [get_value uidai $arg otpV25]
+    set arg {public private password}
+    set crypto [get_value crypto $arg otpV25]
+
+    #/*Prepare the request*/
+    set REQ "/request?stage=staging&request=otp&$otp&$opts&$uidai&$crypto"
+
+    return $REQ
+  };#/*build_otp_request*/
+
+  proc set_default_otp {} {
+    variable widgets_name 
+    set default {"999938452218" "TXN:BalaaghTesting" "public" \
+                 "public" "2.5" "MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s"}
+    set idx 0
+    foreach val $widgets_name(otp) {
+      if {"Entry" == [winfo class $val]} {
+        $val delete 0 end
+        $val insert 0 [lindex $default $idx]
+      }
+      incr idx  
+    } 
+  };#/*set_default_otp*/
+
+  proc crypto_attr {frm} {
+
+    set lbl_frm [labelframe $frm.crypto_lbl_frame -text "Public/Privte Keys File"]
+    grid $lbl_frm -sticky news -column 1 -row 1 -pady 1 -padx 1
+
+    set arg { {public  publice entry {}} 
+              {private privatee entry {}} \
+              {password passworde entry {}}}
+
+    build_form $lbl_frm crypto $arg otpV25
+  
+    set btn_frm [frame $lbl_frm.btn_frm]
+
+    button $btn_frm.btn_public -text "Select Public Key File" -command "otpV25::browse_file public"
+    button $btn_frm.btn_private -text "Select Private Key File" -command "otpV25::browse_file private"
+    grid $btn_frm.btn_public $btn_frm.btn_private -pady 2 -padx 2 -sticky news
+    grid $btn_frm
+
+  };#/*crypto_attr*/
+
+  proc browse_file {type} {
+    variable widgets_name
+
+    set types {
+          {{All Files}        *             }
+          {{Text Files}       {.txt}        }
+          {{TCL Scripts}      {.tcl}        }
+          {{GIF Files}        {.gif}        }
+          {{Text Files}       {}        TEXT}
+        }
+
+    set file_name [tk_getOpenFile -title "PKI Selection" -parent .child_win -filetypes $types]
+
+    if {"public" == $type} {
+      [lindex $widgets_name(crypto) 0] delete 0 end
+      [lindex $widgets_name(crypto) 0] insert 0 $file_name
+
+    } else {
+      [lindex $widgets_name(crypto) 1] delete 0 end
+      [lindex $widgets_name(crypto) 1] insert 0 $file_name
+    }
+
+  };#/*browser_file*/
+
+  proc clear_otp {} {
+    variable widgets_name 
+ 
+    foreach val $widgets_name(otp) {
+      if {"Entry" == [winfo class $val]} {
+        $val delete 0 end
+      }
+    } 
+  };#/*clear_otp*/
+
+};#/*namespace end*/

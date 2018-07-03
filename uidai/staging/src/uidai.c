@@ -109,18 +109,7 @@ int32_t uidai_build_ext_rsp(uint8_t *param_ptr,
   fprintf(stderr, "\n%s:%d session->req_type %s\n", __FILE__, __LINE__,session->req_type);
 
   if(!strncmp(session->req_type, "otp", 3)) {
-    /*Build otp Response*/
-    otp_process_rsp(param_ptr, rsp_ptr, rsp_len);
-    /*Add the subtype in response*/
-    sprintf(&(*rsp_ptr)[*rsp_len],
-            "%s%s%s%s",
-            "&ip=",
-            session->ip_str,
-            "&name=",
-            session->uid_name);
-
-    *rsp_len = strlen(*rsp_ptr);
-
+    
   } else if(!strncmp(session->req_type, "auth", 4)) {
     /*Build auth Response*/
   }
@@ -493,7 +482,6 @@ int32_t uidai_process_req(int32_t conn_fd,
   strncpy(session->req_type, req_type, sizeof(session->req_type));
 
   if(!strncmp(req_type, "otp", 3)) {
-    otp_main(conn_fd, packet_ptr, packet_len, &rsp_ptr, &rsp_len);
 
   } else if(!strncmp(req_type, "auth", 4)) {
     subtype_ptr = uidai_get_param(packet_ptr, "subtype");
@@ -760,12 +748,6 @@ int32_t uidai_init(uint32_t ip_addr,
   util_init(pUidaiCtx->public_fname,
             pUidaiCtx->private_fname,
             "public");
-
-  otp_init(ac, 
-           sa, 
-           lk, 
-           "1.6", 
-           "developer.uidai.gov.in");
 
   auth_init(ac, 
             sa, 
