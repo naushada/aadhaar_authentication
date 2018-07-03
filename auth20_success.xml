@@ -1,0 +1,94 @@
+
+auth.c:992 <Pid ts="2018-07-03T11:27:31" ver="2.0" wadh="">
+  <Demo>
+    <Pi ms="E" mv="100" name="Naushad Ahmed" gender="M" dobt="V"/>
+  </Demo>
+</Pid>
+
+
+<Pid ts="2018-07-03T11:27:31" ver="2.0" wadh="">
+  <Demo>
+    <Pi ms="E" mv="100" name="Naushad Ahmed" gender="M" dobt="V"/>
+  </Demo>
+</Pid>
+
+
+auth.c:557 c14n auth xml is 
+<Auth ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" rc="Y" sa="public" tid="" txn="TXN:BalaaghTesting" uid="999938452218" ver="2.0">
+  <Uses bio="n" otp="n" pa="n" pfa="n" pi="y" pin="n"></Uses>
+  <Meta udc="Balaagh"></Meta>
+  <Skey ci="20200916">F+JM24r4E7UluZ091dFqQVpqmPwTVCiZopGtvifkSgO13nzW7q5WtCeyll7RVbiR7l9bgFHb2x8Is82S0dAQPvWGG18AkjOD2GnVF5wX4PUUcAnTd7sSAhRz4pgfUypkiYyThffVa2DFlUpk1zKGC0bfHfwvDXI7gSyc6LllyFt4hCQlusoDZi35RZWRgQzBRh7EuM37e3EeoK36NOmUrQOqf066POJb8TVUjDeFXYpiWnLxWrCNBBpSjOvjeu6g0NubB6sl0qYDxEb9BpM7YZhrH32EnQo86ToH8ocrb5awrq/dP8aRVCv9x/sdmyTIITxmlgojlwv1qhi0MTzW3w==</Skey>
+  <Hmac>nsDZ/mUVb83iJqMrd/PypArsTLihf4WTGWHvOdIvy5qFWeDlPIc/h6vGmsoRQMIF</Hmac>
+  <Data type="X">MjAxOC0wNy0wM1QxMToyNzozMVf8DgedvtwAsPGTkiPgmoI9NWVMhjcoe1eFydcqLa34UjazTqIPkpyv/7343ROFZEwZYuI3VSnmqKVeVZgjd4noQcZCFsD1apX66fCqZ1eMfHbGF09LZWF1P/3xBLtoqfEJB2ibNqgRWCU86dx3u9njCEN5YNzYriDaip0vdab9+2C1mkWYPIPL2em9x6BEip3Mg/FItDiecZ7rkDk2</Data>
+  
+</Auth>
+Final XML 
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Auth ac="public" lk="MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s" rc="Y" sa="public" tid="" txn="TXN:BalaaghTesting" uid="999938452218" ver="2.0">
+  <Uses bio="n" otp="n" pa="n" pfa="n" pi="y" pin="n"/>
+  <Meta udc="Balaagh"/>
+  <Skey ci="20200916">F+JM24r4E7UluZ091dFqQVpqmPwTVCiZopGtvifkSgO13nzW7q5WtCeyll7RVbiR7l9bgFHb2x8Is82S0dAQPvWGG18AkjOD2GnVF5wX4PUUcAnTd7sSAhRz4pgfUypkiYyThffVa2DFlUpk1zKGC0bfHfwvDXI7gSyc6LllyFt4hCQlusoDZi35RZWRgQzBRh7EuM37e3EeoK36NOmUrQOqf066POJb8TVUjDeFXYpiWnLxWrCNBBpSjOvjeu6g0NubB6sl0qYDxEb9BpM7YZhrH32EnQo86ToH8ocrb5awrq/dP8aRVCv9x/sdmyTIITxmlgojlwv1qhi0MTzW3w==</Skey>
+  <Hmac>nsDZ/mUVb83iJqMrd/PypArsTLihf4WTGWHvOdIvy5qFWeDlPIc/h6vGmsoRQMIF</Hmac>
+  <Data type="X">MjAxOC0wNy0wM1QxMToyNzozMVf8DgedvtwAsPGTkiPgmoI9NWVMhjcoe1eFydcqLa34UjazTqIPkpyv/7343ROFZEwZYuI3VSnmqKVeVZgjd4noQcZCFsD1apX66fCqZ1eMfHbGF09LZWF1P/3xBLtoqfEJB2ibNqgRWCU86dx3u9njCEN5YNzYriDaip0vdab9+2C1mkWYPIPL2em9x6BEip3Mg/FItDiecZ7rkDk2</Data>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <DigestValue>n5GDyNcpEvJ5mhXE3resP+papNM=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>C4DvGYS97Lf66XCzw6Bx418JA4jkuz4NLf1oyUxObRSbPRJOkaYmGH0DPlWBd3moeSMpJgLNx0UqXYDMjnAW0S149idTRjZYIdeCSc7urVN5aKTxipkiX3hkf9kukyqHiX1KlMKkcZQMCZQH8a/zjnP1Ids/nVCqshbNHjIAq8S+6Jr4Nj2RWBaC8sKlrllXWiVqHEl/e115rGy6SJglKqrUt5SOWPjFLakn8tP4NKVSGRiGLps3A2X7ie7H4OsMg08lNsgGpWYF0TJuovdTUZHGWLNAnSs15rkC5BZ2eMIzSNWd841p6GM2GHyBCmGAsrCRd+RsIz8rnMGwt8K4xA==</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509SubjectName>C=IN,ST=KA,L=Bangalore,O=Public AUA,OU=Staging Services,CN=Public AUA for Staging Services</X509SubjectName>
+        <X509Certificate>MIIDuDCCAqCgAwIBAgIGA7J+eqryMA0GCSqGSIb3DQEBBQUAMIGNMQswCQYDVQQG
+EwJJTjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMK
+UHVibGljIEFVQTEZMBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEtMCsGA1UEAxMk
+Um9vdCBQdWJsaWMgQVVBIGZvciBTdGFnaW5nIFNlcnZpY2VzMB4XDTE2MDUyNDE0
+NDAzMVoXDTIwMDUyNDE0NDAzMVowgYgxCzAJBgNVBAYTAklOMQswCQYDVQQIEwJL
+QTESMBAGA1UEBxMJQmFuZ2Fsb3JlMRMwEQYDVQQKEwpQdWJsaWMgQVVBMRkwFwYD
+VQQLExBTdGFnaW5nIFNlcnZpY2VzMSgwJgYDVQQDEx9QdWJsaWMgQVVBIGZvciBT
+dGFnaW5nIFNlcnZpY2VzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+o4XxOsjK58Ud+tQd06Mk8Rd0qoyjA/3u+y0YVYEF6RgT8Ge1uVdTkIcVYaHyXuuH
+UPLLqGW1hPfVtn81UVIMGyrw5+t1c30wpGv3UJ6GCFu0sPGgG5NwkVbIUt2xgT/O
+r/kGzHjUJJy4Y6URSkZiDLDQQWRXvui5ZwwsYRJ8LhT0pSUwan1raG5Vl01GmlWV
+qsrCmnObuoYkN85iwG4/ERGshkgFCPak8B/jH3GPZSi1+FJLmCqMI1xxmTvf0kZb
+7ejm2IZFTo6ecYWJ1vylkzUI553RxVbnHCNZvFe3AyaKMyFlknFR0Fkl5+9Lpxz+
+VOajbCjicg7jIYCw76/xgQIDAQABoyEwHzAdBgNVHQ4EFgQUJHLir1/Tel8v/6Ou
+IXpLS0JH8jIwDQYJKoZIhvcNAQEFBQADggEBAFE15qMGIlp8+M306FbhDEvo1vzx
+N2Pfvg/f92NXH59d2XZ/wuHxugL8qfcM5xkqsDeIRVxRdISpwiIWlqTitn6lenF8
+5bvPQ09T/b09dVz/LxwU2Cm6+6H5/HZSoLtCKBOuRzAKQdxczpyfaqv9caFC+Leg
+PQIm2HCwOM0A4KzhYcFhumGeyCbyVZsSQcJE7bYc/IHkR2erup7h5BACOZ/a+hHL
+PQok/uGvtEsR3roydNcNlR8Ja6Wc4eUf7kisTuZTxwRJI9DPVimbs0VAqhnsnVWA
+K3X4+6sFUq5WfHS4wTRhrR93JvEV5LlQ6UCXYOQMvTii8l07qxkDiysVsLQ=</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+  </Signature>
+</Auth>
+
+uidai.c:608 uidai ip address 103.57.226.18
+
+uidai.c:639 uidai ip address 103.57.226.18
+
+HTTP/1.1 200 OK
+Date: Tue, 03 Jul 2018 05:57:32 GMT
+Server: Apache-Coyote/1.1
+Content-Type: application/xml
+X-Frame-Options: sameorigin
+Keep-Alive: timeout=5, max=5000
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+
+5db
+<?xml version="1.0" encoding="UTF-8"?><AuthRes code="d30c7e41adfa49879bb6ad118caebad5" info="03{2ce68a0203c8029b1c94df035ed500ab46e8376779b1890b26e31652cc9801ab,35bc02bc875a5dd322c38c555891881a30707eab0fb1cff7b1f25b1bd641198f,01a000002a000030,2.0,20180703112731,0,0,0,0,2.0,20ef0f0c8d0eea98772412cea9b3b92612e3e53cb5e59152b5703165f56e8a53,efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7,efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7,23,E,100,NA,NA,NA,NA,NA,NA,NA,,NA,NA,NA,NA,NA,NA}" ret="y" ts="2018-07-03T11:27:31.999+05:30" txn="TXN:BalaaghTesting"><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>z/lgIGWPLtYkBknwQzA3rMrV0eJwCbExKmBA24TLFCs=</DigestValue></Reference></SignedInfo><SignatureValue>S/h8rPAXgqYEVnbSC0RGKaZV3IqqV8wCLhXmJb7nNR4IxikbXDbUWDzBTkY7lXaNKoEhgEWV/MWI
+wV+dVNKTPLwB6BwhX8H8ybtL15V/LFAAZAbBwtvsVnOTi/BotpuT3eBwOqxMFlMbqlmJy34iFfNR
+NEk3PT+w0ogKqO9GUw0rEuD9ZItQG4EZd4gvBPgwLUpRDrLauJGy12wq83+j9P6iZAvKQElVCTDV
+ojQH2VBD7cH3NTWkytLMwh1KQRM3GF6zu7RDTstsGBcA74ebs8ZM67FGScn9TJoQFdNk804cxKlQ
+oHt9gb4/+Robh1hjnylEHJYwG9nBv2dEfohWTg==</SignatureValue></Signature></AuthRes>
+0
+
