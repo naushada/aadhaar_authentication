@@ -447,10 +447,10 @@ proc default_contents {type version version_ex} {
      authV20::set_default_meta
       
     } elseif {"2.5" == $version} {
-     authV20::set_default_auth
-     authV20::set_default_uses
-     authV20::uses_opt_enable "pic"
-     authV20::set_default_meta
+     authV25::set_default_auth
+     authV25::set_default_uses
+     authV25::uses_opt_enable "pic"
+     authV25::set_default_meta
       
     }
 

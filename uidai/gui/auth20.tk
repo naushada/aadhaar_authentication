@@ -232,7 +232,8 @@ namespace eval authV20 {
 
   proc set_default_auth {} {
     variable widgets_name 
-    set default {"999938452218" "public" "TXN:BalaaghTesting" "public" \
+    ;#/*for Registered Devices tid will be empty*/
+    set default {"999938452218" "" "TXN:BalaaghTesting" "public" \
                  "public" "2.0" "Y" "MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s"}
     set idx 0
     foreach val $widgets_name(auth) {
@@ -297,7 +298,7 @@ namespace eval authV20 {
     set auth [get_value auth $arg authV20]
     set arg {pi pa pfa bio pv demo}
     set uses [get_value uses $arg authV20]
-    set arg {udc fdc idc pip lot lov}
+    set arg {udc rdsId rdsVer dpId dc mi mc}
     set meta [get_value meta $arg authV20]
 
     #/*Prepare the request*/

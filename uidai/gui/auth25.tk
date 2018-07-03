@@ -44,9 +44,12 @@ namespace eval authV25 {
 
   proc meta_attr {frm} {
 
-    set arg { {udc  udce  entry {}} {rdsId rdsIde entry {}} {rdsVer rdsVere entry {}} 
-              {dpId dpIde entry {}} {dc    dce    entry {}} {mi     mie     entry {}} 
-              {mc   mce   entry {}}}
+    set arg { {rdsId  rdsIde  entry {}} 
+              {rdsVer rdsVere entry {}} 
+              {dpId   dpIde   entry {}} 
+              {dc     dce     entry {}} 
+              {mi     mie     entry {}} 
+              {mc     mce     entry {}}}
 
     build_form $frm meta $arg authV25
   };#/*meta_attr*/
@@ -232,7 +235,8 @@ namespace eval authV25 {
 
   proc set_default_auth {} {
     variable widgets_name 
-    set default {"999938452218" "public" "TXN:BalaaghTesting" "public" \
+    ;#/*for Registered Devices tid will be empty*/
+    set default {"999938452218" "" "TXN:BalaaghTesting" "public" \
                  "public" "2.5" "Y" "MBni88mRNM18dKdiVyDYCuddwXEQpl68dZAGBQ2nsOlGMzC9DkOVL5s"}
     set idx 0
     foreach val $widgets_name(auth) {
@@ -253,7 +257,7 @@ namespace eval authV25 {
 
   proc set_default_meta {} {
     variable widgets_name 
-    set default {"Balaagh" "" "" "" "" ""}
+    set default {"" "" "" "" "" ""}
     set idx 0
     foreach val $widgets_name(meta) {
       if {"Entry" == [winfo class $val]} {
@@ -297,7 +301,7 @@ namespace eval authV25 {
     set auth [get_value auth $arg authV25]
     set arg {pi pa pfa bio pv demo}
     set uses [get_value uses $arg authV25]
-    set arg {udc fdc idc pip lot lov}
+    set arg {rdsId rdsVer dpId dc mi mc}
     set meta [get_value meta $arg authV25]
 
     #/*Prepare the request*/

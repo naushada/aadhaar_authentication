@@ -101,8 +101,13 @@ int32_t auth_init(const uint8_t *ac,
   strncpy(pAuthCtx->version, ver, sizeof(pAuthCtx->version));
   strncpy(pAuthCtx->rc, "Y", 1);
   strncpy(pAuthCtx->uidai_host_name, host_name, sizeof(pAuthCtx->uidai_host_name));
+
+  /*For Registered devices tid shall be NULL*/
   memset(pAuthCtx->tid, 0, sizeof(pAuthCtx->tid));
-  strncpy(pAuthCtx->tid, tid, sizeof(pAuthCtx->tid));
+  if(tid) {
+    strncpy(pAuthCtx->tid, tid, sizeof(pAuthCtx->tid));
+  }
+
   strncpy(pAuthCtx->txn, txn, sizeof(pAuthCtx->txn));
   strncpy(pAuthCtx->uri, uri, sizeof(pAuthCtx->uri));
   strncpy(pAuthCtx->password, password, sizeof(pAuthCtx->password));
@@ -111,6 +116,324 @@ int32_t auth_init(const uint8_t *ac,
    
   return(0);
 }/*auth_init*/
+
+/*===============================================
+ * V25 - V2.5
+ ===============================================*/
+
+int32_t auth_compose_meta_tag_v25(uint8_t *in_ptr, 
+                                  uint32_t in_len, 
+                                  uint8_t *meta_tag, 
+                                  uint8_t *c14n_meta) {
+  uint8_t *meta = NULL;
+  uint8_t *meta_attr[10];
+  uint32_t offset = 0;
+ 
+  meta = uidai_get_param(in_ptr, "meta");
+
+  meta_attr[0] = uidai_get_attr(meta, "dc");
+  meta_attr[1] = uidai_get_attr(meta, "dpId");
+  meta_attr[2] = uidai_get_attr(meta, "mc");
+  meta_attr[3] = uidai_get_attr(meta, "mi");
+  meta_attr[4] = uidai_get_attr(meta, "rdsId");
+  meta_attr[5] = uidai_get_attr(meta, "rdsVer");
+
+  /*freeing memory*/
+  free(meta);
+  meta = NULL;
+
+  offset += sprintf(&meta_tag[offset],
+                    "%s",
+                    "<Meta");
+  if(meta_attr[0]) {
+    /*dc*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " dc=\"",
+                      meta_attr[0],
+                      "\"");
+  } else {
+    /*dc*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s",
+                      " dc=\"",
+                      "\"");
+    
+  }
+  
+  if(meta_attr[1]) {   
+    /*dpId*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " dpId=\"",
+                      meta_attr[1],
+                      "\"");
+  } else {
+    /*dpId*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s",
+                      " dpId=\"",
+                      "\"");
+    
+  }
+
+  if(meta_attr[2]) {
+    /*mc*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " mc=\"",
+                      meta_attr[2],
+                      "\"");
+  } else {
+    /*mc*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s",
+                      " mc=\"",
+                      "\"");
+    
+  }
+
+  if(meta_attr[3]) {
+    /*mi*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " mi=\"",
+                      meta_attr[3],
+                      "\"");
+  } else {
+    /*mi*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s",
+                      " mi=\"",
+                      "\"");
+    
+  }
+
+  if(meta_attr[4]) {
+    /*rdsId*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " rdsId=\"",
+                      meta_attr[4],
+                      "\"");
+  } else {
+    /*rdsId*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s",
+                      " rdsId=\"",
+                      "\"");
+    
+  }
+
+  if(meta_attr[5]) {
+    /*rdsVer*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " rdsVer=\"",
+                      meta_attr[5],
+                      "\"");
+  } else {
+    /*rdsVer*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s",
+                      " rdsVer=\"",
+                      "\"");
+  }
+
+  strncpy(c14n_meta, meta_tag, offset);
+  sprintf(&meta_tag[offset],
+          "%s",
+          "/>");
+
+  sprintf(&c14n_meta[offset],
+          "%s",
+          "></Meta>");
+
+  for(offset = 0; offset < 6; offset++) {
+
+    if(meta_attr[offset]) {
+      free(meta_attr[offset]);
+      meta_attr[offset] = NULL;
+    }
+
+  }
+
+  return(0);
+}/*auth_compose_meta_tag_v20*/
+
+uint8_t *auth_main_ex_v25(uint8_t *in_ptr, 
+                          uint32_t in_len, 
+                          uint32_t *rsp_len) {
+  
+  uint8_t *pid_xml = NULL;
+  uint8_t *auth_xml_tag[16];
+  uint8_t *c14n[4];
+  uint16_t version = 16;
+  uint32_t idx = 0;
+  int32_t opt_tkn = 0;
+  uint8_t skey[512];
+  uint16_t skey_size = sizeof(skey);
+  uint8_t *data_x = NULL;
+  uint16_t data_x_len = 512;
+  uint8_t *hmac = NULL;
+  uint16_t hmac_len = 256;
+  uint8_t *c14n_auth_xml = NULL;
+  uint16_t c14n_len = 4000;
+  uint8_t *final_xml = NULL;
+  uint16_t final_xml_size = 5000;
+  uint8_t *b64_digest = NULL;
+  uint8_t *b64_signature = NULL;
+  uint8_t *b64_subject = NULL;
+  uint8_t *b64_certificate = NULL;
+  
+  for(idx = 0; idx < 3; idx++) {
+    auth_xml_tag[idx] = (uint8_t *)malloc(sizeof(uint8_t) * 256);
+    assert(auth_xml_tag[idx] != NULL);
+    memset((void *)auth_xml_tag[idx], 0, sizeof(uint8_t) * 256);
+  }
+
+  for(idx = 0; idx < 2; idx++) {
+    c14n[idx] = (uint8_t *)malloc(sizeof(uint8_t) * 256);
+    assert(c14n[idx] != NULL);
+    memset((void *)c14n[idx], 0, sizeof(uint8_t) * 256);
+  }
+
+  /*Auth tag*/
+  auth_compose_auth_tag_v20(in_ptr, in_len, auth_xml_tag[0]);
+  /*Uses tag*/
+  auth_compose_uses_tag_v20(in_ptr, 
+                            in_len, 
+                            auth_xml_tag[1], 
+                            c14n[0]);
+  /*Meta tag*/
+  auth_compose_meta_tag_v25(in_ptr, 
+                            in_len, 
+                            auth_xml_tag[2], 
+                            c14n[1]);
+  /*Pid xml of Auth*/
+  pid_xml = (uint8_t *)malloc(sizeof(uint8_t) * 1024);
+  assert(pid_xml != NULL);
+  memset((void *)pid_xml, 0, sizeof(uint8_t) * 1024);
+
+  auth_compose_pid_xml_v20(in_ptr, 
+                           in_len, 
+                           pid_xml);
+
+  fprintf(stderr, "\n%s\n", pid_xml);
+
+  /*Skey tag of Final AUTH XML <Skey ..></Skey>*/
+  memset((void *)skey, 0, sizeof(skey));
+  auth_skey(skey, skey_size);
+
+  data_x = (uint8_t *)malloc(sizeof(uint8_t) * data_x_len);
+  assert(data_x != NULL);
+  memset((void *)data_x, 0, data_x_len);
+  auth_data_v20(data_x, data_x_len, pid_xml);
+  
+  hmac = (uint8_t *)malloc(sizeof(uint8_t) * hmac_len);
+  assert(hmac != NULL);
+  memset((void *)hmac, 0, hmac_len);
+  auth_hmac_v20(hmac, hmac_len, pid_xml);
+
+  free(pid_xml);
+  pid_xml = NULL;
+
+  /*signature of Auth XML*/
+  c14n_auth_xml = (uint8_t *)malloc(sizeof(uint8_t) * c14n_len);
+  assert(c14n_auth_xml != NULL);
+  memset((void *)c14n_auth_xml, 0, c14n_len);
+ 
+  auth_c14n_auth_xml(c14n_auth_xml, 
+                     c14n_len, 
+                     auth_xml_tag[0],
+                     /*uses tag*/
+                     c14n[0], 
+                     /*No tkn tag for 2.0 & 2.5*/
+                     NULL,
+                     /*meta tag*/
+                     c14n[1], 
+                     skey, 
+                     hmac, 
+                     data_x);
+  free(c14n[0]);
+  free(c14n[1]);
+
+  b64_digest = (uint8_t *)malloc(sizeof(uint8_t) * 2048);
+  assert(b64_digest != NULL);
+  memset((void *)b64_digest, 0, 2048);
+  
+  b64_signature = (uint8_t *)malloc(sizeof(uint8_t) * 2048);
+  assert(b64_signature != NULL);
+  memset((void *)b64_signature, 0, 2048);
+
+  b64_subject = (uint8_t *)malloc(sizeof(uint8_t) * 2048);
+  assert(b64_subject != NULL);
+  memset((void *)b64_subject, 0, 2048);
+
+  b64_certificate = (uint8_t *)malloc(sizeof(uint8_t) * 2048);
+  assert(b64_certificate != NULL);
+  memset((void *)b64_certificate, 0, 2048);
+
+  fprintf(stderr,"\n%s:%d c14n auth xml is \n%s\n", __FILE__, __LINE__, c14n_auth_xml);
+  auth_c14n_sign(c14n_auth_xml,
+                 b64_digest,
+                 b64_signature,
+                 b64_subject,
+                 b64_certificate);
+
+  free(c14n_auth_xml);
+  c14n_auth_xml = NULL;
+
+  final_xml = (uint8_t *)malloc(sizeof(uint8_t) * final_xml_size);
+  assert(final_xml != NULL);
+  memset((void *)final_xml, 0, final_xml_size);
+
+  auth_compose_xml(final_xml,
+                   final_xml_size,
+                   auth_xml_tag[0],
+                   auth_xml_tag[1],
+                   NULL,
+                   auth_xml_tag[2],
+                   skey,
+                   hmac,
+                   data_x);
+
+  free(auth_xml_tag[0]);
+  free(auth_xml_tag[1]);
+  free(auth_xml_tag[2]);
+
+  uint16_t final_xml_len = 0;
+  uint16_t tmp_len = strlen(final_xml);
+
+  util_compose_final_xml(&final_xml[tmp_len], 
+                         (final_xml_size - tmp_len), 
+                         &final_xml_len,
+                         /*digest*/
+                         b64_digest,
+                         /*Signature Value*/
+                         b64_signature,
+                         /*Subject Name*/
+                         b64_subject,
+                         /*Certificate*/
+                         b64_certificate); 
+
+  final_xml_len += tmp_len;
+  snprintf(&final_xml[final_xml_len], 
+           final_xml_size, 
+           "%s", 
+           "</Auth>");
+
+  free(b64_digest);
+  free(b64_signature);
+  free(b64_subject);
+  free(b64_certificate);
+
+  fprintf(stderr, "Final XML \n%s\n", final_xml);
+
+  *rsp_len = strlen(final_xml);
+
+  return(final_xml);
+}/*auth_main_ex_v20*/
 
 
 /*===================================================================================
@@ -695,52 +1018,68 @@ int32_t auth_compose_meta_tag_v20(uint8_t *in_ptr,
   offset += sprintf(&meta_tag[offset],
                     "%s",
                     "<Meta");
+  if(meta_attr[0]) {
+    /*dc*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " dc=\"",
+                      meta_attr[0],
+                      "\"");
+  }
+  
+  if(meta_attr[1]) {   
+    /*dpId*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " dpId=\"",
+                      meta_attr[1],
+                      "\"");
+  }
 
-  /*dc*/
-  offset += sprintf(&meta_tag[offset],
-                    "%s%s%s",
-                    " dc=\"",
-                    meta_attr[0],
-                    "\"");
-  /*dpId*/
-  offset += sprintf(&meta_tag[offset],
-                    "%s%s%s",
-                    " dpId=\"",
-                    meta_attr[1],
-                    "\"");
+  if(meta_attr[2]) {
+    /*mc*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " mc=\"",
+                      meta_attr[2],
+                      "\"");
+  }
 
-  /*mc*/
-  offset += sprintf(&meta_tag[offset],
-                    "%s%s%s",
-                    " mc=\"",
-                    meta_attr[2],
-                    "\"");
+  if(meta_attr[3]) {
+    /*mi*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " mi=\"",
+                      meta_attr[3],
+                      "\"");
+  }
 
-  /*mi*/
-  offset += sprintf(&meta_tag[offset],
-                    "%s%s%s",
-                    " mi=\"",
-                    meta_attr[3],
-                    "\"");
-  /*rdsId*/
-  offset += sprintf(&meta_tag[offset],
-                    "%s%s%s",
-                    " rdsId=\"",
-                    meta_attr[4],
-                    "\"");
-  /*rdsVer*/
-  offset += sprintf(&meta_tag[offset],
-                    "%s%s%s",
-                    " rdsVer=\"",
-                    meta_attr[5],
-                    "\"");
+  if(meta_attr[4]) {
+    /*rdsId*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " rdsId=\"",
+                      meta_attr[4],
+                      "\"");
+  }
 
-  /*udc*/
-  offset += sprintf(&meta_tag[offset],
-                    "%s%s%s",
-                    " udc=\"",
-                    meta_attr[6],
-                    "\"");
+  if(meta_attr[5]) {
+    /*rdsVer*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " rdsVer=\"",
+                      meta_attr[5],
+                      "\"");
+  }
+
+  if(meta_attr[6]) {
+    /*udc*/
+    offset += sprintf(&meta_tag[offset],
+                      "%s%s%s",
+                      " udc=\"",
+                      meta_attr[6],
+                      "\"");
+  }
 
   strncpy(c14n_meta, meta_tag, offset);
 
@@ -753,8 +1092,12 @@ int32_t auth_compose_meta_tag_v20(uint8_t *in_ptr,
           "></Meta>");
 
   for(offset = 0; offset < 7; offset++) {
-    free(meta_attr[offset]);
-    meta_attr[offset] = NULL;
+
+    if(meta_attr[offset]) {
+      free(meta_attr[offset]);
+      meta_attr[offset] = NULL;
+    }
+
   }
 
   return(0);
@@ -910,33 +1253,61 @@ int32_t auth_compose_auth_tag_v20(uint8_t *in_ptr,
   auth_attr[7] = uidai_get_attr(auth, "rc");
  
   free(auth);
-
-  sprintf(auth_tag,
-          "%s%s%s%s%s"
-          "%s%s%s%s%s"
-          "%s%s%s%s%s"
-          "%s%s",
-          "<Auth ac=\"",
-          auth_attr[2],
-          "\" lk=\"",
-          auth_attr[6],
-          "\" rc=\"",
-          auth_attr[7],
-          "\" sa=\"",
-          auth_attr[3],
-          "\" tid=\"",
-          auth_attr[1],
-          "\" txn=\"",
-          auth_attr[5],
-          "\" uid=\"",
-          auth_attr[0],
-          "\" ver=\"",
-          auth_attr[4],
-          "\">");
+  if(auth_attr[1]) {
+    sprintf(auth_tag,
+            "%s%s%s%s%s"
+            "%s%s%s%s%s"
+            "%s%s%s%s%s"
+            "%s%s",
+            "<Auth ac=\"",
+            auth_attr[2],
+            "\" lk=\"",
+            auth_attr[6],
+            "\" rc=\"",
+            auth_attr[7],
+            "\" sa=\"",
+            auth_attr[3],
+            "\" tid=\"",
+            auth_attr[1],
+            "\" txn=\"",
+            auth_attr[5],
+            "\" uid=\"",
+            auth_attr[0],
+            "\" ver=\"",
+            auth_attr[4],
+            "\">");
+  } else {
+    /*tid for public devices shall be empty*/
+    sprintf(auth_tag,
+            "%s%s%s%s%s"
+            "%s%s%s%s%s"
+            "%s%s%s%s%s"
+            "%s",
+            "<Auth ac=\"",
+            auth_attr[2],
+            "\" lk=\"",
+            auth_attr[6],
+            "\" rc=\"",
+            auth_attr[7],
+            "\" sa=\"",
+            auth_attr[3],
+            "\" tid=\"",
+            "\" txn=\"",
+            auth_attr[5],
+            "\" uid=\"",
+            auth_attr[0],
+            "\" ver=\"",
+            auth_attr[4],
+            "\">");
+  }
 
   for(idx = 0; idx < 8; idx++) {
-    free(auth_attr[idx]);
-    auth_attr[idx] = NULL;
+
+    if(auth_attr[idx]) {
+      free(auth_attr[idx]);
+      auth_attr[idx] = NULL;
+    }
+
   }
 
   return(0);
@@ -3044,15 +3415,30 @@ void auth_init_ex(uint8_t *in_ptr, uint32_t in_len) {
             crypto_attr[2]);
 
   for(idx = 0; idx < 7; idx++) {
-    free(auth_attr[idx]);
+
+    if(auth_attr[idx]) {
+      free(auth_attr[idx]);
+      auth_attr[idx] = NULL;
+    }
+
   } 
 
   for(idx = 0; idx < 2; idx++) {
-    free(uidai_attr[idx]);
+
+    if(uidai_attr[idx]) {
+      free(uidai_attr[idx]);
+      uidai_attr[idx] = NULL;
+    }
+
   }
  
   for(idx = 0; idx < 3; idx++) {
-    free(crypto_attr[idx]);
+
+    if(crypto_attr[idx]) {
+      free(crypto_attr[idx]);
+      crypto_attr[idx] = NULL;
+    }
+
   }
 
 }/*auth_init_ex*/
@@ -3073,12 +3459,18 @@ uint8_t *auth_main_ex(uint8_t *in_ptr,
     free(rsp_ptr);
     rsp_ptr = NULL;
 
-  } else if(20 == version || 25 == version) {
+  } else if(20 == version) {
     rsp_ptr = auth_main_ex_v20(in_ptr, in_len, &rsp_len);
     http_req_ptr = auth_compose_http_req(in_ptr, rsp_ptr, &rsp_len);
     free(rsp_ptr);
     rsp_ptr = NULL;
 
+  } else if(25 == version) {
+    rsp_ptr = auth_main_ex_v25(in_ptr, in_len, &rsp_len);
+    http_req_ptr = auth_compose_http_req(in_ptr, rsp_ptr, &rsp_len);
+    free(rsp_ptr);
+    rsp_ptr = NULL;
+    
   }
 
   return(http_req_ptr);
