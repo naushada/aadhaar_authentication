@@ -982,6 +982,9 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   } else if(!strncmp(auth_attr[0], "2.0", 3)) {
     /*version 2.0*/
     version = 20;
+  } else if(!strncmp(auth_attr[0], "2.1", 3)) {
+    /*version 2.1*/
+    version = 21;
   } else if(!strncmp(auth_attr[0], "2.5", 3)) {
     /*version 2.5*/
     version = 25;
@@ -994,7 +997,7 @@ uint8_t *uidai_parse_req(uint8_t *in_ptr, uint32_t in_len, int32_t rsp_fd) {
   uidai_attr[0] = uidai_get_attr(uidai, "host");
   free(uidai);
   uidai = NULL;
-  uidai_init_ex("192.168.1.6", 8080, uidai_attr[0], 80);
+  uidai_init_ex("192.168.1.3", 8080, uidai_attr[0], 80);
   free(uidai_attr[0]);
   uidai_attr[0] = NULL;
 
@@ -1075,34 +1078,51 @@ int32_t uidai_spawn_gui(int32_t rd_fd[2], int32_t wr_fd[2]) {
 uint8_t *uidai_chunked_rsp(int32_t fd, uint32_t *rsp_len) {
   uint8_t wait_for_more_data;
   uint8_t *buffer = NULL;
-  uint32_t buffer_size = 5500;
+  uint32_t buffer_size = 9500;
   uint32_t buffer_len = 0;
   uint8_t status[8];
+  struct timeval to;
+  int32_t ret = -1;
+  fd_set rd;
 
-  memset((void *)status, 0, sizeof(status) * sizeof(uint8_t));
-  /*Allocate the memory*/
-  buffer = (uint8_t *)malloc(sizeof(uint8_t) * buffer_size);
-  assert(buffer != NULL);
+  to.tv_sec = 3;
+  to.tv_usec = 0;
+  FD_ZERO(&rd);
+  FD_SET(fd, &rd);
+  ret = select((fd + 1), &rd, NULL, NULL, &to);
 
-  /*Response UIDAI Server*/
-  do {
-    memset((void *)buffer, 0, buffer_size);
-    buffer_len = buffer_size;
-    uidai_recv(fd, buffer, &buffer_len, MSG_PEEK);
-    sscanf(buffer, "%*s%s%*s", status);
+  fprintf(stderr, "%s:%d ret is %d\n", __FILE__, __LINE__, ret);
+  if(ret && FD_ISSET(fd, &rd)) { 
+    /*Response UIDAI Server*/
+    memset((void *)status, 0, sizeof(status) * sizeof(uint8_t));
+    /*Allocate the memory*/
+    buffer = (uint8_t *)malloc(sizeof(uint8_t) * buffer_size);
+    assert(buffer != NULL);
 
-    if(strncmp(status, "200", 3)) {
-      fprintf(stderr, "\n%s:%d %s", __FILE__, __LINE__, buffer);
-      free(buffer);
-      buffer = NULL;
-      buffer_len = 0;
-      break;
-    }
+    do {
+      memset((void *)buffer, 0, buffer_size);
+      buffer_len = buffer_size;
+      uidai_recv(fd, buffer, &buffer_len, MSG_PEEK);
+      sscanf(buffer, "%*s%s%*s", status);
 
-    wait_for_more_data = uidai_pre_process_uidai_rsp(fd, 
-                                                     buffer, 
-                                                     buffer_len);
-  }while(wait_for_more_data);
+      if(strncmp(status, "200", 3)) {
+        fprintf(stderr, "\n%s:%d %s", __FILE__, __LINE__, buffer);
+        free(buffer);
+        buffer = NULL;
+        buffer_len = 0;
+        break;
+      }
+
+      wait_for_more_data = uidai_pre_process_uidai_rsp(fd, 
+                                                       buffer, 
+                                                       buffer_len);
+    }while(wait_for_more_data);
+
+  } else {
+    /*timeout of 2s happens*/
+    buffer_len = 0;
+    fprintf(stderr, "%s:%d timeout happens\n", __FILE__, __LINE__);
+  }
 
   if(buffer_len) {
     memset((void *)buffer, 0, buffer_size);

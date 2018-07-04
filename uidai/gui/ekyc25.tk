@@ -19,16 +19,21 @@ namespace eval ekycV25 {
 
   proc kyc_attr {frm} {
 
-    set arg { {ver vere entry {}} {ra rae combobox {O F I P}} {rc rce combobox {Y N}} 
-              {mec mece combobox {N Y}} {lr lre combobox {N Y}} {de dee combobox {N Y}} 
-              {pfr pfre combobox {Y N}} {uri urie combobox {"/ekyc2.5 /kyc/2.0" "/kyc/1.0"}} }
+    set arg { {lk  lke  entry {}}
+              {ver vere entry {}} 
+              {ra  rae  combobox {O F I P}} 
+              {rc  rce  combobox {Y N}} 
+              {lr  lre  combobox {N Y}} 
+              {de  dee  combobox {N Y}} 
+              {pfr pfre combobox {Y N}} 
+              {uri urie combobox {"/kyc2.5" "/kyc/2.0" "/kyc/1.0"}} }
 
     build_form $frm kyc $arg ekycV25
   };#/*kyc_attr*/
 
   proc set_default_kyc {} {
     variable widgets_name 
-    set default {"2.5"}
+    set default {"MMxNu7a6589B5x5RahDW-zNP7rhGbZb5HsTRwbi-VVNxkoFmkHGmYKM" "2.5"}
     set idx 0
     foreach val $widgets_name(kyc) {
       if {"Entry" == [winfo class $val]} {
@@ -60,7 +65,7 @@ namespace eval ekycV25 {
     set crypto [get_value crypto $arg ekycV25] 
     set REQ "$auth_req&$crypto"
     #eKYC attributes
-    set arg {ver ra rc mec lr de pfr uri}
+    set arg {lk ver ra rc lr de pfr uri}
     set ekyc [get_value kyc $arg ekycV25]
 
     #/*Prepare the request*/

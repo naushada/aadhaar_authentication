@@ -602,16 +602,17 @@ proc submit_contents {type version version_ex} {
 
 proc btn_widget {f_name type version version_ex} {
 
-  set frm [frame $f_name.btn_frame]
-  set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
-
-  #set frm [frame .child_win.btn_frame]
+  #set frm [frame $f_name.btn_frame]
   #set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
+
+  set frm [frame .child_win.btn_frame]
+  set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
 
   button $lbl_frm.clear -text "Clear Contents" -command "clear_contents $type $version $version_ex"
   button $lbl_frm.default -text "Set Default Value" -command "default_contents $type $version $version_ex"
   button $lbl_frm.submit -text "Submit Request" -command "submit_contents $type $version $version_ex"
-  grid $lbl_frm.clear $lbl_frm.default $lbl_frm.submit -row 4 -pady 5 -padx 5
+  button $lbl_frm.close -text "Close " -command "destroy .child_win"
+  grid $lbl_frm.clear $lbl_frm.default $lbl_frm.submit  $lbl_frm.close -row 4 -pady 5 -padx 5
   grid $lbl_frm 
   grid $frm -sticky w -pady 8 -padx 9
     
@@ -637,11 +638,11 @@ proc init_frame {f_name title} {
   wm geometry .child_win 900x400+100+100
   canvas .child_win.canvas -xscrollcommand ".child_win.xscroll set" \
          -yscrollcommand ".child_win.yscroll set" -width 500 -height 600 \
-         -bd 4
+         -bd 0
   scrollbar .child_win.xscroll -orient horizontal -command ".child_win.canvas xview"
   scrollbar .child_win.yscroll -orient vertical -command ".child_win.canvas yview"
 
-  set container [frame .child_win.canvas.$f_name -relief raised -padx 5 -pady 5]
+  set container [frame .child_win.canvas.$f_name -relief sunken -padx 5 -pady 5]
 
   .child_win.canvas create window 0 0 -anchor nw -window $container
 

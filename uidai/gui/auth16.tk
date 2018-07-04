@@ -27,9 +27,13 @@ namespace eval authV16 {
 
   proc auth_attr {frm} {
 
-    set arg { {uid uide entry {}} {tid tide entry {}} {txn txne entry {}} 
-              {ac ace entry {}} {sa sae entry {}} {ver vere entry {}} 
-              {lk lke entry {}} }
+    set arg { {uid uide entry {}} 
+              {tid tide entry {}} 
+              {txn txne entry {}} 
+              {ac  ace  entry {}} 
+              {sa  sae  entry {}} 
+              {ver vere entry {}} 
+              {lk  lke  entry {}} }
 
     build_form $frm auth $arg authV16
   };#/*auth_attr*/

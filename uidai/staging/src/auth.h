@@ -244,4 +244,8 @@ int32_t auth_compose_final_req(uint8_t *in_ptr,
 uint8_t *auth_compose_http_req(uint8_t *in_ptr, 
                                uint8_t *auth_xml, 
                                uint32_t *len_ptr);
+
+uint8_t *auth_main_ex_v25(uint8_t *in_ptr, 
+                          uint32_t in_len, 
+                          uint32_t *rsp_len);
 #endif /* __AUTH_H__ */
