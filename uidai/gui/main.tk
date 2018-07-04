@@ -87,7 +87,7 @@ proc Exit {} {
  
 proc staging_ekyc {ekyc_version auth_version} {
 
-  set container [init_frame container eKYC]
+  set container [init_frame container "eKYC $ekyc_version"]
   staging_auth_form $container $auth_version 
   staging_uses_form $container $auth_version
   staging_tkn_form  $container $auth_version
@@ -107,7 +107,7 @@ proc staging_ekyc {ekyc_version auth_version} {
  
 proc staging_otp {version} {
 
-  set container [init_frame container OTP]
+  set container [init_frame container "OTP $version"]
   staging_otp_form $container $version 
   staging_opts_form $container $version
   staging_uidai_form $container $version 1 0 otp
@@ -118,7 +118,7 @@ proc staging_otp {version} {
 
 proc staging_auth {version} {
 
-  set container [init_frame container Authentication]
+  set container [init_frame container "Authentication $version"]
   staging_auth_form $container $version 
   staging_uses_form $container $version
   staging_tkn_form  $container $version
@@ -606,16 +606,18 @@ proc btn_widget {f_name type version version_ex} {
   #set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
 
   set frm [frame .child_win.btn_frame]
-  set lbl_frm [labelframe $frm.lbl_frame -text "Command"]
+  set lbl_frm [labelframe $frm.lbl_frame -text "Command" -relief sunken]
+
 
   button $lbl_frm.clear -text "Clear Contents" -command "clear_contents $type $version $version_ex"
   button $lbl_frm.default -text "Set Default Value" -command "default_contents $type $version $version_ex"
   button $lbl_frm.submit -text "Submit Request" -command "submit_contents $type $version $version_ex"
   button $lbl_frm.close -text "Close " -command "destroy .child_win"
-  grid $lbl_frm.clear $lbl_frm.default $lbl_frm.submit  $lbl_frm.close -row 4 -pady 5 -padx 5
+  grid $lbl_frm.clear $lbl_frm.default $lbl_frm.submit  $lbl_frm.close -pady 5 -padx 5
   grid $lbl_frm 
   grid $frm -sticky w -pady 8 -padx 9
     
+  
 };#/*btn_widget*/
 
 
@@ -636,11 +638,12 @@ proc init_frame {f_name title} {
   toplevel .child_win
   wm title .child_win $title 
   wm geometry .child_win 900x400+100+100
+
   canvas .child_win.canvas -xscrollcommand ".child_win.xscroll set" \
          -yscrollcommand ".child_win.yscroll set" -width 500 -height 600 \
          -bd 0
-  scrollbar .child_win.xscroll -orient horizontal -command ".child_win.canvas xview"
-  scrollbar .child_win.yscroll -orient vertical -command ".child_win.canvas yview"
+  scrollbar .child_win.xscroll -orient horizontal -command ".child_win.canvas xview" -relief sunken 
+  scrollbar .child_win.yscroll -orient vertical -command ".child_win.canvas yview" -relief sunken
 
   set container [frame .child_win.canvas.$f_name -relief sunken -padx 5 -pady 5]
 

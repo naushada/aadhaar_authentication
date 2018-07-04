@@ -2476,10 +2476,10 @@ uint8_t *auth_main_ex_v16(uint8_t *in_ptr,
                             auth_xml_tag[1], 
                             c14n[0]);
 
-  auth_compose_tkn_tag_v16(in_ptr, 
-                           in_len, 
-                           auth_xml_tag[2], 
-                           c14n[1]);
+  opt_tkn = auth_compose_tkn_tag_v16(in_ptr, 
+                                     in_len, 
+                                     auth_xml_tag[2], 
+                                     c14n[1]);
 
   auth_compose_meta_tag_v16(in_ptr, 
                             in_len, 
