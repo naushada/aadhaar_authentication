@@ -1,0 +1,7 @@
+# Build artifacts (CMake native, Podman, Yocto)
+build/
+.cache/
+
+# Editor / OS noise
+.DS_Store
+*.swp

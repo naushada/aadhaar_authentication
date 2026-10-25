@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1
+# Build context is the cpp/ directory:
+#   podman build -t uidai-cpp .
+#   podman build --platform linux/arm64 -t uidai-cpp:arm64 .
+
+# ---- build stage ----
+FROM debian:bookworm AS build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      cmake g++ make libssl-dev libevent-dev pkg-config \
+ && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
+COPY . /src
+RUN cmake -S /src -B /build -DCMAKE_BUILD_TYPE=Release -DUIDAI_BUILD_TESTS=OFF \
+ && cmake --build /build -j"$(nproc)"
+
+# ---- runtime stage ----
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libssl3 libevent-2.1-7 \
+ && rm -rf /var/lib/apt/lists/*
+COPY --from=build /build/uidai_cli /usr/local/bin/uidai_cli
+ENTRYPOINT ["uidai_cli"]
