@@ -50,7 +50,8 @@ target_link_libraries(uidai_transport PUBLIC uidai::libevent)
 add_library(uidai_protocol STATIC
   src/protocol/protocol.cpp
   src/protocol/otp.cpp
-  src/protocol/auth.cpp)
+  src/protocol/auth.cpp
+  src/protocol/ekyc.cpp)
 target_include_directories(uidai_protocol PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(uidai_protocol PUBLIC uidai_core)
 
