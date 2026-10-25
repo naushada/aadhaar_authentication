@@ -24,6 +24,8 @@ option(UIDAI_BUILD_TESTS "Build unit tests"          OFF)
 # ---- uidai_core: core + crypto + xml (OpenSSL is consumed here) ----
 add_library(uidai_core STATIC
   src/core/logger.cpp
+  src/core/parser.cpp
+  src/core/response_parser.cpp
   src/crypto/crypto_engine.cpp
   src/crypto/key_store.cpp
   src/xml/xml_signature.cpp)
@@ -42,22 +44,26 @@ add_library(uidai_transport STATIC
   src/transport/transport.cpp
   src/transport/http.cpp
   src/transport/chunked.cpp
-  src/transport/event_loop.cpp)
+  src/transport/event_loop.cpp
+  src/transport/gui_pipe.cpp)
 target_include_directories(uidai_transport PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(uidai_transport PUBLIC uidai::libevent)
 
-# ---- uidai_protocol: otp / auth / ekyc strategies ----
+# ---- uidai_protocol: otp / auth / ekyc strategies + client facade ----
 add_library(uidai_protocol STATIC
   src/protocol/protocol.cpp
   src/protocol/otp.cpp
   src/protocol/auth.cpp
-  src/protocol/ekyc.cpp)
+  src/protocol/ekyc.cpp
+  src/protocol/client.cpp)
 target_include_directories(uidai_protocol PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(uidai_protocol PUBLIC uidai_core)
+target_link_libraries(uidai_protocol PUBLIC uidai_core uidai_transport)
 
 if(UIDAI_BUILD_CLI)
   add_executable(uidai_cli src/cli.cpp)
   target_link_libraries(uidai_cli PRIVATE uidai_core uidai_transport uidai_protocol)
+  target_compile_definitions(uidai_cli PRIVATE
+    UIDAI_GUI_DIR="${CMAKE_SOURCE_DIR}/../uidai/gui")
 endif()
 
 if(UIDAI_BUILD_TESTS)
