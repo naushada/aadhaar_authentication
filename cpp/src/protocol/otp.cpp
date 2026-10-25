@@ -20,15 +20,20 @@ std::string formatCh(const std::string& ch) {
   return buf;
 }
 
-void appendOtpAttrs(std::string& s, const OtpParams& p, std::string_view ts) {
+// v1.6 carries a tid attribute; v2.5 drops it. Attribute order is otherwise
+// identical: ac lk sa [tid] ts txn type uid ver.
+void appendOtpAttrs(std::string& s, const OtpParams& p, std::string_view ts,
+                    bool includeTid) {
   s += " ac=\"";
   s += p.ac;
   s += "\" lk=\"";
   s += p.lk;
   s += "\" sa=\"";
   s += p.sa;
-  s += "\" tid=\"";
-  s += p.tid;
+  if (includeTid) {
+    s += "\" tid=\"";
+    s += p.tid;
+  }
   s += "\" ts=\"";
   s += ts;
   s += "\" txn=\"";
@@ -40,6 +45,56 @@ void appendOtpAttrs(std::string& s, const OtpParams& p, std::string_view ts) {
   s += "\" ver=\"";
   s += p.ver;
   s += "\">\n";
+}
+
+std::string composeOtp(const OtpParams& p, std::string_view ts,
+                       bool includeTid) {
+  std::string s;
+  s.reserve(1024);
+  s += "<Otp";
+  appendOtpAttrs(s, p, ts, includeTid);
+  s += "  <Opts ch=\"";
+  s += formatCh(p.ch);
+  s += "\"/>";
+  return s;
+}
+
+std::string composeC14n(const OtpParams& p, std::string_view ts,
+                        bool includeTid) {
+  std::string s;
+  s.reserve(1024);
+  s += "<Otp";
+  appendOtpAttrs(s, p, ts, includeTid);
+  s += "  <Opts ch=\"";
+  s += formatCh(p.ch);
+  s += "\"></Opts>\n";
+  s += "  \n";
+  s += "</Otp>";
+  return s;
+}
+
+std::string signXml(const OtpParams& p, std::string_view ts,
+                    const crypto::KeyStore& ks, bool includeTid) {
+  const std::string c14n = composeC14n(p, ts, includeTid);
+
+  const auto digest = CryptoEngine::sha1(c14n);
+  const std::string digestB64 =
+      CryptoEngine::base64Encode(digest.data(), digest.size());
+
+  const std::string signedInfo = uidai::xml::c14nSignedInfo(digestB64);
+  const auto sig = CryptoEngine::rsaSha1Sign(ks.privateKey(), signedInfo);
+  const std::string sigB64 =
+      CryptoEngine::base64Encode(sig.data(), sig.size());
+
+  std::string out = "<?xml version=\"1.0\" encoding=\"UTF-8\" "
+                    "standalone=\"yes\"?>\n";
+  out += composeOtp(p, ts, includeTid);
+  out += "\n";
+  out += uidai::xml::composeSignatureBlock(digestB64, sigB64,
+                                           ks.subjectName(),
+                                           ks.certificateB64());
+  out += "</Otp>";
+  return out;
 }
 
 } // namespace
@@ -56,27 +111,11 @@ std::string otpTimestamp() {
 }
 
 std::string otpComposeOtpV16(const OtpParams& p, std::string_view ts) {
-  std::string s;
-  s.reserve(1024);
-  s += "<Otp";
-  appendOtpAttrs(s, p, ts);
-  s += "  <Opts ch=\"";
-  s += formatCh(p.ch);
-  s += "\"/>";
-  return s;
+  return composeOtp(p, ts, true);
 }
 
 std::string otpComposeC14nV16(const OtpParams& p, std::string_view ts) {
-  std::string s;
-  s.reserve(1024);
-  s += "<Otp";
-  appendOtpAttrs(s, p, ts);
-  s += "  <Opts ch=\"";
-  s += formatCh(p.ch);
-  s += "\"></Opts>\n";
-  s += "  \n";
-  s += "</Otp>";
-  return s;
+  return composeC14n(p, ts, true);
 }
 
 std::string otpComposeXmlV16(const OtpParams& p, std::string_view ts) {
@@ -90,23 +129,29 @@ std::string otpComposeXmlV16(const OtpParams& p, std::string_view ts) {
 
 std::string otpSignXmlV16(const OtpParams& p, std::string_view ts,
                           const crypto::KeyStore& ks) {
-  const std::string c14n = otpComposeC14nV16(p, ts);
+  return signXml(p, ts, ks, true);
+}
 
-  const auto digest = CryptoEngine::sha1(c14n);
-  const std::string digestB64 =
-      CryptoEngine::base64Encode(digest.data(), digest.size());
+std::string otpComposeOtpV25(const OtpParams& p, std::string_view ts) {
+  return composeOtp(p, ts, false);
+}
 
-  const std::string signedInfo = uidai::xml::c14nSignedInfo(digestB64);
-  const auto sig = CryptoEngine::rsaSha1Sign(ks.privateKey(), signedInfo);
-  const std::string sigB64 =
-      CryptoEngine::base64Encode(sig.data(), sig.size());
+std::string otpComposeC14nV25(const OtpParams& p, std::string_view ts) {
+  return composeC14n(p, ts, false);
+}
 
-  std::string out = otpComposeXmlV16(p, ts);
-  out += uidai::xml::composeSignatureBlock(digestB64, sigB64,
-                                           ks.subjectName(),
-                                           ks.certificateB64());
-  out += "</Otp>";
-  return out;
+std::string otpComposeXmlV25(const OtpParams& p, std::string_view ts) {
+  std::string s;
+  s.reserve(4096);
+  s += "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n";
+  s += otpComposeOtpV25(p, ts);
+  s += "\n";
+  return s;
+}
+
+std::string otpSignXmlV25(const OtpParams& p, std::string_view ts,
+                          const crypto::KeyStore& ks) {
+  return signXml(p, ts, ks, false);
 }
 
 } // namespace uidai::protocol

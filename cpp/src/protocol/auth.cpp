@@ -73,6 +73,32 @@ std::string metaAttrs(const AuthParams& p) {
   return s;
 }
 
+// auth_compose_meta_tag_v25 attribute list: no udc, and every attribute is
+// emitted even when empty (the C emits ` dc=""` for a missing attr).
+std::string metaAttrsV25(const AuthParams& p) {
+  std::string s;
+  s += " dc=\"" + p.metaDc + "\"";
+  s += " dpId=\"" + p.metaDpId + "\"";
+  s += " mc=\"" + p.metaMc + "\"";
+  s += " mi=\"" + p.metaMi + "\"";
+  s += " rdsId=\"" + p.metaRdsId + "\"";
+  s += " rdsVer=\"" + p.metaRdsVer + "\"";
+  return s;
+}
+
+// auth_compose_meta_tag_v16 attribute list: fdc idc lot lov pip udc (note the
+// non-alphabetical order), always emitted.
+std::string metaAttrsV16(const AuthParams& p) {
+  std::string s;
+  s += " fdc=\"" + p.metaFdc + "\"";
+  s += " idc=\"" + p.metaIdc + "\"";
+  s += " lot=\"" + p.metaLot + "\"";
+  s += " lov=\"" + p.metaLov + "\"";
+  s += " pip=\"" + p.metaPip + "\"";
+  s += " udc=\"" + p.metaUdc + "\"";
+  return s;
+}
+
 // auth_compose_pi_v16.
 std::string composePi(const AuthParams& p) {
   std::string s = "\n    <Pi";
@@ -107,6 +133,15 @@ std::string composeBio(const AuthParams& p) {
   if (!p.bioType.empty()) s += " type=\"" + p.bioType + "\"";
   if (!p.bioPosh.empty()) s += " posh=\"" + p.bioPosh + "\"";
   if (!p.bioBs.empty()) s += " bs=\"" + p.bioBs + "\"";
+  if (!p.bioValue.empty()) s += ">" + p.bioValue + "</Bio>\n  </Bios>\n";
+  return s;
+}
+
+// auth_compose_bio_v16: no dih attribute on <Bios>, no bs on <Bio>.
+std::string composeBioV16(const AuthParams& p) {
+  std::string s = "  <Bios>\n    <Bio";
+  if (!p.bioType.empty()) s += " type=\"" + p.bioType + "\"";
+  if (!p.bioPosh.empty()) s += " posh=\"" + p.bioPosh + "\"";
   if (!p.bioValue.empty()) s += ">" + p.bioValue + "</Bio>\n  </Bios>\n";
   return s;
 }
@@ -169,6 +204,14 @@ std::string authComposeMetaC14nV20(const AuthParams& p) {
   return "<Meta" + metaAttrs(p) + "></Meta>";
 }
 
+std::string authComposeMetaTagV25(const AuthParams& p) {
+  return "<Meta" + metaAttrsV25(p) + "/>";
+}
+
+std::string authComposeMetaC14nV25(const AuthParams& p) {
+  return "<Meta" + metaAttrsV25(p) + "></Meta>";
+}
+
 std::string authComposePidXmlV20(const AuthParams& p, std::string_view ts) {
   std::string pid;
   pid.reserve(512);
@@ -225,14 +268,17 @@ std::string authComposeHmacV20(std::string_view pidXml,
   return "<Hmac>" + b64 + "</Hmac>";
 }
 
-std::string authSignXmlV20(const AuthParams& p, std::string_view ts,
-                           const std::array<uint8_t, 32>& sessionKey,
-                           const crypto::KeyStore& ks) {
+namespace {
+
+// Shared signing body for auth v2.0 and v2.5 — the only difference is the
+// <Meta> tag (v2.5 drops udc and always emits every attribute).
+std::string signAuth(const AuthParams& p, std::string_view ts,
+                     const std::array<uint8_t, 32>& sessionKey,
+                     const crypto::KeyStore& ks, const std::string& metaTag,
+                     const std::string& metaC14n) {
   const std::string authTag = authComposeAuthTagV20(p);
   const std::string usesTag = authComposeUsesTagV20(p);
   const std::string usesC14n = authComposeUsesC14nV20(p);
-  const std::string metaTag = authComposeMetaTagV20(p);
-  const std::string metaC14n = authComposeMetaC14nV20(p);
 
   const AuthCryptoContext ctx = authCryptoContext(ts);
   const std::string pidXml = authComposePidXmlV20(p, ts);
@@ -241,6 +287,119 @@ std::string authSignXmlV20(const AuthParams& p, std::string_view ts,
   const std::string hmac = authComposeHmacV20(pidXml, ctx, sessionKey);
 
   // Canonical <Auth> — the string that gets SHA-1 digested.
+  const std::string c14n = authTag + "\n  " + usesC14n + "\n  " + metaC14n +
+                           "\n  " + skey + "\n  " + hmac + "\n  " + data +
+                           "\n  \n</Auth>";
+
+  const auto digest = CryptoEngine::sha1(c14n);
+  const std::string digestB64 =
+      CryptoEngine::base64Encode(digest.data(), digest.size());
+  const std::string signedInfo = uidai::xml::c14nSignedInfo(digestB64);
+  const auto sig = CryptoEngine::rsaSha1Sign(ks.privateKey(), signedInfo);
+  const std::string sigB64 =
+      CryptoEngine::base64Encode(sig.data(), sig.size());
+
+  std::string out =
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n";
+  out += authTag + "\n  " + usesTag + "\n  " + metaTag + "\n  " + skey + "\n  " +
+         hmac + "\n  " + data + "\n";
+  out += uidai::xml::composeSignatureBlock(digestB64, sigB64, ks.subjectName(),
+                                           ks.certificateB64());
+  out += "</Auth>";
+  return out;
+}
+
+} // namespace
+
+std::string authSignXmlV20(const AuthParams& p, std::string_view ts,
+                           const std::array<uint8_t, 32>& sessionKey,
+                           const crypto::KeyStore& ks) {
+  return signAuth(p, ts, sessionKey, ks, authComposeMetaTagV20(p),
+                  authComposeMetaC14nV20(p));
+}
+
+std::string authSignXmlV25(const AuthParams& p, std::string_view ts,
+                           const std::array<uint8_t, 32>& sessionKey,
+                           const crypto::KeyStore& ks) {
+  return signAuth(p, ts, sessionKey, ks, authComposeMetaTagV25(p),
+                  authComposeMetaC14nV25(p));
+}
+
+// ---- v1.6 ----
+
+std::string authComposeAuthTagV16(const AuthParams& p) {
+  return "<Auth ac=\"" + p.ac + "\" lk=\"" + p.lk + "\" sa=\"" + p.sa +
+         "\" tid=\"" + p.tid + "\" txn=\"" + p.txn + "\" uid=\"" + p.uid +
+         "\" ver=\"" + p.ver + "\">";
+}
+
+std::string authComposeMetaTagV16(const AuthParams& p) {
+  return "<Meta" + metaAttrsV16(p) + "/>";
+}
+
+std::string authComposeMetaC14nV16(const AuthParams& p) {
+  return "<Meta" + metaAttrsV16(p) + "></Meta>";
+}
+
+std::string authComposePidXmlV16(const AuthParams& p, std::string_view ts) {
+  std::string pid;
+  pid.reserve(512);
+  pid += "<Pid ts=\"" + std::string(ts) + "\" ver=\"1.0\">";
+
+  const bool hasPi = p.usesPi == "1";
+  const bool hasPa = p.usesPa == "1";
+  const bool hasPfa = p.usesPfa == "1";
+
+  if (hasPi || hasPa || hasPfa) {
+    pid += "\n";
+    pid += composeDemo(p);
+    if (hasPi) pid += composePi(p);
+    // pa/pfa address composition is deferred (not exercised by the v1.6 golden).
+    pid += "  </Demo>\n";
+  }
+
+  if (p.usesBio == "1") pid += composeBioV16(p);
+  if (p.usesPv == "1") pid += composePv(p);
+
+  pid += "</Pid>\n";
+  return pid;
+}
+
+std::string authComposeDataV16(std::string_view pidXml,
+                               const std::array<uint8_t, 32>& sessionKey) {
+  const auto ct = CryptoEngine::aes256EcbEncrypt(sessionKeyView(sessionKey),
+                                                 pidXml);
+  const std::string b64 = CryptoEngine::base64Encode(ct.data(), ct.size());
+  return "<Data type=\"X\">" + b64 + "</Data>";
+}
+
+std::string authComposeHmacV16(std::string_view pidXml,
+                               const std::array<uint8_t, 32>& sessionKey) {
+  const auto digest = CryptoEngine::sha256(pidXml);
+  const auto ct = CryptoEngine::aes256EcbEncrypt(
+      sessionKeyView(sessionKey),
+      std::string_view(reinterpret_cast<const char*>(digest.data()),
+                       digest.size()));
+  const std::string b64 = CryptoEngine::base64Encode(ct.data(), ct.size());
+  return "<Hmac>" + b64 + "</Hmac>";
+}
+
+std::string authSignXmlV16(const AuthParams& p, std::string_view ts,
+                           const std::array<uint8_t, 32>& sessionKey,
+                           const crypto::KeyStore& ks) {
+  const std::string authTag = authComposeAuthTagV16(p);
+  const std::string usesTag = authComposeUsesTagV20(p);
+  const std::string usesC14n = authComposeUsesC14nV20(p);
+  const std::string metaTag = authComposeMetaTagV16(p);
+  const std::string metaC14n = authComposeMetaC14nV16(p);
+
+  const std::string pidXml = authComposePidXmlV16(p, ts);
+  const std::string skey = authComposeSkey(sessionKey, ks);
+  const std::string data = authComposeDataV16(pidXml, sessionKey);
+  const std::string hmac = authComposeHmacV16(pidXml, sessionKey);
+
+  // Canonical <Auth> — the string that gets SHA-1 digested (no <Tkn> for the
+  // v1.6 golden, whose tkn type is "NA").
   const std::string c14n = authTag + "\n  " + usesC14n + "\n  " + metaC14n +
                            "\n  " + skey + "\n  " + hmac + "\n  " + data +
                            "\n  \n</Auth>";

@@ -42,6 +42,17 @@ struct AuthParams {
   std::string metaRdsVer;
   std::string metaUdc;
 
+  // v1.6 <Meta> attributes (fdc idc lot lov pip udc, always emitted).
+  std::string metaFdc;
+  std::string metaIdc;
+  std::string metaPip;
+  std::string metaLot;
+  std::string metaLov;
+
+  // v1.6 <Tkn> attributes; type "NA" omits the <Tkn> tag entirely.
+  std::string tknType;
+  std::string tknValue;
+
   // <Pi> attributes (optional; empty = omitted). piName may contain '+' which
   // auth_restore_str turns back into spaces.
   std::string piMs;
@@ -92,6 +103,11 @@ std::string authComposeMetaTagV20(const AuthParams& p);
 // "<Meta …></Meta>" (canonicalized form).
 std::string authComposeMetaC14nV20(const AuthParams& p);
 
+// v2.5 <Meta>: no udc, and every attribute is always emitted. Ports
+// auth_compose_meta_tag_v25.
+std::string authComposeMetaTagV25(const AuthParams& p);
+std::string authComposeMetaC14nV25(const AuthParams& p);
+
 // "<Pid …>…</Pid>" — the encrypted payload. auth_compose_pid_xml_v20.
 std::string authComposePidXmlV20(const AuthParams& p, std::string_view ts);
 
@@ -115,6 +131,36 @@ std::string authComposeHmacV20(std::string_view pidXml,
 // embed the enveloped <Signature>. `sessionKey` is explicit so tests can inject
 // a known key; pass CryptoEngine::randomSessionKey() for a fresh one.
 std::string authSignXmlV20(const AuthParams& p, std::string_view ts,
+                           const std::array<uint8_t, 32>& sessionKey,
+                           const crypto::KeyStore& ks);
+
+// Full signed Auth v2.5 request XML. Ports auth_main_ex_v25: identical to v2.0
+// except the <Meta> tag (v2.5 drops udc and always emits every attribute).
+std::string authSignXmlV25(const AuthParams& p, std::string_view ts,
+                           const std::array<uint8_t, 32>& sessionKey,
+                           const crypto::KeyStore& ks);
+
+// ---- v1.6 ----
+// <Auth ac lk sa tid txn uid ver> (no rc). auth_compose_auth_tag_v16.
+std::string authComposeAuthTagV16(const AuthParams& p);
+
+// v1.6 <Meta fdc idc lot lov pip udc> (always emitted). auth_compose_meta_tag_v16.
+std::string authComposeMetaTagV16(const AuthParams& p);
+std::string authComposeMetaC14nV16(const AuthParams& p);
+
+// "<Pid ts=\"…\" ver=\"1.0\">" (no wadh). auth_compose_pid_xml_v16.
+std::string authComposePidXmlV16(const AuthParams& p, std::string_view ts);
+
+// "<Data type=\"X\">b64</Data>". auth_data_v16: b64(AES-256-ECB(pidXml)).
+std::string authComposeDataV16(std::string_view pidXml,
+                               const std::array<uint8_t, 32>& sessionKey);
+
+// "<Hmac>b64</Hmac>". auth_hmac_v16: b64(AES-256-ECB(SHA256(pidXml))).
+std::string authComposeHmacV16(std::string_view pidXml,
+                               const std::array<uint8_t, 32>& sessionKey);
+
+// Full signed Auth v1.6 request XML. Ports auth_main_ex_v16.
+std::string authSignXmlV16(const AuthParams& p, std::string_view ts,
                            const std::array<uint8_t, 32>& sessionKey,
                            const crypto::KeyStore& ks);
 

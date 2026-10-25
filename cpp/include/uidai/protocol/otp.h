@@ -42,4 +42,12 @@ std::string otpComposeXmlV16(const OtpParams& p, std::string_view ts);
 std::string otpSignXmlV16(const OtpParams& p, std::string_view ts,
                           const crypto::KeyStore& ks);
 
+// ---- v2.5 (same as v1.6 minus the tid attribute) ----
+// Ports otp_compose_otp_v25 / otp_compose_c14n_v25 / otp_sign_xml_v25.
+std::string otpComposeOtpV25(const OtpParams& p, std::string_view ts);
+std::string otpComposeC14nV25(const OtpParams& p, std::string_view ts);
+std::string otpComposeXmlV25(const OtpParams& p, std::string_view ts);
+std::string otpSignXmlV25(const OtpParams& p, std::string_view ts,
+                          const crypto::KeyStore& ks);
+
 } // namespace uidai::protocol
