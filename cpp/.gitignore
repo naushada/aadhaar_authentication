@@ -2,6 +2,9 @@
 build/
 .cache/
 
+# Captured HTTP request/response dumps (runtime output from sandbox_test.sh)
+dumps/
+
 # Editor / OS noise
 .DS_Store
 *.swp

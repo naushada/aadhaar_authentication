@@ -12,7 +12,10 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+#include <atomic>
+#include <cstdlib>
 #include <cstring>
+#include <fstream>
 #include <string>
 #include <utility>
 
@@ -102,11 +105,29 @@ sockaddr_in resolveIpv4(const std::string& host, unsigned short port) {
   return sin;
 }
 
+// Capture the raw HTTP request/response to <UIDAI_DUMP_DIR>/<name><seq>.http
+// when the UIDAI_DUMP_DIR environment variable is set. Keeps a byte-exact
+// record of what was sent and received for offline reference; no-op otherwise.
+void dumpHttpCapture(const std::string& name, const std::string& data) {
+  const char* dir = std::getenv("UIDAI_DUMP_DIR");
+  if (!dir || !*dir || data.empty()) return;
+  static std::atomic<int> seq{0};
+  const int n = seq.fetch_add(1);
+  std::string path(dir);
+  if (!path.empty() && path.back() != '/') path += '/';
+  path += name;
+  path += std::to_string(n);
+  path += ".http";
+  std::ofstream out(path, std::ios::binary);
+  if (out) out.write(data.data(), static_cast<std::streamsize>(data.size()));
+}
+
 } // namespace
 
 HttpResponse LibeventTransport::perform(const HttpRequest& req, int timeoutMs) {
   ConnState st;
   st.wire = req.serialize();
+  dumpHttpCapture("request_", st.wire);
 
   EventLoop loop;
   st.base = loop.base();
@@ -135,6 +156,7 @@ HttpResponse LibeventTransport::perform(const HttpRequest& req, int timeoutMs) {
   event_add(tev, &tv);
 
   loop.run();
+  dumpHttpCapture("response_", st.raw);
 
   event_free(tev);
   bufferevent_free(bev);
