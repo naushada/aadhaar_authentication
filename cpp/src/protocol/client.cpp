@@ -8,6 +8,7 @@
 #include "uidai/transport/http.h"
 #include "uidai/transport/transport.h"
 
+#include <string>
 #include <string_view>
 
 namespace uidai::protocol {
@@ -31,6 +32,7 @@ bool startsWith(std::string_view s, std::string_view prefix) {
 void parseAuth(QueryParser& qp, RequestSpec& out) {
   out.auth.ac = attr(AttrParser(*qp.param("auth")), "ac");
   out.auth.lk = attr(AttrParser(*qp.param("auth")), "lk");
+  out.asaLk = attr(AttrParser(*qp.param("auth")), "asalk");
   out.auth.rc = attr(AttrParser(*qp.param("auth")), "rc");
   out.auth.sa = attr(AttrParser(*qp.param("auth")), "sa");
   out.auth.tid = attr(AttrParser(*qp.param("auth")), "tid");
@@ -108,6 +110,7 @@ void parseOtp(QueryParser& qp, RequestSpec& out) {
   AttrParser o(*qp.param("otp"));
   out.otp.ac = attr(o, "ac");
   out.otp.lk = attr(o, "lk");
+  out.asaLk = attr(o, "asalk");
   out.otp.sa = attr(o, "sa");
   out.otp.tid = attr(o, "tid");
   out.otp.txn = attr(o, "txn");
@@ -135,6 +138,8 @@ void parseEkyc(QueryParser& qp, RequestSpec& out) {
   out.targetUri = attr(k, "uri");
 
   parseAuth(qp, out);
+  // The URL's ASA key comes from the kyc block, not the inner auth block.
+  out.asaLk = attr(k, "asalk");
 }
 
 } // namespace
@@ -147,11 +152,19 @@ RequestSpec parseRequest(std::string_view line) {
   if (!kind) throw uidai::UidaiError("request kind missing");
   req.kind = std::move(*kind);
 
-  // uidai block: host (always) and uri (otp/auth).
+  // uidai block: host (always) and uri (otp/auth), plus optional scheme/port.
   if (auto uidai = qp.param("uidai")) {
     AttrParser u(*uidai);
     req.host = attr(u, "host");
     req.targetUri = attr(u, "uri");
+    req.scheme = attr(u, "scheme");
+    if (req.scheme.empty()) req.scheme = "http";
+    const std::string portStr = attr(u, "port");
+    if (!portStr.empty()) {
+      req.port = static_cast<unsigned short>(std::stoul(portStr));
+    } else if (req.scheme == "https") {
+      req.port = 443;
+    }
   }
 
   // crypto block: AUA p12, UIDAI cer, passphrase.
@@ -193,8 +206,9 @@ std::string requestTarget(const RequestSpec& req) {
     throw uidai::UidaiError("uid too short for target path");
   }
 
-  // POST http://<host><uri>/<ac>/<uid[0]>/<uid[1]>/<lk>
-  std::string target = "http://";
+  // POST <scheme>://<host><uri>/<ac>/<uid[0]>/<uid[1]>/<lk-or-asalk>
+  std::string target = req.scheme;
+  target += "://";
   target += req.host;
   target += req.targetUri;
   target += "/";
@@ -204,14 +218,14 @@ std::string requestTarget(const RequestSpec& req) {
   target += "/";
   target += (*uid)[1];
   target += "/";
-  target += req.targetLk;
+  target += req.asaLk.empty() ? req.targetLk : req.asaLk;
   return target;
 }
 
 UidaiClient::UidaiClient(TransportFactory factory) : factory_(std::move(factory)) {
   if (!factory_) {
-    factory_ = [](const std::string& host, unsigned short port) {
-      return std::make_unique<transport::LibeventTransport>(host, port);
+    factory_ = [](const std::string& host, unsigned short port, bool useTls) {
+      return std::make_unique<transport::LibeventTransport>(host, port, useTls);
     };
   }
 }
@@ -267,7 +281,7 @@ std::string UidaiClient::handle(const RequestSpec& req) {
   };
   http.body = std::move(body);
 
-  auto transport = factory_(req.host, 80);
+  auto transport = factory_(req.host, req.port, req.scheme == "https");
   transport::HttpResponse rsp = transport->perform(http);
 
   return uidai::core::formatDisplayResponse(uidai::core::parseResponseXml(rsp.body));

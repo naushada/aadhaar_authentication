@@ -5,7 +5,12 @@
 
 #include <event2/buffer.h>
 #include <event2/bufferevent.h>
+#include <event2/bufferevent_ssl.h>
 #include <event2/event.h>
+
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+#include <openssl/x509_vfy.h>
 
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -28,12 +33,15 @@ uint32_t libeventVersionNumber() {
 struct LibeventTransport::Impl {
   std::string host;
   unsigned short port;
+  bool useTls = false;
 };
 
-LibeventTransport::LibeventTransport(std::string host, unsigned short port)
+LibeventTransport::LibeventTransport(std::string host, unsigned short port,
+                                     bool useTls)
     : impl_(std::make_unique<Impl>()) {
   impl_->host = std::move(host);
   impl_->port = port;
+  impl_->useTls = useTls;
 }
 
 LibeventTransport::~LibeventTransport() = default;
@@ -44,6 +52,7 @@ struct ConnState {
   event_base* base = nullptr;
   std::string wire; // serialized request
   std::string raw;  // accumulated response bytes
+  bool tls = false; // SSL bufferevent (for handshake error reporting)
   bool done = false;
   bool failed = false;
   std::string err;
@@ -72,7 +81,18 @@ void onEvent(struct bufferevent* bev, short what, void* arg) {
     }
   } else if (what & BEV_EVENT_ERROR) {
     st->failed = true;
-    st->err = "connection error";
+    if (st->tls) {
+      const unsigned long e = bufferevent_get_openssl_error(bev);
+      if (e) {
+        char buf[256];
+        ERR_error_string_n(e, buf, sizeof(buf));
+        st->err = std::string("TLS handshake failed: ") + buf;
+      } else {
+        st->err = "TLS handshake failed";
+      }
+    } else {
+      st->err = "connection error";
+    }
     event_base_loopexit(st->base, nullptr);
   } else if (what & BEV_EVENT_EOF) {
     // Connection closed. For connection-close-delimited responses this is the
@@ -127,27 +147,61 @@ void dumpHttpCapture(const std::string& name, const std::string& data) {
 HttpResponse LibeventTransport::perform(const HttpRequest& req, int timeoutMs) {
   ConnState st;
   st.wire = req.serialize();
+  st.tls = impl_->useTls;
   dumpHttpCapture("request_", st.wire);
 
   EventLoop loop;
   st.base = loop.base();
 
-  struct bufferevent* bev =
-      bufferevent_socket_new(loop.base(), -1, BEV_OPT_CLOSE_ON_FREE);
-  if (!bev) throw UidaiError("bufferevent_socket_new failed");
+  SSL_CTX* sslCtx = nullptr;
+  SSL* ssl = nullptr;
+  struct bufferevent* bev = nullptr;
+
+  if (impl_->useTls) {
+    sslCtx = SSL_CTX_new(TLS_client_method());
+    if (!sslCtx) throw UidaiError("SSL_CTX_new failed");
+    SSL_CTX_set_verify(sslCtx, SSL_VERIFY_PEER, nullptr);
+    SSL_CTX_set_default_verify_paths(sslCtx);
+
+    ssl = SSL_new(sslCtx);
+    if (!ssl) {
+      SSL_CTX_free(sslCtx);
+      throw UidaiError("SSL_new failed");
+    }
+    // SNI (so the server picks the right cert) and hostname verification
+    // (X509_VERIFY_PARAM_set1_host is the non-deprecated form of SSL_set1_host,
+    // which OpenSSL 4.0 marks deprecated).
+    SSL_set_tlsext_host_name(ssl, impl_->host.c_str());
+    X509_VERIFY_PARAM_set1_host(SSL_get0_param(ssl), impl_->host.c_str(), 0);
+
+    bev = bufferevent_openssl_socket_new(loop.base(), -1, ssl,
+                                         BUFFEREVENT_SSL_CONNECTING,
+                                         BEV_OPT_CLOSE_ON_FREE);
+    if (!bev) {
+      SSL_free(ssl);
+      SSL_CTX_free(sslCtx);
+      throw UidaiError("bufferevent_openssl_socket_new failed");
+    }
+  } else {
+    bev = bufferevent_socket_new(loop.base(), -1, BEV_OPT_CLOSE_ON_FREE);
+    if (!bev) throw UidaiError("bufferevent_socket_new failed");
+  }
+
   bufferevent_setcb(bev, onRead, nullptr, onEvent, &st);
 
   sockaddr_in sin = resolveIpv4(impl_->host, impl_->port);
   if (bufferevent_socket_connect(bev, reinterpret_cast<sockaddr*>(&sin),
                                  sizeof(sin)) < 0) {
-    bufferevent_free(bev);
+    bufferevent_free(bev); // frees the SSL (if any)
+    if (sslCtx) SSL_CTX_free(sslCtx);
     throw UidaiError("bufferevent_socket_connect failed for " + impl_->host);
   }
   bufferevent_enable(bev, EV_READ | EV_WRITE);
 
   struct event* tev = event_new(loop.base(), -1, EV_TIMEOUT, onTimeout, &st);
   if (!tev) {
-    bufferevent_free(bev);
+    bufferevent_free(bev); // frees the SSL (if any)
+    if (sslCtx) SSL_CTX_free(sslCtx);
     throw UidaiError("event_new failed");
   }
   struct timeval tv;
@@ -159,7 +213,8 @@ HttpResponse LibeventTransport::perform(const HttpRequest& req, int timeoutMs) {
   dumpHttpCapture("response_", st.raw);
 
   event_free(tev);
-  bufferevent_free(bev);
+  bufferevent_free(bev); // frees the SSL (if any)
+  if (sslCtx) SSL_CTX_free(sslCtx);
 
   if (st.failed) throw UidaiError("transport: " + st.err);
   if (!st.done) throw UidaiError("transport: loop exited without a response");

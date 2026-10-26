@@ -15,8 +15,11 @@ endif()
 # Our finder (FindLibevent.cmake) lives here.
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-find_package(OpenSSL REQUIRED)
+# Resolve libevent first: FindLibevent.cmake pins OPENSSL_ROOT_DIR to the
+# OpenSSL libevent_openssl links against (see there), so find_package(OpenSSL)
+# below picks the matching one rather than an arbitrary Homebrew openssl@N.
 find_package(Libevent REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 option(UIDAI_BUILD_CLI   "Build the uidai_cli driver" ON)
 option(UIDAI_BUILD_TESTS "Build unit tests"          OFF)
@@ -47,7 +50,7 @@ add_library(uidai_transport STATIC
   src/transport/event_loop.cpp
   src/transport/gui_pipe.cpp)
 target_include_directories(uidai_transport PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(uidai_transport PUBLIC uidai::libevent)
+target_link_libraries(uidai_transport PUBLIC uidai::libevent uidai::libevent_openssl OpenSSL::SSL)
 
 # ---- uidai_protocol: otp / auth / ekyc strategies + client facade ----
 add_library(uidai_protocol STATIC

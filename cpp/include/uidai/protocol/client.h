@@ -23,6 +23,9 @@ struct RequestSpec {
   std::string host;       // UIDAI endpoint host (uidai block)
   std::string targetUri;  // request path prefix (uidai.uri, or kyc.uri for eKYC)
   std::string targetLk;   // license key in the HTTP target (auth/otp lk, kyc lk for eKYC)
+  std::string asaLk;      // ASA license key: overrides targetLk in the URL when set
+  std::string scheme = "http"; // "http" | "https"
+  unsigned short port = 80;    // destination port (443 for https)
 
   std::string publicKeyFile;  // UIDAI .cer
   std::string privateKeyFile; // AUA .p12
@@ -37,8 +40,9 @@ struct RequestSpec {
 // unsupported request kind. Ports uidai_parse_req.
 RequestSpec parseRequest(std::string_view line);
 
-// "http://<host><uri>/<ac>/<uid[0]>/<uid[1]>/<lk>" — the absolute request-target
-// for a parsed request. Ports otp/auth/ekyc_compose_http_req.
+// "<scheme>://<host><uri>/<ac>/<uid[0]>/<uid[1]>/<lk>" — the absolute
+// request-target for a parsed request. The final segment is `asaLk` when set,
+// else `targetLk`. Ports otp/auth/ekyc_compose_http_req.
 std::string requestTarget(const RequestSpec& req);
 
 // Client facade: compose a signed request, POST it, parse the response, and
@@ -47,9 +51,9 @@ std::string requestTarget(const RequestSpec& req);
 class UidaiClient {
 public:
   using TransportFactory = std::function<std::unique_ptr<transport::HttpTransport>(
-      const std::string& host, unsigned short port)>;
+      const std::string& host, unsigned short port, bool useTls)>;
 
-  // A null factory selects the default LibeventTransport(host, port).
+  // A null factory selects the default LibeventTransport(host, port, useTls).
   explicit UidaiClient(TransportFactory factory = nullptr);
 
   // Handle one parsed request end-to-end and return the display line

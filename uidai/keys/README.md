@@ -28,8 +28,50 @@ offline byte-exactness testing (what the golden tests do).
 ## License keys and codes
 
 - `ac` / `sa` → `"public"`
-- **AUA License Key** (`lk`): `MOw-DpjjHGxPlnKDXZlGh72zoPoryq4q5K1AhJL58HKfsoeCklXadcw`
-- **ASA License Key**: `MGL5DLfGSNT6Eam2Gq_CtHARsi8HML0GpYH5tU_kg7XJ8YpkdtaL9TA`
+- **AUA License Key** (`<Auth lk="…">`, the XML attribute): `MOw-DpjjHGxPlnKDXZlGh72zoPoryq4q5K1AhJL58HKfsoeCklXadcw`
+- **ASA License Key** (`<asalk>` — the *last URL path segment*): `MGL5DLfGSNT6Eam2Gq_CtHARsi8HML0GpYH5tU_kg7XJ8YpkdtaL9TA`
+
+> These are now **two different values**. In the 2018-era sample clients both
+> positions carried the same "public" key, which is why the C client reuses one
+> string for both. Against the live sandbox they must be split (see *Endpoint*).
+
+## Endpoint (verified against the live sandbox)
+
+The modern staging API is HTTPS-only (`:443`; plain-HTTP `:80` is closed) and
+version-qualified in the path:
+
+```
+POST https://developer.uidai.gov.in/authserver/2.5/public/<uid[0]>/<uid[1]>/<asalk>
+POST https://developer.uidai.gov.in/uidotp/2.5/public/<uid[0]>/<uid[1]>/<asalk>
+POST https://developer.uidai.gov.in/uidkyc/kyc/2.5/public/<uid[0]>/<uid[1]>/<asalk>
+```
+
+- `authserver` / `uidotp` / `uidkyc/kyc` → service prefix (not `/uidauth`).
+- `<ver>` in the URL must match the request's `ver` attribute (2.5 is the live
+  default; 2.0/1.6 paths now 404).
+- `<asalk>` is the **ASA** license key (`MGL5DLfG…`), *not* the AUA `lk`.
+
+The C++ client reaches this endpoint natively: `uidai={…,scheme=https,port=443}`
+selects the HTTPS transport, and `auth={…,asalk=…}` supplies the ASA key for the
+URL segment (falling back to `lk` when `asalk` is absent, for the 2018-era
+one-key samples). `cpp/tools/sandbox_test.sh` drives `uidai_cli` over this path
+end-to-end.
+
+## Verified live-sandbox result
+
+POSTing the signed v2.5 body over HTTPS returns a signed `<AuthRes>` from UIDAI:
+
+| Stage | Result |
+|-------|--------|
+| old path `/uidauth/public/9/9/…` | `404` (endpoint moved) |
+| `ver=2.0` body → `…/authserver/2.5/…` | `err=540` — "invalid Auth XML version" |
+| AUA key in URL `<asalk>` | `err=940` — "unauthorized ASA channel" |
+| ASA key in URL, valid path + version | `err=570` — "invalid key info in digital signature" (AUA cert expired/not-authorized) |
+
+`err=570` is reached only after UIDAI has decrypted and processed the payload —
+so the C++ crypto/signing is byte-correct end-to-end. The remaining blocker to a
+`ret="y"` is the **expired AUA `.p12`** (bundled one lapsed May 2020), which is
+not downloadable and must be re-provisioned from the AUA portal.
 
 ## Seeded test Aadhaar numbers (with demographic data)
 

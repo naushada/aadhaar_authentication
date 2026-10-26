@@ -133,6 +133,34 @@ TEST(request_target_ekyc) {
                kLk);
 }
 
+TEST(request_target_auth_https_with_asalk) {
+  const std::string req =
+      "/request?stage=staging&request=auth"
+      "&auth={uid=999938452218,tid=public,txn=T,ac=public,sa=public,ver=2.5,"
+      "lk=" + std::string(kLk) + ",asalk=ASA-KEY}"
+      "&uidai={uri=/authserver/2.5,host=developer.uidai.gov.in,"
+      "scheme=https,port=443}"
+      "&crypto={public=PUB.cer,private=PRIV.p12,password=public}";
+  RequestSpec r = parseRequest(req);
+  CHECK_EQ(r.scheme, std::string("https"));
+  CHECK(r.port == 443);
+  CHECK_EQ(r.targetLk, std::string(kLk)); // lk stays the AUA key
+  CHECK_EQ(r.asaLk, std::string("ASA-KEY"));
+  CHECK_EQ(requestTarget(r),
+           std::string(
+               "https://developer.uidai.gov.in/authserver/2.5/public/9/9/ASA-KEY"));
+}
+
+TEST(parse_request_https_defaults_port_to_443) {
+  const std::string req =
+      "/request?request=auth"
+      "&auth={uid=999938452218,ac=public,ver=2.5}"
+      "&uidai={host=developer.uidai.gov.in,scheme=https}";
+  RequestSpec r = parseRequest(req);
+  CHECK_EQ(r.scheme, std::string("https"));
+  CHECK(r.port == 443);
+}
+
 // A transport that records the outbound request and returns a canned response.
 struct MockTransport : HttpTransport {
   HttpRequest* captured;
@@ -175,7 +203,7 @@ TEST(client_handle_otp_end_to_end_with_mock) {
       "<OtpRes txn=\"TXN:BalaaghTesting\" code=\"abc\" "
       "ts=\"2018-06-27T12:13:25+05:30\" ret=\"y\" info=\"01{x}\"/>";
 
-  auto factory = [&](const std::string&, unsigned short)
+  auto factory = [&](const std::string&, unsigned short, bool)
       -> std::unique_ptr<HttpTransport> {
     auto m = std::make_unique<MockTransport>();
     m->captured = &captured;
