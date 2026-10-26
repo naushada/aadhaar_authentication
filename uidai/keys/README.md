@@ -8,7 +8,8 @@ test data), except the AUA private key (see below).
 
 | File | Role | Identity | Valid |
 |------|------|----------|-------|
-| `Staging_Signature_PrivateKey.p12` | AUA **private** key + cert (`password="public"`) → `rsaSha1Sign` | `CN=Public AUA for Staging Services` | May 24 2016 → **May 24 2020** (expired) |
+| `Staging_Signature_PrivateKey.p12` | AUA **private** key + cert (`password="public"`) → `rsaSha1Sign` (bundled demo, from the 2018 sample) | `CN=Public AUA for Staging Services` | May 24 2016 → **May 24 2020** (expired) |
+| `PublicAUAforStagingServices.p12` | AUA **private** key + cert (the *newest* public sample-client keystore, from `github.com/uidaitc/authapiclient`) | `CN=Public AUA for Staging Services` | May 25 2020 → **May 25 2024** (expired) |
 | `uidai_auth_stage.cer` | UIDAI **public** key (old) → `rsaPublicEncrypt` session-key wrap | `CN=AuthStaging16092020` | …→ **Sep 16 2020** (expired) |
 | `Auth_Private_Key_11082030.cer` | UIDAI **public** key (current) → session-key wrap | `CN=AuthStaging11082030` | Aug 11 2025 → **Aug 11 2030** ✅ |
 
@@ -20,10 +21,20 @@ test data), except the AUA private key (see below).
 ## The AUA private key is NOT downloadable
 
 UIDAI publishes only *public* certificates. The AUA signing key (`.p12`) is
-generated/provisioned to the AUA at onboarding and is never published. To do a
-**live** sandbox run you must re-provision a current `.p12` from the AUA portal
-(`developer.uidai.gov.in`); the bundled demo `.p12` is expired and only valid for
-offline byte-exactness testing (what the golden tests do).
+provisioned to the AUA and never published as a download. The authoritative
+[Testing Data and License Keys](https://uidai.gov.in/en/data-and-download#testing-data-and-license-keys)
+page says so explicitly:
+
+> Keystore for digital signature for "public" AUA — you can request the `.p12`
+> by writing to **authsupport@uidai.net.in**.
+
+Even the newest public sample-client keystore shipped with
+[`uidaitc/authapiclient`](https://github.com/uidaitc/authapiclient)
+(`PublicAUAforStagingServices.p12`, included here) lapsed **25 May 2024**, so no
+downloadable AUA key is currently valid. To get a `ret="y"` from the live
+sandbox, request a current `.p12` from `authsupport@uidai.net.in` and drop it in
+this directory; the bundled demo keys are expired and only valid for offline
+byte-exactness testing (what the golden tests do).
 
 ## License keys and codes
 
